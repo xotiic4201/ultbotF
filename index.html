@@ -1,1 +1,1620 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XULT - Ultimate Discord Bot</title>
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0f;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a1f;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #3b3b4f;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b4b9f;
+        }
+        
+        /* Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-dark {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Cards */
+        .feature-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 1px solid #2a2a3a;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: #ff69b4;
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.1);
+        }
+        
+        /* Candy Machine */
+        .candy-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 2px solid #ff69b4;
+            border-radius: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .candy-card:hover {
+            transform: translateY(-2px);
+            border-color: #ff1493;
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
+        }
+        
+        .candy-card.selected {
+            border-color: #ff1493;
+            box-shadow: 0 0 0 2px #ff1493;
+        }
+        
+        .candy-stripes {
+            display: flex;
+            height: 4px;
+            width: 100%;
+        }
+        
+        .stripe-pink { background: #ff69b4; flex: 1; }
+        .stripe-purple { background: #9b59b6; flex: 1; }
+        .stripe-blue { background: #3498db; flex: 1; }
+        .stripe-green { background: #2ecc71; flex: 1; }
+        .stripe-yellow { background: #f1c40f; flex: 1; }
+        
+        /* Progress Bars */
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .progress-low { background: #ff4444; }
+        .progress-medium { background: #ffaa44; }
+        .progress-high { background: #44ff44; }
+        
+        /* Animations */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Tabs */
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            color: white;
+        }
+        
+        /* Tables */
+        .table-row {
+            border-bottom: 1px solid #2a2a3a;
+            transition: background 0.2s;
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Inputs */
+        .input-field {
+            background: #1a1a2a;
+            border: 1px solid #2a2a3a;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.2);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: rgba(68, 255, 68, 0.2);
+            color: #44ff44;
+            border: 1px solid #44ff44;
+        }
+        
+        .badge-warning {
+            background: rgba(255, 170, 68, 0.2);
+            color: #ffaa44;
+            border: 1px solid #ffaa44;
+        }
+        
+        .badge-danger {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        
+        .badge-premium {
+            background: rgba(255, 105, 180, 0.2);
+            color: #ff69b4;
+            border: 1px solid #ff69b4;
+        }
+    </style>
+</head>
+<body class="bg-[#0a0a0f] text-white">
+    <!-- Navbar -->
+    <nav class="glass fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-bolt text-2xl text-purple-500"></i>
+                    <span class="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                        XULT
+                    </span>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#dashboard" class="text-gray-300 hover:text-white transition">Dashboard</a>
+                    <a href="#economy" class="text-gray-300 hover:text-white transition">Economy</a>
+                    <a href="#moderation" class="text-gray-300 hover:text-white transition">Moderation</a>
+                    <a href="#notifications" class="text-gray-300 hover:text-white transition">Notifications</a>
+                    <a href="#stock" class="text-gray-300 hover:text-white transition">Stock</a>
+                    <a href="#fourtwenty" class="text-gray-300 hover:text-white transition">4:20</a>
+                    <a href="#vending" class="text-gray-300 hover:text-white transition">Candy</a>
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div id="auth-buttons">
+                    <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
+                        <i class="fab fa-discord"></i>
+                        <span>Login with Discord</span>
+                    </button>
+                </div>
+                
+                <!-- User Menu -->
+                <div id="user-menu" class="hidden relative">
+                    <button onclick="toggleMenu()" class="flex items-center space-x-3">
+                        <img id="user-avatar" src="" class="w-8 h-8 rounded-full border-2 border-purple-500">
+                        <span id="user-name" class="text-sm font-medium"></span>
+                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                    </button>
+                    
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 glass-dark rounded-lg py-1 border border-gray-700">
+                        <div class="px-4 py-2 border-b border-gray-700">
+                            <p class="text-xs text-gray-400">Logged in as</p>
+                            <p id="dropdown-name" class="text-sm font-medium"></p>
+                        </div>
+                        <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="container mx-auto px-4 py-8">
+            <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
+            
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="glass rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i class="fas fa-server text-2xl text-blue-500"></i>
+                        <span class="text-xs text-green-500">+2 this week</span>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-servers">0</div>
+                    <div class="text-sm text-gray-400">Total Servers</div>
+                </div>
+                
+                <div class="glass rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i class="fas fa-users text-2xl text-green-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-users">0</div>
+                    <div class="text-sm text-gray-400">Total Users</div>
+                </div>
+                
+                <div class="glass rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i class="fas fa-chart-line text-2xl text-purple-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-commands">0</div>
+                    <div class="text-sm text-gray-400">Commands Today</div>
+                </div>
+                
+                <div class="glass rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i class="fas fa-crown text-2xl text-yellow-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold" id="stat-premium">0</div>
+                    <div class="text-sm text-gray-400">Premium Users</div>
+                </div>
+            </div>
+            
+            <!-- Activity Chart -->
+            <div class="glass rounded-xl p-6 mb-8">
+                <h2 class="text-lg font-semibold mb-4">Activity (Last 7 Days)</h2>
+                <canvas id="activityChart" height="100"></canvas>
+            </div>
+            
+            <!-- Server List -->
+            <div class="glass rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold">Your Servers</h2>
+                    <button onclick="refreshServers()" class="text-sm text-purple-400 hover:text-purple-300">
+                        <i class="fas fa-sync-alt mr-1"></i>
+                        Refresh
+                    </button>
+                </div>
+                
+                <div id="servers-list" class="space-y-2">
+                    <!-- Filled by JS -->
+                </div>
+                
+                <div id="no-servers" class="hidden text-center py-8 text-gray-400">
+                    <i class="fas fa-server text-4xl mb-3 opacity-50"></i>
+                    <p>Bot not in any of your servers yet</p>
+                    <button class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
+                        Invite Bot
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Economy Section -->
+        <section id="economy" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">Economy System</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column - User Stats -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Your Stats</h2>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Coins</span>
+                                <span class="font-bold" id="user-coins">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">XP</span>
+                                <span class="font-bold" id="user-xp">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Level</span>
+                                <span class="font-bold" id="user-level">1</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Rank</span>
+                                <span class="font-bold" id="user-rank">#0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                        <div class="space-y-2">
+                            <button class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 py-2 rounded-lg text-sm font-semibold">
+                                <i class="fas fa-dice mr-2"></i>
+                                Daily Bonus
+                            </button>
+                            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-2 rounded-lg text-sm font-semibold">
+                                <i class="fas fa-ticket mr-2"></i>
+                                Enter Lottery
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Leaderboard & Shop -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">🏆 Leaderboard</h2>
+                        <div id="leaderboard" class="space-y-2">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">🛍️ Shop</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
+                                <i class="fas fa-crown text-yellow-500 text-2xl mb-2"></i>
+                                <h3 class="font-semibold">VIP Role</h3>
+                                <p class="text-xs text-gray-400 mb-2">Gives VIP role</p>
+                                <p class="text-sm text-yellow-500 mb-2">500 coins</p>
+                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                    Buy
+                                </button>
+                            </div>
+                            
+                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
+                                <i class="fas fa-bolt text-blue-500 text-2xl mb-2"></i>
+                                <h3 class="font-semibold">Double XP</h3>
+                                <p class="text-xs text-gray-400 mb-2">24h double XP</p>
+                                <p class="text-sm text-yellow-500 mb-2">300 coins</p>
+                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                    Buy
+                                </button>
+                            </div>
+                            
+                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
+                                <i class="fas fa-box text-green-500 text-2xl mb-2"></i>
+                                <h3 class="font-semibold">Mystery Box</h3>
+                                <p class="text-xs text-gray-400 mb-2">Random reward</p>
+                                <p class="text-sm text-yellow-500 mb-2">100 coins</p>
+                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                    Buy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Moderation Section -->
+        <section id="moderation" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">Moderation</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column - Actions -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                        <div class="space-y-3">
+                            <select id="server-select-mod" class="input-field text-sm">
+                                <option value="">Select Server</option>
+                            </select>
+                            
+                            <input type="text" id="user-id" placeholder="User ID" class="input-field text-sm">
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="jailUser()" class="bg-red-600 hover:bg-red-700 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-gavel mr-1"></i>
+                                    Jail
+                                </button>
+                                <button onclick="unjailUser()" class="bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-unlock mr-1"></i>
+                                    Unjail
+                                </button>
+                            </div>
+                            
+                            <button onclick="purgeMessages()" class="w-full bg-orange-600 hover:bg-orange-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-trash mr-1"></i>
+                                Purge (100)
+                            </button>
+                            
+                            <button onclick="showWarnings()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Check Warnings
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Auto-Mod Settings</h2>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Bad Word Filter</span>
+                                <input type="checkbox" id="badword-filter" class="toggle">
+                            </label>
+                            
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Anti-Spam</span>
+                                <input type="checkbox" id="anti-spam" class="toggle">
+                            </label>
+                            
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Auto-Role on Join</span>
+                                <input type="checkbox" id="auto-role" class="toggle">
+                            </label>
+                            
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm mt-2">
+                                Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Logs & Warnings -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Recent Warnings</h2>
+                        <div id="warnings-list" class="space-y-2 max-h-96 overflow-y-auto">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Moderation Logs</h2>
+                        <div id="mod-logs" class="space-y-2 text-sm">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Notifications Section -->
+        <section id="notifications" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">Notifications</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- YouTube -->
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fab fa-youtube text-red-500 mr-2"></i>
+                        YouTube
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <select id="server-select-yt" class="input-field text-sm">
+                            <option value="">Select Server</option>
+                        </select>
+                        
+                        <input type="text" id="yt-channel" placeholder="YouTube Channel ID" class="input-field text-sm">
+                        
+                        <select id="yt-notify-channel" class="input-field text-sm">
+                            <option value="">Notification Channel</option>
+                        </select>
+                        
+                        <button onclick="addYouTubeChannel()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 py-2 rounded-lg text-sm">
+                            <i class="fas fa-plus mr-1"></i>
+                            Track Channel
+                        </button>
+                    </div>
+                    
+                    <div id="yt-list" class="mt-4 space-y-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                
+                <!-- Twitch -->
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fab fa-twitch text-purple-500 mr-2"></i>
+                        Twitch
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <select id="server-select-twitch" class="input-field text-sm">
+                            <option value="">Select Server</option>
+                        </select>
+                        
+                        <input type="text" id="twitch-name" placeholder="Twitch Username" class="input-field text-sm">
+                        
+                        <select id="twitch-notify-channel" class="input-field text-sm">
+                            <option value="">Notification Channel</option>
+                        </select>
+                        
+                        <button onclick="addTwitchStreamer()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 py-2 rounded-lg text-sm">
+                            <i class="fas fa-plus mr-1"></i>
+                            Track Streamer
+                        </button>
+                    </div>
+                    
+                    <div id="twitch-list" class="mt-4 space-y-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                
+                <!-- Twitter/X -->
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fab fa-twitter text-blue-400 mr-2"></i>
+                        Twitter/X
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <select id="server-select-twitter" class="input-field text-sm">
+                            <option value="">Select Server</option>
+                        </select>
+                        
+                        <input type="text" id="twitter-name" placeholder="@username" class="input-field text-sm">
+                        
+                        <select id="twitter-notify-channel" class="input-field text-sm">
+                            <option value="">Notification Channel</option>
+                        </select>
+                        
+                        <button onclick="addTwitterAccount()" class="w-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 py-2 rounded-lg text-sm">
+                            <i class="fas fa-plus mr-1"></i>
+                            Track Account
+                        </button>
+                    </div>
+                    
+                    <div id="twitter-list" class="mt-4 space-y-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                
+                <!-- Settings -->
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4">Notification Settings</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Default Role to Ping</label>
+                            <select id="notify-role" class="input-field text-sm">
+                                <option value="">@everyone</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Check Interval</label>
+                            <select id="notify-interval" class="input-field text-sm">
+                                <option value="1">Every minute</option>
+                                <option value="5">Every 5 minutes</option>
+                                <option value="10">Every 10 minutes</option>
+                                <option value="30">Every 30 minutes</option>
+                            </select>
+                        </div>
+                        
+                        <button class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                            Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Stock System Section -->
+        <section id="stock" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">Stock System</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Stock List -->
+                <div class="lg:col-span-3">
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold">Available Stock</h2>
+                            <button onclick="refreshStock()" class="text-sm text-purple-400 hover:text-purple-300">
+                                <i class="fas fa-sync-alt mr-1"></i>
+                                Refresh
+                            </button>
+                        </div>
+                        
+                        <div id="stock-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stock Controls -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Add Stock</h2>
+                        <div class="space-y-3">
+                            <input type="text" id="stock-type" placeholder="Stock type (e.g., nitro)" class="input-field text-sm">
+                            
+                            <textarea id="stock-content" placeholder="Paste stock content (one per line, double line between entries)" rows="5" class="input-field text-sm"></textarea>
+                            
+                            <button onclick="addStock()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-upload mr-1"></i>
+                                Upload Stock
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Access Control</h2>
+                        <div class="space-y-3">
+                            <select id="stock-server" class="input-field text-sm">
+                                <option value="">Select Server</option>
+                            </select>
+                            
+                            <select id="stock-role" class="input-field text-sm">
+                                <option value="">Role for /gen access</option>
+                            </select>
+                            
+                            <button onclick="setGenAccess()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                                Set Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 4:20 Section -->
+        <section id="fourtwenty" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">🌿 4:20 Reminder</h1>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="glass rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold">Settings</h2>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Server</label>
+                            <select id="fourtwenty-server" class="input-field">
+                                <option value="">Select Server</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Channel</label>
+                            <select id="fourtwenty-channel" class="input-field">
+                                <option value="">Select Channel</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Role to Ping</label>
+                            <select id="fourtwenty-role" class="input-field">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Voice Channel (Optional)</label>
+                            <select id="fourtwenty-vc" class="input-field">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Timezone</label>
+                            <select id="fourtwenty-timezone" class="input-field">
+                                <option value="UTC">UTC</option>
+                                <option value="America/New_York">EST</option>
+                                <option value="America/Chicago">CST</option>
+                                <option value="America/Denver">MST</option>
+                                <option value="America/Los_Angeles">PST</option>
+                                <option value="Europe/London">GMT</option>
+                                <option value="Europe/Paris">CET</option>
+                                <option value="Asia/Tokyo">JST</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex space-x-2 pt-4">
+                            <button onclick="saveFourTwenty()" class="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded-lg">
+                                <i class="fas fa-save mr-1"></i>
+                                Save Settings
+                            </button>
+                            <button onclick="testFourTwenty()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded-lg">
+                                <i class="fas fa-play mr-1"></i>
+                                Test Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass rounded-xl p-6 mt-4">
+                    <h3 class="font-semibold mb-2">Next Reminders</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>4:20 AM</span>
+                            <span class="text-gray-400" id="next-420am">Calculating...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>4:20 PM</span>
+                            <span class="text-gray-400" id="next-420pm">Calculating...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Candy Vending Machine Section -->
+        <section id="vending" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">🍬 Candy Vending Machine</h1>
+            
+            <!-- Premium Gate -->
+            <div id="premium-gate" class="glass rounded-xl p-8 max-w-md mx-auto text-center border border-purple-500/30 hidden">
+                <i class="fas fa-crown text-5xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
+                <p class="text-gray-400 text-sm mb-6">You need the premium role to access the candy vending machine.</p>
+                <button onclick="checkPremium()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg text-sm w-full">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Check Again
+                </button>
+            </div>
+            
+            <!-- Candy Machine -->
+            <div id="candy-machine" class="hidden">
+                <!-- Stats -->
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
+                    <div class="glass rounded-lg p-4 text-center">
+                        <div class="text-xs text-gray-400">Total Pieces</div>
+                        <div id="total-pieces" class="text-2xl font-bold text-pink-400">0</div>
+                    </div>
+                    <div class="glass rounded-lg p-4 text-center">
+                        <div class="text-xs text-gray-400">Flavors</div>
+                        <div id="total-flavors" class="text-2xl font-bold text-purple-400">0</div>
+                    </div>
+                </div>
+                
+                <!-- Cooldown -->
+                <div id="cooldown-bar" class="hidden glass rounded-lg p-4 mb-6 border border-yellow-500/30 max-w-md mx-auto">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-hourglass-half text-yellow-500"></i>
+                        <div class="flex-1">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-yellow-500">Cooldown</span>
+                                <span id="cooldown-timer" class="text-yellow-500 font-mono">5s</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="cooldown-progress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Candy Grid -->
+                <div id="candy-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Result Modal -->
+    <div id="result-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="glass rounded-xl border border-pink-500 max-w-md w-full p-6">
+            <div class="text-center mb-4">
+                <i class="fas fa-candy-cane text-5xl text-pink-500 mb-2"></i>
+                <h3 class="text-xl font-bold">Candy Dispensed!</h3>
+            </div>
+            
+            <div class="bg-gray-900 rounded-lg p-3 mb-4">
+                <pre id="result-text" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
+            </div>
+            
+            <div class="flex justify-between text-xs text-gray-400 mb-4">
+                <span id="result-cooldown">⏱️ 5s</span>
+                <span id="result-remaining">🍬 0 left</span>
+            </div>
+            
+            <div class="flex space-x-2">
+                <button onclick="copyResult()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                    <i class="fas fa-copy mr-1"></i>
+                    Copy
+                </button>
+                <button onclick="closeModal()" class="flex-1 glass hover:bg-gray-800 py-2 rounded-lg text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 mt-12 py-6">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-400">
+            <p>© 2024 XULT - Ultimate Discord Bot. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // ==================== CONFIG ====================
+        const API_URL = 'http://localhost:5000';  // Your bot's API URL
+        const API_KEY = 'your-api-key-here';      // From bot console
+        const DISCORD_CLIENT_ID = 'your-client-id'; // From Discord Developer Portal
+        const REDIRECT_URI = window.location.origin;
+        
+        // State
+        let currentUser = null;
+        let accessToken = null;
+        let isPremium = false;
+        let candyItems = [];
+        let selectedCandy = null;
+        let cooldown = 0;
+        let cooldownInterval = null;
+        let currentResult = null;
+        let userGuilds = [];
+        let activityChart = null;
+        
+        // ==================== AUTH ====================
+        function loginWithDiscord() {
+            const params = new URLSearchParams({
+                client_id: DISCORD_CLIENT_ID,
+                redirect_uri: REDIRECT_URI,
+                response_type: 'token',
+                scope: 'identify guilds'
+            });
+            
+            window.location.href = `https://discord.com/api/oauth2/authorize?${params}`;
+        }
+        
+        function handleAuth() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
+            
+            if (token) {
+                accessToken = token;
+                fetchUser();
+                fetchUserGuilds();
+                window.location.hash = '';
+            }
+        }
+        
+        async function fetchUser() {
+            try {
+                const res = await fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                const user = await res.json();
+                currentUser = user;
+                
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-menu').classList.remove('hidden');
+                document.getElementById('user-name').textContent = user.username;
+                document.getElementById('dropdown-name').textContent = user.username;
+                document.getElementById('user-avatar').src = user.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                checkPremium();
+                fetchStats();
+                fetchUserEconomy();
+            } catch (e) {
+                console.error('Auth failed:', e);
+            }
+        }
+        
+        async function fetchUserGuilds() {
+            try {
+                const res = await fetch('https://discord.com/api/users/@me/guilds', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                userGuilds = await res.json();
+                updateServerSelects();
+                updateServersList();
+            } catch (e) {
+                console.error('Failed to fetch guilds:', e);
+            }
+        }
+        
+        function updateServerSelects() {
+            const selects = ['server-select-mod', 'server-select-yt', 'server-select-twitch', 
+                           'server-select-twitter', 'stock-server', 'fourtwenty-server'];
+            
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    select.innerHTML = '<option value="">Select Server</option>';
+                    userGuilds.forEach(guild => {
+                        select.innerHTML += `<option value="${guild.id}">${guild.name}</option>`;
+                    });
+                }
+            });
+        }
+        
+        function updateServersList() {
+            const list = document.getElementById('servers-list');
+            const noServers = document.getElementById('no-servers');
+            
+            if (userGuilds.length === 0) {
+                list.innerHTML = '';
+                noServers.classList.remove('hidden');
+                return;
+            }
+            
+            noServers.classList.add('hidden');
+            list.innerHTML = userGuilds.map(guild => `
+                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition">
+                    <div class="flex items-center space-x-3">
+                        <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
+                             class="w-8 h-8 rounded-full">
+                        <div>
+                            <p class="font-medium">${guild.name}</p>
+                            <p class="text-xs text-gray-400">ID: ${guild.id}</p>
+                        </div>
+                    </div>
+                    <span class="badge ${guild.owner ? 'badge-success' : 'badge-warning'}">
+                        ${guild.owner ? 'Owner' : 'Member'}
+                    </span>
+                </div>
+            `).join('');
+        }
+        
+        function toggleMenu() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
+        
+        function logout() {
+            currentUser = null;
+            accessToken = null;
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+            showSection('dashboard');
+        }
+        
+        // ==================== NAVIGATION ====================
+        function showSection(sectionId) {
+            const sections = ['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event?.target.classList.add('active');
+        }
+        
+        // ==================== API CALLS ====================
+        async function fetchStats() {
+            try {
+                const res = await fetch(`${API_URL}/api/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const data = await res.json();
+                
+                document.getElementById('stat-servers').textContent = data.total_servers || 0;
+                document.getElementById('stat-users').textContent = data.total_users || 0;
+                document.getElementById('stat-commands').textContent = data.total_commands || 0;
+                document.getElementById('stat-premium').textContent = data.premium_users || 0;
+                
+                updateChart(data.activity || [5, 10, 15, 20, 25, 30, 35]);
+            } catch (e) {
+                console.error('Stats fetch failed:', e);
+            }
+        }
+        
+        function updateChart(activityData) {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            
+            if (activityChart) {
+                activityChart.destroy();
+            }
+            
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Commands',
+                        data: activityData,
+                        borderColor: '#ff69b4',
+                        backgroundColor: 'rgba(255, 105, 180, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        async function checkPremium() {
+            if (!currentUser) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/api/check-premium/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                isPremium = data.hasPremium;
+                
+                if (isPremium) {
+                    document.getElementById('premium-gate').classList.add('hidden');
+                    document.getElementById('candy-machine').classList.remove('hidden');
+                    fetchCandyStock();
+                } else {
+                    document.getElementById('premium-gate').classList.remove('hidden');
+                    document.getElementById('candy-machine').classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Premium check failed:', e);
+            }
+        }
+        
+        async function fetchUserEconomy() {
+            if (!currentUser) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/api/user/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                document.getElementById('user-coins').textContent = data.coins || 0;
+                document.getElementById('user-xp').textContent = data.xp || 0;
+                document.getElementById('user-level').textContent = data.level || 1;
+                document.getElementById('user-rank').textContent = `#${data.rank || 0}`;
+            } catch (e) {
+                console.error('Economy fetch failed:', e);
+            }
+        }
+        
+        async function fetchLeaderboard() {
+            try {
+                const res = await fetch(`${API_URL}/api/leaderboard`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                const leaderboard = document.getElementById('leaderboard');
+                
+                leaderboard.innerHTML = data.map((user, i) => `
+                    <div class="flex items-center justify-between p-2 bg-gray-800/30 rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 text-center font-bold ${i < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${i+1}</span>
+                            <span>${user.username}</span>
+                        </div>
+                        <span class="font-bold text-yellow-500">${user.coins}</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Leaderboard fetch failed:', e);
+            }
+        }
+        
+        // ==================== STOCK FUNCTIONS ====================
+        async function fetchCandyStock() {
+            try {
+                const res = await fetch(`${API_URL}/api/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                candyItems = Object.entries(data).map(([type, item]) => ({
+                    type,
+                    ...item
+                }));
+                
+                updateCandyGrid();
+                updateStockStats();
+            } catch (e) {
+                console.error('Stock fetch failed:', e);
+            }
+        }
+        
+        function updateStockStats() {
+            const total = candyItems.reduce((sum, i) => sum + (i.count || 0), 0);
+            document.getElementById('total-pieces').textContent = total;
+            document.getElementById('total-flavors').textContent = candyItems.length;
+            
+            // Update stock grid in stock section
+            const stockGrid = document.getElementById('stock-grid');
+            if (stockGrid) {
+                stockGrid.innerHTML = candyItems.map(item => `
+                    <div class="bg-gray-800/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold">${item.name || item.type}</span>
+                            <span class="badge ${item.count < 10 ? 'badge-danger' : item.count < 30 ? 'badge-warning' : 'badge-success'}">
+                                ${item.count} left
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400 mb-2">${item.flavor || 'Mixed'}</p>
+                        <div class="progress-bar mb-2">
+                            <div class="progress-fill ${item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high'}" 
+                                 style="width: ${Math.min(100, (item.count / 100) * 100)}%"></div>
+                        </div>
+                        <button onclick="generateCandy('${item.type}')" 
+                                class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs mt-2"
+                                ${item.count === 0 ? 'disabled' : ''}>
+                            Generate
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateCandyGrid() {
+            const grid = document.getElementById('candy-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = candyItems.map(item => {
+                const pct = Math.min(100, (item.count / 100) * 100);
+                const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
+                
+                return `
+                    <div class="candy-card ${selectedCandy?.type === item.type ? 'selected' : ''}" 
+                         onclick="selectCandy('${item.type}')">
+                        <div class="candy-stripes">
+                            <div class="stripe-pink"></div>
+                            <div class="stripe-purple"></div>
+                            <div class="stripe-blue"></div>
+                            <div class="stripe-green"></div>
+                            <div class="stripe-yellow"></div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <div class="text-center mb-3">
+                                <div class="text-4xl mb-2">${item.emoji || '🍬'}</div>
+                                <h3 class="font-bold">${item.name || item.type}</h3>
+                                <p class="text-xs text-gray-400">${item.flavor || 'Mixed'}</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-gray-400">Stock</span>
+                                    <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'}">${item.count}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-${stockClass}" style="width: ${pct}%"></div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="event.stopPropagation(); generateCandy('${item.type}')" 
+                                    class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white py-2 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${item.count === 0 ? 'disabled' : ''}>
+                                ${item.count === 0 ? 'Sold Out' : 'Dispense'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function selectCandy(type) {
+            selectedCandy = candyItems.find(i => i.type === type);
+            updateCandyGrid();
+        }
+        
+        async function generateCandy(type) {
+            if (cooldown > 0) {
+                alert(`Please wait ${cooldown}s`);
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/generate/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+                
+                const result = await res.json();
+                
+                if (result.success) {
+                    currentResult = result;
+                    document.getElementById('result-modal').classList.remove('hidden');
+                    document.getElementById('result-modal').classList.add('flex');
+                    document.getElementById('result-text').textContent = result.content;
+                    document.getElementById('result-cooldown').innerHTML = `⏱️ ${result.cooldown}s`;
+                    document.getElementById('result-remaining').innerHTML = `🍬 ${result.remaining} left`;
+                    
+                    fetchCandyStock();
+                    startCooldown(result.cooldown || 5);
+                } else {
+                    alert(result.error || 'Failed to generate');
+                }
+            } catch (e) {
+                alert('Failed to connect to bot');
+                console.error(e);
+            }
+        }
+        
+        function startCooldown(seconds) {
+            cooldown = seconds;
+            document.getElementById('cooldown-bar').classList.remove('hidden');
+            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
+            document.getElementById('cooldown-progress').style.width = '100%';
+            
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            
+            const start = Date.now();
+            cooldownInterval = setInterval(() => {
+                const elapsed = (Date.now() - start) / 1000;
+                const remaining = Math.max(0, seconds - elapsed);
+                const pct = (remaining / seconds) * 100;
+                
+                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldown-progress').style.width = `${pct}%`;
+                
+                if (remaining <= 0) {
+                    clearInterval(cooldownInterval);
+                    document.getElementById('cooldown-bar').classList.add('hidden');
+                    cooldown = 0;
+                }
+            }, 100);
+        }
+        
+        // ==================== MODERATION FUNCTIONS ====================
+        async function jailUser() {
+            const serverId = document.getElementById('server-select-mod').value;
+            const userId = document.getElementById('user-id').value;
+            
+            if (!serverId || !userId) {
+                alert('Select a server and enter user ID');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/mod/jail`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, userId, duration: '10m' })
+                });
+                
+                const data = await res.json();
+                alert(data.message || 'User jailed');
+            } catch (e) {
+                alert('Failed to jail user');
+            }
+        }
+        
+        async function unjailUser() {
+            const serverId = document.getElementById('server-select-mod').value;
+            const userId = document.getElementById('user-id').value;
+            
+            if (!serverId || !userId) {
+                alert('Select a server and enter user ID');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/mod/unjail`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, userId })
+                });
+                
+                const data = await res.json();
+                alert(data.message || 'User unjailed');
+            } catch (e) {
+                alert('Failed to unjail user');
+            }
+        }
+        
+        async function purgeMessages() {
+            const serverId = document.getElementById('server-select-mod').value;
+            
+            if (!serverId) {
+                alert('Select a server');
+                return;
+            }
+            
+            if (confirm('Purge 100 messages?')) {
+                try {
+                    const res = await fetch(`${API_URL}/api/mod/purge`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ serverId, amount: 100 })
+                    });
+                    
+                    const data = await res.json();
+                    alert(`Purged ${data.count} messages`);
+                } catch (e) {
+                    alert('Failed to purge messages');
+                }
+            }
+        }
+        
+        // ==================== NOTIFICATION FUNCTIONS ====================
+        async function addYouTubeChannel() {
+            const serverId = document.getElementById('server-select-yt').value;
+            const channelId = document.getElementById('yt-channel').value;
+            const notifyChannel = document.getElementById('yt-notify-channel').value;
+            
+            if (!serverId || !channelId) {
+                alert('Select a server and enter channel ID');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/notifications/youtube/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, channelId, notifyChannel })
+                });
+                
+                alert('YouTube channel added');
+            } catch (e) {
+                alert('Failed to add channel');
+            }
+        }
+        
+        async function addTwitchStreamer() {
+            const serverId = document.getElementById('server-select-twitch').value;
+            const username = document.getElementById('twitch-name').value;
+            const notifyChannel = document.getElementById('twitch-notify-channel').value;
+            
+            if (!serverId || !username) {
+                alert('Select a server and enter username');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/notifications/twitch/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, username, notifyChannel })
+                });
+                
+                alert('Twitch streamer added');
+            } catch (e) {
+                alert('Failed to add streamer');
+            }
+        }
+        
+        async function addTwitterAccount() {
+            const serverId = document.getElementById('server-select-twitter').value;
+            const username = document.getElementById('twitter-name').value;
+            const notifyChannel = document.getElementById('twitter-notify-channel').value;
+            
+            if (!serverId || !username) {
+                alert('Select a server and enter username');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/notifications/twitter/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, username, notifyChannel })
+                });
+                
+                alert('Twitter account added');
+            } catch (e) {
+                alert('Failed to add account');
+            }
+        }
+        
+        // ==================== STOCK FUNCTIONS ====================
+        async function addStock() {
+            const type = document.getElementById('stock-type').value;
+            const content = document.getElementById('stock-content').value;
+            
+            if (!type || !content) {
+                alert('Enter stock type and content');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, content })
+                });
+                
+                alert('Stock added successfully');
+                document.getElementById('stock-type').value = '';
+                document.getElementById('stock-content').value = '';
+                fetchCandyStock();
+            } catch (e) {
+                alert('Failed to add stock');
+            }
+        }
+        
+        async function setGenAccess() {
+            const serverId = document.getElementById('stock-server').value;
+            const roleId = document.getElementById('stock-role').value;
+            
+            if (!serverId || !roleId) {
+                alert('Select a server and role');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/access`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverId, roleId })
+                });
+                
+                alert('Access role set');
+            } catch (e) {
+                alert('Failed to set access');
+            }
+        }
+        
+        function refreshStock() {
+            fetchCandyStock();
+        }
+        
+        // ==================== 4:20 FUNCTIONS ====================
+        function saveFourTwenty() {
+            const serverId = document.getElementById('fourtwenty-server').value;
+            const channelId = document.getElementById('fourtwenty-channel').value;
+            const roleId = document.getElementById('fourtwenty-role').value;
+            const vcId = document.getElementById('fourtwenty-vc').value;
+            const timezone = document.getElementById('fourtwenty-timezone').value;
+            
+            if (!serverId || !channelId) {
+                alert('Select a server and channel');
+                return;
+            }
+            
+            // Calculate next 4:20 times
+            const now = new Date();
+            const next420am = new Date(now);
+            next420am.setHours(4, 20, 0, 0);
+            if (now > next420am) next420am.setDate(next420am.getDate() + 1);
+            
+            const next420pm = new Date(now);
+            next420pm.setHours(16, 20, 0, 0);
+            if (now > next420pm) next420pm.setDate(next420pm.getDate() + 1);
+            
+            document.getElementById('next-420am').textContent = next420am.toLocaleString();
+            document.getElementById('next-420pm').textContent = next420pm.toLocaleString();
+            
+            alert('4:20 settings saved');
+        }
+        
+        function testFourTwenty() {
+            alert('Test message sent! (Check your Discord)');
+        }
+        
+        // ==================== UTILITIES ====================
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult.content);
+                alert('Copied!');
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('result-modal').classList.remove('flex');
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+        
+        function refreshServers() {
+            fetchUserGuilds();
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(e) {
+            if (!e.target.matches('#user-menu, #user-menu *')) {
+                document.getElementById('user-dropdown').classList.add('hidden');
+            }
+        };
+        
+        // Initialize
+        handleAuth();
+        fetchStats();
+        fetchLeaderboard();
+        
+        // Set up tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = tab.getAttribute('data-section');
+                showSection(section);
+            });
+        });
+        
+        // Navigation from navbar
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('href').substring(1);
+                showSection(section);
+            });
+        });
+    </script>
+</body>
+</html>
