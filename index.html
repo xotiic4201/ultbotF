@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
+        /* Your existing styles */
         * {
             margin: 0;
             padding: 0;
@@ -28,55 +28,12 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1a1a1f;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #3b3b4f;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b4b9f;
-        }
-        
-        /* Glass Effect */
         .glass {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .glass-dark {
-            background: rgba(10, 10, 15, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Cards */
-        .feature-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 1px solid #2a2a3a;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-2px);
-            border-color: #ff69b4;
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.1);
-        }
-        
-        /* Candy Machine */
         .candy-card {
             background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
             border: 2px solid #ff69b4;
@@ -93,11 +50,6 @@
             box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
         }
         
-        .candy-card.selected {
-            border-color: #ff1493;
-            box-shadow: 0 0 0 2px #ff1493;
-        }
-        
         .candy-stripes {
             display: flex;
             height: 4px;
@@ -110,7 +62,6 @@
         .stripe-green { background: #2ecc71; flex: 1; }
         .stripe-yellow { background: #f1c40f; flex: 1; }
         
-        /* Progress Bars */
         .progress-bar {
             height: 6px;
             background: rgba(255,255,255,0.1);
@@ -127,7 +78,6 @@
         .progress-medium { background: #ffaa44; }
         .progress-high { background: #44ff44; }
         
-        /* Animations */
         .spinner {
             animation: spin 1s linear infinite;
         }
@@ -137,20 +87,10 @@
             to { transform: rotate(360deg); }
         }
         
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
         .hidden {
             display: none !important;
         }
         
-        /* Tabs */
         .tab {
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
@@ -164,17 +104,6 @@
             color: white;
         }
         
-        /* Tables */
-        .table-row {
-            border-bottom: 1px solid #2a2a3a;
-            transition: background 0.2s;
-        }
-        
-        .table-row:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Inputs */
         .input-field {
             background: #1a1a2a;
             border: 1px solid #2a2a3a;
@@ -191,7 +120,6 @@
             box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.2);
         }
         
-        /* Badges */
         .badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -345,7 +273,7 @@
                 <div id="no-servers" class="hidden text-center py-8 text-gray-400">
                     <i class="fas fa-server text-4xl mb-3 opacity-50"></i>
                     <p>Bot not in any of your servers yet</p>
-                    <button class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
+                    <button onclick="inviteBot()" class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
                         Invite Bot
                     </button>
                 </div>
@@ -384,11 +312,11 @@
                     <div class="glass rounded-xl p-6">
                         <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
                         <div class="space-y-2">
-                            <button class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 py-2 rounded-lg text-sm font-semibold">
+                            <button onclick="dailyBonus()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 py-2 rounded-lg text-sm font-semibold">
                                 <i class="fas fa-dice mr-2"></i>
                                 Daily Bonus
                             </button>
-                            <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-2 rounded-lg text-sm font-semibold">
+                            <button onclick="enterLottery()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-2 rounded-lg text-sm font-semibold">
                                 <i class="fas fa-ticket mr-2"></i>
                                 Enter Lottery
                             </button>
@@ -413,7 +341,7 @@
                                 <h3 class="font-semibold">VIP Role</h3>
                                 <p class="text-xs text-gray-400 mb-2">Gives VIP role</p>
                                 <p class="text-sm text-yellow-500 mb-2">500 coins</p>
-                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                <button onclick="buyItem('VIP Role', 500)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
                                     Buy
                                 </button>
                             </div>
@@ -423,7 +351,7 @@
                                 <h3 class="font-semibold">Double XP</h3>
                                 <p class="text-xs text-gray-400 mb-2">24h double XP</p>
                                 <p class="text-sm text-yellow-500 mb-2">300 coins</p>
-                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                <button onclick="buyItem('Double XP', 300)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
                                     Buy
                                 </button>
                             </div>
@@ -433,7 +361,7 @@
                                 <h3 class="font-semibold">Mystery Box</h3>
                                 <p class="text-xs text-gray-400 mb-2">Random reward</p>
                                 <p class="text-sm text-yellow-500 mb-2">100 coins</p>
-                                <button class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                <button onclick="buyItem('Mystery Box', 100)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
                                     Buy
                                 </button>
                             </div>
@@ -487,20 +415,20 @@
                         <div class="space-y-3">
                             <label class="flex items-center justify-between">
                                 <span class="text-sm text-gray-400">Bad Word Filter</span>
-                                <input type="checkbox" id="badword-filter" class="toggle">
+                                <input type="checkbox" id="badword-filter" class="toggle" onchange="toggleBadWordFilter()">
                             </label>
                             
                             <label class="flex items-center justify-between">
                                 <span class="text-sm text-gray-400">Anti-Spam</span>
-                                <input type="checkbox" id="anti-spam" class="toggle">
+                                <input type="checkbox" id="anti-spam" class="toggle" onchange="toggleAntiSpam()">
                             </label>
                             
                             <label class="flex items-center justify-between">
                                 <span class="text-sm text-gray-400">Auto-Role on Join</span>
-                                <input type="checkbox" id="auto-role" class="toggle">
+                                <input type="checkbox" id="auto-role" class="toggle" onchange="toggleAutoRole()">
                             </label>
                             
-                            <button class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm mt-2">
+                            <button onclick="saveModSettings()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm mt-2">
                                 Save Settings
                             </button>
                         </div>
@@ -640,7 +568,7 @@
                             </select>
                         </div>
                         
-                        <button class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                        <button onclick="saveNotifySettings()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
                             Save Settings
                         </button>
                     </div>
@@ -880,9 +808,10 @@
     
     <script>
         // ==================== CONFIG ====================
-        const API_URL = 'http://localhost:5000';  // Your bot's API URL
-        const API_KEY = 'your-api-key-here';      // From bot console
-        const DISCORD_CLIENT_ID = 'your-client-id'; // From Discord Developer Portal
+        // CHANGE THESE TO YOUR ACTUAL URLs
+        const API_URL = 'https://xult-bot.onrender.com';  // Your Render bot URL
+        const API_KEY = 'your-api-key-here';               // Will be shown in bot console
+        const DISCORD_CLIENT_ID = 'your-client-id';        // From Discord Developer Portal
         const REDIRECT_URI = window.location.origin;
         
         // State
@@ -1016,6 +945,10 @@
             showSection('dashboard');
         }
         
+        function inviteBot() {
+            window.open(`https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`, '_blank');
+        }
+        
         // ==================== NAVIGATION ====================
         function showSection(sectionId) {
             const sections = ['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending'];
@@ -1024,9 +957,16 @@
             });
             document.getElementById(sectionId).classList.remove('hidden');
             
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event?.target.classList.add('active');
+            // Update URL hash
+            window.location.hash = sectionId;
+        }
+        
+        // Check hash on load
+        if (window.location.hash) {
+            const section = window.location.hash.substring(1);
+            if (['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending'].includes(section)) {
+                setTimeout(() => showSection(section), 100);
+            }
         }
         
         // ==================== API CALLS ====================
@@ -1045,6 +985,11 @@
                 updateChart(data.activity || [5, 10, 15, 20, 25, 30, 35]);
             } catch (e) {
                 console.error('Stats fetch failed:', e);
+                // Show placeholder data
+                document.getElementById('stat-servers').textContent = '0';
+                document.getElementById('stat-users').textContent = '0';
+                document.getElementById('stat-commands').textContent = '0';
+                document.getElementById('stat-premium').textContent = '0';
             }
         }
         
@@ -1140,15 +1085,19 @@
                 const data = await res.json();
                 const leaderboard = document.getElementById('leaderboard');
                 
-                leaderboard.innerHTML = data.map((user, i) => `
-                    <div class="flex items-center justify-between p-2 bg-gray-800/30 rounded-lg">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-6 text-center font-bold ${i < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${i+1}</span>
-                            <span>${user.username}</span>
+                if (data && data.length > 0) {
+                    leaderboard.innerHTML = data.map((user, i) => `
+                        <div class="flex items-center justify-between p-2 bg-gray-800/30 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 text-center font-bold ${i < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${i+1}</span>
+                                <span>${user.username || 'Unknown'}</span>
+                            </div>
+                            <span class="font-bold text-yellow-500">${user.coins || 0}</span>
                         </div>
-                        <span class="font-bold text-yellow-500">${user.coins}</span>
-                    </div>
-                `).join('');
+                    `).join('');
+                } else {
+                    leaderboard.innerHTML = '<p class="text-gray-400 text-center">No data yet</p>';
+                }
             } catch (e) {
                 console.error('Leaderboard fetch failed:', e);
             }
@@ -1289,7 +1238,7 @@
                     alert(result.error || 'Failed to generate');
                 }
             } catch (e) {
-                alert('Failed to connect to bot');
+                alert('Failed to connect to bot. Make sure the bot is running on Render.');
                 console.error(e);
             }
         }
@@ -1399,6 +1348,54 @@
             }
         }
         
+        async function showWarnings() {
+            const serverId = document.getElementById('server-select-mod').value;
+            const userId = document.getElementById('user-id').value;
+            
+            if (!serverId || !userId) {
+                alert('Select a server and enter user ID');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/mod/warnings/${serverId}/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                const list = document.getElementById('warnings-list');
+                
+                if (data.warnings && data.warnings.length > 0) {
+                    list.innerHTML = data.warnings.map(w => `
+                        <div class="p-2 bg-gray-800/50 rounded-lg">
+                            <p class="text-sm"><span class="text-red-400">Reason:</span> ${w.reason}</p>
+                            <p class="text-xs text-gray-400">Date: ${w.date}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<p class="text-gray-400 text-center">No warnings found</p>';
+                }
+            } catch (e) {
+                alert('Failed to fetch warnings');
+            }
+        }
+        
+        function toggleBadWordFilter() {
+            // Implement
+        }
+        
+        function toggleAntiSpam() {
+            // Implement
+        }
+        
+        function toggleAutoRole() {
+            // Implement
+        }
+        
+        function saveModSettings() {
+            alert('Settings saved (mock)');
+        }
+        
         // ==================== NOTIFICATION FUNCTIONS ====================
         async function addYouTubeChannel() {
             const serverId = document.getElementById('server-select-yt').value;
@@ -1476,6 +1473,10 @@
             } catch (e) {
                 alert('Failed to add account');
             }
+        }
+        
+        function saveNotifySettings() {
+            alert('Settings saved (mock)');
         }
         
         // ==================== STOCK FUNCTIONS ====================
@@ -1569,6 +1570,19 @@
             alert('Test message sent! (Check your Discord)');
         }
         
+        // ==================== ECONOMY FUNCTIONS ====================
+        function dailyBonus() {
+            alert('Daily bonus claimed! (mock)');
+        }
+        
+        function enterLottery() {
+            alert('Entered lottery! (mock)');
+        }
+        
+        function buyItem(item, price) {
+            alert(`Bought ${item} for ${price} coins! (mock)`);
+        }
+        
         // ==================== UTILITIES ====================
         function copyResult() {
             if (currentResult) {
@@ -1598,23 +1612,8 @@
         fetchStats();
         fetchLeaderboard();
         
-        // Set up tab click handlers
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = tab.getAttribute('data-section');
-                showSection(section);
-            });
-        });
-        
-        // Navigation from navbar
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.getAttribute('href').substring(1);
-                showSection(section);
-            });
-        });
+        // Periodic refresh
+        setInterval(fetchStats, 30000); // Refresh stats every 30 seconds
     </script>
 </body>
 </html>
