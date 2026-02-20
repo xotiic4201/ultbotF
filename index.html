@@ -1252,8 +1252,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Configuration
-        const API_BASE = 'https://ultbotb.onrender.com';
-        const CLIENT_ID = '1417284780675956766'; // Replace with your Discord app client ID
+        const API_BASE = 'https://ultbotb.onrender.com'; // ⚠️ REPLACE WITH YOUR ACTUAL RENDER URL
+        const CLIENT_ID = '1417284780675956766'; // Your Discord client ID
         const REDIRECT_URI = encodeURIComponent(window.location.origin + '/callback');
         const OWNER_ID = '1302203907782606880'; // Your Discord ID
 
@@ -1261,6 +1261,7 @@
         let currentUser = null;
         let userRole = 'user';
         let accessToken = localStorage.getItem('discord_token');
+        let apiKey = null;
         let stockData = {};
         let activityChart = null;
         let cooldowns = {};
@@ -1269,26 +1270,100 @@
         document.addEventListener('DOMContentLoaded', async () => {
             createBackground();
             
-            // Check if we have a token in URL (OAuth callback)
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                const params = new URLSearchParams(hash);
+            // Handle OAuth callback
+            if (window.location.hash) {
+                const params = new URLSearchParams(window.location.hash.substring(1));
                 const token = params.get('access_token');
                 if (token) {
                     accessToken = token;
                     localStorage.setItem('discord_token', token);
                     window.location.hash = '';
+                    window.location.reload();
                 }
             }
             
             if (accessToken) {
                 await loadUser();
+                await fetchApiKey(); // 🔑 Get API key first
                 showDashboard();
                 loadDashboard();
             } else {
                 showLogin();
             }
         });
+
+        // 🔑 NEW: Fetch API key from bot
+        async function fetchApiKey() {
+            // Check cache first
+            if (apiKey) return apiKey;
+            
+            const cached = localStorage.getItem('xult_api_key');
+            if (cached) {
+                apiKey = cached;
+                return apiKey;
+            }
+            
+            try {
+                console.log('Fetching API key from:', `${API_BASE}/api/key`);
+                const response = await fetch(`${API_BASE}/api/key`);
+                if (!response.ok) throw new Error(`Failed to fetch API key: ${response.status}`);
+                
+                const data = await response.json();
+                apiKey = data.key;
+                localStorage.setItem('xult_api_key', apiKey);
+                console.log('✅ API key fetched successfully');
+                return apiKey;
+            } catch (error) {
+                console.error('Error fetching API key:', error);
+                showToast('Failed to connect to bot API. Make sure the bot is running.', 'error');
+                throw error;
+            }
+        }
+
+        // 🔑 UPDATE: API request helper with automatic key inclusion
+        async function apiRequest(endpoint, options = {}) {
+            if (!apiKey) {
+                try {
+                    await fetchApiKey();
+                } catch (error) {
+                    showToast('Cannot connect to bot API', 'error');
+                    throw error;
+                }
+            }
+            
+            const headers = {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            try {
+                console.log(`Making API request to: ${API_BASE}${endpoint}`);
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    ...options,
+                    headers
+                });
+                
+                if (response.status === 401) {
+                    // Key might be invalid - clear cache and retry once
+                    console.log('API key invalid, clearing cache and retrying...');
+                    localStorage.removeItem('xult_api_key');
+                    apiKey = null;
+                    await fetchApiKey();
+                    return apiRequest(endpoint, options); // Retry
+                }
+                
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.error || `API error: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`API request failed: ${endpoint}`, error);
+                throw error;
+            }
+        }
 
         // Create animated background
         function createBackground() {
@@ -1344,27 +1419,13 @@
         // Check premium status from bot
         async function checkPremiumStatus() {
             try {
-                const response = await fetch(`${API_BASE}/api/check-premium/${currentUser.id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${getApiKey()}`
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.hasPremium) {
-                        userRole = 'premium';
-                    }
+                const data = await apiRequest(`/api/check-premium/${currentUser.id}`);
+                if (data.hasPremium) {
+                    userRole = 'premium';
                 }
             } catch (error) {
                 console.error('Error checking premium:', error);
             }
-        }
-
-        // Get API key from server
-        function getApiKey() {
-            // You'll need to implement this - either embed in page or fetch from server
-            return 'YOUR_API_KEY';
         }
 
         function updateUserInfo() {
@@ -1377,12 +1438,15 @@
             if (userRole === 'owner') {
                 badge.textContent = 'OWNER';
                 badge.className = 'user-badge badge-owner';
+                badge.style.display = 'inline-block';
             } else if (userRole === 'admin') {
                 badge.textContent = 'ADMIN';
                 badge.className = 'user-badge badge-admin';
+                badge.style.display = 'inline-block';
             } else if (userRole === 'premium') {
                 badge.textContent = 'PREMIUM';
                 badge.className = 'user-badge badge-premium';
+                badge.style.display = 'inline-block';
             } else {
                 badge.style.display = 'none';
             }
@@ -1400,8 +1464,10 @@
 
         function logout() {
             localStorage.removeItem('discord_token');
+            localStorage.removeItem('xult_api_key');
             accessToken = null;
             currentUser = null;
+            apiKey = null;
             showLogin();
         }
 
@@ -1437,32 +1503,6 @@
                 case 'system':
                     loadSystem();
                     break;
-            }
-        }
-
-        // API helper with error handling
-        async function apiRequest(endpoint, options = {}) {
-            const headers = {
-                'Authorization': `Bearer ${getApiKey()}`,
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-            
-            try {
-                const response = await fetch(`${API_BASE}${endpoint}`, {
-                    ...options,
-                    headers
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json().catch(() => ({}));
-                    throw new Error(error.error || `API error: ${response.status}`);
-                }
-                
-                return await response.json();
-            } catch (error) {
-                console.error(`API request failed: ${endpoint}`, error);
-                throw error;
             }
         }
 
@@ -1525,6 +1565,7 @@
             } catch (error) {
                 hideTabLoading();
                 showError('dashboard', error.message);
+                showToast(error.message, 'error');
             }
         }
 
@@ -1571,6 +1612,7 @@
             } catch (error) {
                 document.getElementById('stockError').textContent = error.message;
                 document.getElementById('stockError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('stockLoading').style.display = 'none';
             }
@@ -1680,6 +1722,7 @@
             } catch (error) {
                 document.getElementById('usersError').textContent = error.message;
                 document.getElementById('usersError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('usersLoading').style.display = 'none';
             }
@@ -1740,6 +1783,7 @@
             } catch (error) {
                 document.getElementById('premiumError').textContent = error.message;
                 document.getElementById('premiumError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('premiumLoading').style.display = 'none';
             }
@@ -1749,7 +1793,6 @@
             const tbody = document.getElementById('premiumBody');
             
             try {
-                // You'll need to implement this endpoint
                 const users = await apiRequest('/api/admin/premium/users');
                 
                 tbody.innerHTML = users.map(user => `
@@ -1788,6 +1831,7 @@
             } catch (error) {
                 document.getElementById('serversError').textContent = error.message;
                 document.getElementById('serversError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('serversLoading').style.display = 'none';
             }
@@ -1829,6 +1873,7 @@
             } catch (error) {
                 document.getElementById('logsError').textContent = error.message;
                 document.getElementById('logsError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('logsLoading').style.display = 'none';
             }
@@ -1877,6 +1922,7 @@
             } catch (error) {
                 document.getElementById('systemError').textContent = error.message;
                 document.getElementById('systemError').style.display = 'block';
+                showToast(error.message, 'error');
             } finally {
                 document.getElementById('systemLoading').style.display = 'none';
             }
@@ -1992,8 +2038,7 @@
 
         // User actions
         function editUser(userId) {
-            // Implement edit user modal
-            showToast(`Edit user ${userId}`, 'info');
+            showToast(`Edit user ${userId} - Coming soon`, 'info');
         }
 
         async function jailUser(userId) {
@@ -2019,13 +2064,14 @@
         }
 
         function viewUserDetails(userId) {
-            // Implement user details modal
-            showToast(`Viewing details for ${userId}`, 'info');
+            showToast(`Viewing details for ${userId} - Coming soon`, 'info');
         }
 
         async function revokePremium(userId) {
+            if (!confirm(`Revoke premium from user ${userId}?`)) return;
+            
             try {
-                await apiRequest(`/api/admin/users/${userId}/premium/revoke`, { method: 'POST' });
+                await apiRequest(`/api/admin/users/${userId}/premium/toggle`, { method: 'POST' });
                 showToast(`Revoked premium from ${userId}`, 'success');
                 loadPremium();
             } catch (error) {
@@ -2060,7 +2106,7 @@
         }
 
         function viewServerDetails(serverId) {
-            showToast(`Viewing server ${serverId}`, 'info');
+            showToast(`Viewing server ${serverId} - Coming soon`, 'info');
         }
 
         // Refresh functions
