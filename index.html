@@ -1266,36 +1266,11 @@
         let activityChart = null;
         let cooldowns = {};
 
-        // Initialize
+        // Initialize - SIMPLIFIED
         document.addEventListener('DOMContentLoaded', async () => {
             createBackground();
             
-            // Check for error parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('error')) {
-                showToast('Login failed: ' + urlParams.get('error'), 'error');
-            }
-            
-            // Check if we're on the callback page with a hash
-            if (window.location.pathname === '/callback' || window.location.pathname === '/callback.html') {
-                handleCallback();
-                return;
-            }
-            
-            // Check if we have a token in URL hash (direct OAuth return to main page)
-            if (window.location.hash) {
-                const hashParams = new URLSearchParams(window.location.hash.substring(1));
-                const token = hashParams.get('access_token');
-                if (token) {
-                    accessToken = token;
-                    localStorage.setItem('discord_token', token);
-                    window.location.hash = '';
-                    window.location.href = '/'; // Redirect to clean URL
-                    return;
-                }
-            }
-            
-            // Check for existing token
+            // Check if we have a token
             if (accessToken) {
                 try {
                     // Validate token with Discord
@@ -1309,12 +1284,12 @@
                         showDashboard();
                         loadDashboard();
                     } else {
-                        console.log('Token invalid, clearing');
+                        // Token invalid
                         localStorage.removeItem('discord_token');
                         showLogin();
                     }
                 } catch (error) {
-                    console.error('Error validating token:', error);
+                    console.error('Error:', error);
                     showLogin();
                 }
             } else {
@@ -1322,25 +1297,12 @@
             }
         });
 
-        // Handle OAuth callback
-        function handleCallback() {
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                const params = new URLSearchParams(hash);
-                const token = params.get('access_token');
-                
-                if (token) {
-                    localStorage.setItem('discord_token', token);
-                    console.log('✅ Token stored, redirecting to dashboard');
-                    window.location.href = '/';
-                } else {
-                    console.error('❌ No token found in hash');
-                    window.location.href = '/?error=no_token';
-                }
-            } else {
-                console.error('❌ No hash found in URL');
-                window.location.href = '/?error=no_hash';
-            }
+        // Discord OAuth
+        function loginWithDiscord() {
+            const scopes = ['identify', 'guilds'];
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes.join('%20')}`;
+            console.log('Redirecting to:', url);
+            window.location.href = url;
         }
 
         // Fetch API key from bot
@@ -1354,32 +1316,23 @@
             }
             
             try {
-                console.log('Fetching API key from:', `${API_BASE}/api/key`);
                 const response = await fetch(`${API_BASE}/api/key`);
-                if (!response.ok) throw new Error(`Failed to fetch API key: ${response.status}`);
+                if (!response.ok) throw new Error('Failed to fetch API key');
                 
                 const data = await response.json();
                 apiKey = data.key;
                 localStorage.setItem('xult_api_key', apiKey);
-                console.log('✅ API key fetched successfully');
                 return apiKey;
             } catch (error) {
                 console.error('Error fetching API key:', error);
-                showToast('Failed to connect to bot API. Make sure the bot is running.', 'error');
+                showToast('Failed to connect to bot API', 'error');
                 throw error;
             }
         }
 
         // API request helper
         async function apiRequest(endpoint, options = {}) {
-            if (!apiKey) {
-                try {
-                    await fetchApiKey();
-                } catch (error) {
-                    showToast('Cannot connect to bot API', 'error');
-                    throw error;
-                }
-            }
+            if (!apiKey) await fetchApiKey();
             
             const headers = {
                 'Authorization': `Bearer ${apiKey}`,
@@ -1393,13 +1346,6 @@
                     headers
                 });
                 
-                if (response.status === 401) {
-                    localStorage.removeItem('xult_api_key');
-                    apiKey = null;
-                    await fetchApiKey();
-                    return apiRequest(endpoint, options);
-                }
-                
                 if (!response.ok) {
                     const error = await response.json().catch(() => ({}));
                     throw new Error(error.error || `API error: ${response.status}`);
@@ -1407,7 +1353,7 @@
                 
                 return await response.json();
             } catch (error) {
-                console.error(`API request failed: ${endpoint}`, error);
+                console.error(`API request failed:`, error);
                 throw error;
             }
         }
@@ -1426,21 +1372,11 @@
             }
         }
 
-        // Discord OAuth
-        function loginWithDiscord() {
-            const scopes = ['identify', 'guilds'];
-            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes.join('%20')}`;
-            console.log('Redirecting to:', url);
-            window.location.href = url;
-        }
-
         // Load user data from Discord
         async function loadUser() {
             try {
                 const response = await fetch('https://discord.com/api/users/@me', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
                 });
                 
                 if (!response.ok) throw new Error('Failed to load user');
@@ -1450,7 +1386,12 @@
                 if (currentUser.id === OWNER_ID) {
                     userRole = 'owner';
                 } else {
-                    await checkPremiumStatus();
+                    try {
+                        const data = await apiRequest(`/api/check-premium/${currentUser.id}`);
+                        if (data.hasPremium) userRole = 'premium';
+                    } catch (e) {
+                        console.error('Premium check failed:', e);
+                    }
                 }
                 
                 updateUserInfo();
@@ -1459,18 +1400,6 @@
                 console.error('Error loading user:', error);
                 showToast('Failed to load user data', 'error');
                 logout();
-            }
-        }
-
-        // Check premium status from bot
-        async function checkPremiumStatus() {
-            try {
-                const data = await apiRequest(`/api/check-premium/${currentUser.id}`);
-                if (data.hasPremium) {
-                    userRole = 'premium';
-                }
-            } catch (error) {
-                console.error('Error checking premium:', error);
             }
         }
 
@@ -1484,10 +1413,6 @@
             if (userRole === 'owner') {
                 badge.textContent = 'OWNER';
                 badge.className = 'user-badge badge-owner';
-                badge.style.display = 'inline-block';
-            } else if (userRole === 'admin') {
-                badge.textContent = 'ADMIN';
-                badge.className = 'user-badge badge-admin';
                 badge.style.display = 'inline-block';
             } else if (userRole === 'premium') {
                 badge.textContent = 'PREMIUM';
@@ -1525,6 +1450,7 @@
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
             
+            // Load appropriate data based on tab
             switch(tabName) {
                 case 'dashboard':
                     loadDashboard();
