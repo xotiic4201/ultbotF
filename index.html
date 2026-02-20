@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT - Bot Dashboard & Candy Vending Machine</title>
+    <title>XULT - Bot Dashboard & Vending Machine</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,62 +19,55 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
         
         body {
             background: #0a0a0f;
             color: white;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
-        /* Glassmorphism */
         .glass {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .glass-dark {
             background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Vending Machine */
         .vending-machine {
-            background: linear-gradient(135deg, #1a0f1a 0%, #0f0f1a 100%);
+            background: linear-gradient(135deg, #1a0f1a, #0f0f1a);
             border: 3px solid #ff1493;
             border-radius: 2rem;
             padding: 2rem;
             position: relative;
-            box-shadow: 0 20px 40px rgba(255, 20, 147, 0.3);
         }
         
         .vending-machine::before {
             content: '🍬 CANDY VENDING 🍬';
             position: absolute;
-            top: -18px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff1493, #9b59b6);
             color: white;
             padding: 0.5rem 2rem;
             border-radius: 2rem;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: bold;
             border: 2px solid gold;
             white-space: nowrap;
-            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.5);
         }
         
         .candy-card {
-            background: linear-gradient(135deg, #1a1a2a 0%, #0f0f1a 100%);
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
             border: 2px solid #ff69b4;
             border-radius: 1.5rem;
             padding: 1.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -118,7 +108,7 @@
         
         .progress-fill {
             height: 100%;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
         
         .progress-low { background: #ff4444; }
@@ -205,16 +195,10 @@
         }
         
         .stat-card {
-            background: linear-gradient(135deg, #1a1a2a 0%, #0f0f1a 100%);
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
             border: 1px solid #2a2a3a;
             border-radius: 1rem;
             padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        
-        .stat-card:hover {
-            border-color: #ff69b4;
-            transform: translateY(-2px);
         }
         
         .btn-primary {
@@ -261,13 +245,11 @@
             padding: 0.75rem 1rem;
             color: white;
             width: 100%;
-            transition: all 0.3s;
         }
         
         .input-field:focus {
             outline: none;
             border-color: #ff69b4;
-            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
         }
         
         .cooldown-timer {
@@ -277,41 +259,48 @@
             padding: 1rem;
         }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1a1a2a;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #ff69b4;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff1493;
-        }
-        
-        .owner-badge {
-            background: linear-gradient(135deg, gold, orange);
-            color: black;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .premium-badge {
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 2px solid #ff69b4;
+            border-radius: 1rem;
+            padding: 1rem 2rem;
             color: white;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .server-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 1px solid #2a2a3a;
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .server-card:hover {
+            border-color: #ff69b4;
+            transform: translateY(-2px);
+        }
+        
+        .flavor-tag {
+            background: rgba(255, 255, 255, 0.1);
             padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            border-radius: 1rem;
             font-size: 0.75rem;
-            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
     </style>
 </head>
@@ -328,8 +317,8 @@
                     </span>
                 </div>
                 
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center space-x-2">
+                <!-- Navigation -->
+                <div id="nav-links" class="hidden md:flex items-center space-x-2">
                     <a href="#" onclick="showSection('dashboard'); return false;" class="tab" data-section="dashboard">
                         <i class="fas fa-chart-pie mr-2"></i>Dashboard
                     </a>
@@ -351,25 +340,30 @@
                 </div>
                 
                 <!-- User Menu -->
-                <div id="userMenu" class="relative">
-                    <button onclick="toggleUserMenu()" class="flex items-center space-x-3 bg-white/5 px-4 py-2 rounded-full border border-gray-800 hover:border-pink-500 transition-all">
-                        <img id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full">
-                        <span id="userName" class="font-medium hidden md:inline">Not logged in</span>
+                <div id="user-menu" class="relative hidden">
+                    <button onclick="toggleUserMenu()" class="flex items-center space-x-3 bg-white/5 px-4 py-2 rounded-full border border-gray-800 hover:border-pink-500">
+                        <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full">
+                        <span id="user-name" class="font-medium hidden md:inline"></span>
                         <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                     </button>
                     
-                    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
                         <div class="px-4 py-2 border-b border-gray-700">
                             <p class="text-xs text-gray-400">Logged in as</p>
-                            <p id="dropdownName" class="font-medium"></p>
-                            <p id="dropdownId" class="text-xs text-gray-400 mt-1"></p>
-                            <div id="userBadge" class="mt-2"></div>
+                            <p id="dropdown-name" class="font-medium"></p>
+                            <p id="dropdown-id" class="text-xs text-gray-400 mt-1"></p>
+                            <div id="user-badge" class="mt-2"></div>
                         </div>
                         <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
                             <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </div>
                 </div>
+                
+                <!-- Login Button -->
+                <button id="login-button" onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm hidden">
+                    <i class="fab fa-discord mr-2"></i>Login
+                </button>
             </div>
         </div>
     </nav>
@@ -378,15 +372,18 @@
     <main class="pt-20 pb-12 px-4">
         <div class="container mx-auto">
             <!-- Loading Overlay -->
-            <div id="loadingOverlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
+            <div id="loading-overlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
                 <div class="text-center">
                     <div class="loading-spinner mx-auto mb-4"></div>
-                    <p id="loadingText" class="text-gray-300">Loading...</p>
+                    <p id="loading-text" class="text-gray-300">Loading...</p>
                 </div>
             </div>
             
+            <!-- Toast Notification -->
+            <div id="toast" class="toast"></div>
+            
             <!-- Login Prompt -->
-            <div id="loginPrompt" class="max-w-md mx-auto text-center py-16">
+            <div id="login-prompt" class="max-w-md mx-auto text-center py-16">
                 <i class="fas fa-candy-cane text-7xl text-pink-500 mb-6"></i>
                 <h1 class="text-4xl font-bold mb-4">Welcome to XULT</h1>
                 <p class="text-gray-400 mb-8">Login with Discord to access the bot dashboard and candy vending machine</p>
@@ -396,19 +393,16 @@
             </div>
             
             <!-- Dashboard Section -->
-            <div id="dashboardSection" class="hidden">
+            <div id="dashboard-section" class="hidden">
                 <div class="flex items-center justify-between mb-8">
                     <h1 class="text-3xl font-bold">Dashboard</h1>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm text-gray-400">Last updated: <span id="lastUpdated">just now</span></span>
-                        <button onclick="refreshData()" class="btn-secondary text-sm">
-                            <i class="fas fa-sync-alt mr-2"></i>Refresh
-                        </button>
-                    </div>
+                    <button onclick="refreshData()" class="btn-secondary text-sm">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
                 </div>
                 
-                <!-- Owner Welcome Banner -->
-                <div id="ownerWelcome" class="hidden glass p-6 mb-8 border-2 border-yellow-500">
+                <!-- Owner Welcome -->
+                <div id="owner-welcome" class="hidden glass p-6 mb-8 border-2 border-yellow-500">
                     <div class="flex items-center">
                         <i class="fas fa-crown text-4xl text-yellow-500 mr-4"></i>
                         <div>
@@ -424,31 +418,28 @@
                         <div class="flex items-center justify-between mb-2">
                             <i class="fas fa-server text-2xl text-blue-500"></i>
                         </div>
-                        <div class="text-3xl font-bold" id="statServers">0</div>
+                        <div class="text-3xl font-bold" id="stat-servers">0</div>
                         <div class="text-sm text-gray-400">Servers</div>
                     </div>
-                    
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-2">
                             <i class="fas fa-users text-2xl text-green-500"></i>
                         </div>
-                        <div class="text-3xl font-bold" id="statUsers">0</div>
+                        <div class="text-3xl font-bold" id="stat-users">0</div>
                         <div class="text-sm text-gray-400">Users</div>
                     </div>
-                    
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-2">
                             <i class="fas fa-candy-cane text-2xl text-pink-500"></i>
                         </div>
-                        <div class="text-3xl font-bold" id="statCandy">0</div>
+                        <div class="text-3xl font-bold" id="stat-candy">0</div>
                         <div class="text-sm text-gray-400">Candy Pieces</div>
                     </div>
-                    
                     <div class="stat-card">
                         <div class="flex items-center justify-between mb-2">
                             <i class="fas fa-crown text-2xl text-yellow-500"></i>
                         </div>
-                        <div class="text-3xl font-bold" id="statPremium">0</div>
+                        <div class="text-3xl font-bold" id="stat-premium">0</div>
                         <div class="text-sm text-gray-400">Premium Users</div>
                     </div>
                 </div>
@@ -456,68 +447,47 @@
                 <!-- Charts -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Candy Dispensed (7 Days)</h2>
-                        <canvas id="activityChart" height="200"></canvas>
+                        <h2 class="text-lg font-semibold mb-4">Activity (7 Days)</h2>
+                        <canvas id="activity-chart" height="200"></canvas>
                     </div>
-                    
                     <div class="glass p-6">
                         <h2 class="text-lg font-semibold mb-4">Stock Distribution</h2>
-                        <canvas id="stockChart" height="200"></canvas>
+                        <canvas id="stock-chart" height="200"></canvas>
                     </div>
                 </div>
                 
-                <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="showSection('vending')" class="btn-primary">
-                                <i class="fas fa-candy-cane mr-2"></i>Vending Machine
-                            </button>
-                            <button onclick="inviteBot()" class="btn-secondary">
-                                <i class="fab fa-discord mr-2"></i>Invite Bot
-                            </button>
-                            <button onclick="window.open('https://discord.gg/pQBKywjW7h')" class="btn-secondary">
-                                <i class="fas fa-question-circle mr-2"></i>Support
-                            </button>
-                            <button onclick="refreshData()" class="btn-secondary">
-                                <i class="fas fa-sync-alt mr-2"></i>Refresh
-                            </button>
+                <!-- User Info -->
+                <div class="glass p-6">
+                    <h2 class="text-lg font-semibold mb-4">Your Info</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-400">Username</p>
+                            <p id="profile-username" class="font-medium">-</p>
                         </div>
-                    </div>
-                    
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Your Stats</h2>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Username</span>
-                                <span id="profileName" class="font-medium">-</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">User ID</span>
-                                <span id="profileId" class="font-medium">-</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Premium Status</span>
-                                <span id="profilePremium" class="badge">Checking...</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Your Candies</span>
-                                <span id="profileCandies" class="font-medium">0</span>
-                            </div>
+                        <div>
+                            <p class="text-sm text-gray-400">User ID</p>
+                            <p id="profile-id" class="font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Status</p>
+                            <p id="profile-premium" class="font-medium">Checking...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Generations</p>
+                            <p id="profile-generations" class="font-medium">0</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <!-- Vending Machine Section -->
-            <div id="vendingSection" class="vending-machine">
+            <div id="vending-section" class="vending-machine hidden">
                 <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
                     🍬 Candy Vending Machine 🍬
                 </h1>
                 
                 <!-- Premium Gate -->
-                <div id="premiumGate" class="text-center py-12">
+                <div id="premium-gate" class="text-center py-12">
                     <div class="glass p-8 max-w-md mx-auto border-2 border-pink-500">
                         <i class="fas fa-lock text-5xl text-pink-500 mb-4"></i>
                         <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
@@ -527,15 +497,15 @@
                             <code class="text-pink-400 font-mono">1474136325912399994</code>
                         </div>
                         <button onclick="checkPremiumStatus()" class="btn-primary">
-                            <i class="fas fa-sync-alt mr-2"></i>Check Premium Status
+                            <i class="fas fa-sync-alt mr-2"></i>Check Status
                         </button>
                     </div>
                 </div>
                 
-                <!-- Candy Machine Content -->
-                <div id="candyMachine" class="hidden">
+                <!-- Candy Machine -->
+                <div id="candy-machine" class="hidden">
                     <!-- Admin Controls -->
-                    <div id="candyAdminControls" class="hidden glass p-4 mb-6 border-2 border-yellow-500">
+                    <div id="candy-admin-controls" class="hidden glass p-4 mb-6 border-2 border-yellow-500">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-crown text-yellow-500"></i>
@@ -552,67 +522,63 @@
                         </div>
                     </div>
                     
-                    <!-- Stats Row -->
+                    <!-- Stats -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-pink-400" id="totalCandies">0</div>
+                            <div class="text-2xl font-bold text-pink-400" id="total-candies">0</div>
                             <div class="text-xs text-gray-400">Total Pieces</div>
                         </div>
                         <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-purple-400" id="totalFlavors">0</div>
+                            <div class="text-2xl font-bold text-purple-400" id="total-flavors">0</div>
                             <div class="text-xs text-gray-400">Flavors</div>
                         </div>
                         <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-yellow-400" id="yourCandies">0</div>
+                            <div class="text-2xl font-bold text-yellow-400" id="your-candies">0</div>
                             <div class="text-xs text-gray-400">Your Generations</div>
                         </div>
                         <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-green-400" id="cooldownDisplay">0s</div>
+                            <div class="text-2xl font-bold text-green-400" id="cooldown-display">0s</div>
                             <div class="text-xs text-gray-400">Cooldown</div>
                         </div>
                     </div>
                     
                     <!-- Cooldown Bar -->
-                    <div id="cooldownBar" class="hidden cooldown-timer mb-6">
+                    <div id="cooldown-bar" class="hidden cooldown-timer mb-6">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-hourglass-half text-yellow-500"></i>
                             <div class="flex-1">
                                 <div class="flex justify-between text-xs mb-1">
                                     <span class="text-yellow-500">Cooldown</span>
-                                    <span id="cooldownTimer" class="text-yellow-500 font-mono">5s</span>
+                                    <span id="cooldown-timer" class="text-yellow-500 font-mono">5s</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div id="cooldownProgress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
+                                    <div id="cooldown-progress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Candy Grid -->
-                    <div id="candyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Filled by JavaScript -->
-                    </div>
+                    <div id="candy-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
             </div>
             
             <!-- Servers Section -->
-            <div id="serversSection" class="hidden">
-                <h1 class="text-3xl font-bold mb-8">Your Servers with XULT</h1>
-                <div id="serversGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Filled by JavaScript -->
-                </div>
-                <div id="noServers" class="hidden text-center py-16">
+            <div id="servers-section" class="hidden">
+                <h1 class="text-3xl font-bold mb-8">Your Servers</h1>
+                <div id="servers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="no-servers" class="hidden text-center py-16">
                     <i class="fas fa-server text-6xl text-gray-600 mb-4"></i>
                     <h3 class="text-xl font-semibold mb-2">No Servers Found</h3>
                     <p class="text-gray-400 mb-4">XULT isn't in any of your servers yet</p>
                     <button onclick="inviteBot()" class="btn-primary">
-                        <i class="fab fa-discord mr-2"></i>Invite XULT to a Server
+                        <i class="fab fa-discord mr-2"></i>Invite XULT
                     </button>
                 </div>
             </div>
             
             <!-- Premium Section -->
-            <div id="premiumSection" class="hidden max-w-2xl mx-auto">
+            <div id="premium-section" class="hidden max-w-2xl mx-auto">
                 <div class="glass p-8 text-center">
                     <i class="fas fa-crown text-6xl text-yellow-500 mb-4"></i>
                     <h2 class="text-2xl font-bold mb-4">Premium Features</h2>
@@ -649,7 +615,7 @@
             </div>
             
             <!-- Admin Section -->
-            <div id="adminSection" class="hidden">
+            <div id="admin-section" class="hidden">
                 <h1 class="text-3xl font-bold mb-8 flex items-center">
                     <i class="fas fa-shield-alt text-red-500 mr-3"></i>Admin Panel
                 </h1>
@@ -659,11 +625,11 @@
                     <div class="glass p-6">
                         <h2 class="text-lg font-semibold mb-4">Stock Management</h2>
                         <div class="space-y-4">
-                            <select id="adminCandySelect" class="input-field">
+                            <select id="admin-candy-select" class="input-field">
                                 <option value="">Select Candy Type</option>
                             </select>
                             
-                            <textarea id="adminStockContent" rows="5" class="input-field" placeholder="Paste stock content here (one per line)"></textarea>
+                            <textarea id="admin-stock-content" rows="5" class="input-field" placeholder="Paste stock content here (one per line)"></textarea>
                             
                             <div class="grid grid-cols-2 gap-2">
                                 <button onclick="addToStock()" class="btn-primary text-sm">
@@ -676,61 +642,47 @@
                         </div>
                     </div>
                     
-                    <!-- Quick Stats -->
+                    <!-- System Stats -->
                     <div class="glass p-6">
                         <h2 class="text-lg font-semibold mb-4">System Stats</h2>
                         <div class="space-y-4">
                             <div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">CPU</span>
-                                    <span id="adminCpu">-</span>
+                                    <span id="admin-cpu">-</span>
                                 </div>
                                 <div class="progress-bar mt-1">
-                                    <div id="adminCpuBar" class="progress-fill bg-blue-500" style="width: 0%"></div>
+                                    <div id="admin-cpu-bar" class="progress-fill bg-blue-500" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">Memory</span>
-                                    <span id="adminMemory">-</span>
+                                    <span id="admin-memory">-</span>
                                 </div>
                                 <div class="progress-bar mt-1">
-                                    <div id="adminMemoryBar" class="progress-fill bg-green-500" style="width: 0%"></div>
+                                    <div id="admin-memory-bar" class="progress-fill bg-green-500" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400">Uptime</span>
-                                    <span id="adminUptime">-</span>
+                                    <span id="admin-uptime">-</span>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">DB Size</span>
-                                    <span id="adminDbSize">-</span>
-                                </div>
-                            </div>
-                            
-                            <div class="pt-4">
-                                <button onclick="backupDatabase()" class="btn-secondary w-full">
-                                    <i class="fas fa-database mr-1"></i>Backup Database
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Stock Usage Logs -->
+                <!-- Logs -->
                 <div class="glass p-6 mt-6">
                     <h2 class="text-lg font-semibold mb-4">Recent Generations</h2>
-                    <div id="stockLogs" class="space-y-2 max-h-60 overflow-y-auto">
-                        <!-- Filled by JavaScript -->
-                    </div>
+                    <div id="stock-logs" class="space-y-2 max-h-60 overflow-y-auto"></div>
                 </div>
             </div>
             
             <!-- Owner Section -->
-            <div id="ownerSection" class="hidden">
+            <div id="owner-section" class="hidden">
                 <h1 class="text-3xl font-bold mb-8 flex items-center">
                     <i class="fas fa-crown text-yellow-500 mr-3"></i>Owner Panel
                 </h1>
@@ -738,20 +690,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="stat-card">
                         <div class="text-sm text-gray-400">Total Users</div>
-                        <div class="text-3xl font-bold" id="ownerTotalUsers">0</div>
+                        <div class="text-3xl font-bold" id="owner-total-users">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="text-sm text-gray-400">Total Servers</div>
-                        <div class="text-3xl font-bold" id="ownerTotalServers">0</div>
+                        <div class="text-3xl font-bold" id="owner-total-servers">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="text-sm text-gray-400">Premium Users</div>
-                        <div class="text-3xl font-bold" id="ownerPremiumUsers">0</div>
+                        <div class="text-3xl font-bold" id="owner-premium-users">0</div>
                     </div>
                 </div>
                 
-                <!-- Users Table -->
-                <div class="glass p-6 mb-6">
+                <!-- User Management -->
+                <div class="glass p-6">
                     <h2 class="text-lg font-semibold mb-4">User Management</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -763,31 +715,11 @@
                                     <th class="text-left py-2 px-4 text-sm text-gray-400">XP</th>
                                     <th class="text-left py-2 px-4 text-sm text-gray-400">Level</th>
                                     <th class="text-left py-2 px-4 text-sm text-gray-400">Role</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody">
-                                <!-- Filled by JavaScript -->
-                            </tbody>
+                            <tbody id="user-table-body"></tbody>
                         </table>
-                    </div>
-                </div>
-                
-                <!-- Database Controls -->
-                <div class="glass p-6">
-                    <h2 class="text-lg font-semibold mb-4">Database Controls</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button onclick="executeSQL()" class="btn-secondary">
-                            <i class="fas fa-terminal mr-2"></i>SQL Query
-                        </button>
-                        <button onclick="syncDatabase()" class="btn-secondary">
-                            <i class="fas fa-sync mr-2"></i>Sync DB
-                        </button>
-                        <button onclick="clearCache()" class="btn-secondary">
-                            <i class="fas fa-broom mr-2"></i>Clear Cache
-                        </button>
-                        <button onclick="viewLogs()" class="btn-secondary">
-                            <i class="fas fa-history mr-2"></i>View Logs
-                        </button>
                     </div>
                 </div>
             </div>
@@ -795,95 +727,83 @@
     </main>
     
     <!-- Add Candy Modal -->
-    <div id="addCandyModal" class="modal">
+    <div id="add-candy-modal" class="modal">
         <div class="modal-content">
             <h2 class="text-2xl font-bold mb-4 flex items-center">
-                <i class="fas fa-candy-cane text-pink-500 mr-2"></i>
-                Create New Candy
+                <i class="fas fa-candy-cane text-pink-500 mr-2"></i>Create New Candy
             </h2>
             
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Stock Type (internal)</label>
-                    <input type="text" id="newCandyType" placeholder="e.g., nitro" class="input-field">
+                    <label class="block text-sm text-gray-400 mb-1">Stock Type</label>
+                    <input type="text" id="new-candy-type" placeholder="e.g., nitro" class="input-field">
                 </div>
-                
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Candy Name</label>
-                    <input type="text" id="newCandyName" placeholder="e.g., Nitro Blast" class="input-field">
+                    <input type="text" id="new-candy-name" placeholder="e.g., Nitro Blast" class="input-field">
                 </div>
-                
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Flavor</label>
-                    <input type="text" id="newCandyFlavor" placeholder="e.g., Blue Raspberry" class="input-field">
+                    <input type="text" id="new-candy-flavor" placeholder="e.g., Blue Raspberry" class="input-field">
                 </div>
-                
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Color Gradient</label>
-                    <select id="newCandyColor" class="input-field">
+                    <label class="block text-sm text-gray-400 mb-1">Color</label>
+                    <select id="new-candy-color" class="input-field">
                         <option value="from-purple-500 to-pink-500">Purple → Pink</option>
                         <option value="from-blue-500 to-cyan-500">Blue → Cyan</option>
                         <option value="from-green-500 to-emerald-500">Green → Emerald</option>
                         <option value="from-red-500 to-rose-500">Red → Rose</option>
-                        <option value="from-yellow-500 to-orange-500">Yellow → Orange</option>
                     </select>
                 </div>
-                
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Cooldown (seconds)</label>
-                    <input type="number" id="newCandyCooldown" value="5" class="input-field">
+                    <label class="block text-sm text-gray-400 mb-1">Cooldown (s)</label>
+                    <input type="number" id="new-candy-cooldown" value="5" class="input-field">
                 </div>
                 
                 <div class="flex space-x-2 pt-4">
                     <button onclick="createNewCandy()" class="flex-1 btn-primary">
-                        <i class="fas fa-save mr-1"></i>
-                        Create Candy
+                        <i class="fas fa-save mr-1"></i>Create
                     </button>
-                    <button onclick="closeAddCandyModal()" class="flex-1 btn-secondary">
-                        Cancel
-                    </button>
+                    <button onclick="closeAddCandyModal()" class="flex-1 btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
     
     <!-- Result Modal -->
-    <div id="resultModal" class="modal">
+    <div id="result-modal" class="modal">
         <div class="modal-content">
             <div class="text-center mb-4">
                 <i class="fas fa-candy-cane text-5xl text-pink-500 mb-2"></i>
-                <h3 class="text-xl font-bold" id="resultTitle">Candy Dispensed!</h3>
+                <h3 class="text-xl font-bold" id="result-title">Candy Dispensed!</h3>
             </div>
             
             <div class="bg-gray-900 rounded-lg p-3 mb-4">
-                <pre id="resultText" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
+                <pre id="result-text" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
             </div>
             
             <div class="flex justify-between text-xs text-gray-400 mb-4">
-                <span id="resultCooldown">⏱️ 5s</span>
-                <span id="resultRemaining">🍬 0 left</span>
+                <span id="result-cooldown">⏱️ 5s</span>
+                <span id="result-remaining">🍬 0 left</span>
             </div>
             
             <div class="flex space-x-2">
                 <button onclick="copyResult()" class="flex-1 btn-primary">
-                    <i class="fas fa-copy mr-1"></i>
-                    Copy
+                    <i class="fas fa-copy mr-1"></i>Copy
                 </button>
-                <button onclick="closeResultModal()" class="flex-1 btn-secondary">
-                    Close
-                </button>
+                <button onclick="closeResultModal()" class="flex-1 btn-secondary">Close</button>
             </div>
         </div>
     </div>
     
     <script>
         // ==================== CONFIGURATION ====================
-        const API_URL = 'https://ultbotb.onrender.com';  // Change to your bot's API URL
-        const API_KEY = 'your-api-key-here';      // Get from bot's api_key.txt
+        const API_URL = 'http://localhost:5000'; // Change to your bot's IP
+        const API_KEY = 'your-api-key-here'; // Get from bot's api_key.txt
         const DISCORD_CLIENT_ID = '1417284780675956766';
         const REDIRECT_URI = window.location.origin;
         
-        // IDs from your bot
+        // IDs
         const OWNER_ID = '1302203907782606880';
         const PREMIUM_ROLE_ID = '1474136325912399994';
         const MAIN_SERVER_ID = '1344385779627069541';
@@ -898,13 +818,11 @@
         let cooldown = 0;
         let cooldownInterval = null;
         let currentResult = null;
-        let userGuilds = [];
         let activityChart = null;
         let stockChart = null;
-        let yourGenerations = 0;
+        let generations = 0;
         
-        // ==================== AUTH FUNCTIONS ====================
-        
+        // ==================== AUTH ====================
         function loginWithDiscord() {
             const params = new URLSearchParams({
                 client_id: DISCORD_CLIENT_ID,
@@ -928,6 +846,7 @@
                 showLoading('Logging in...');
                 fetchUser();
                 window.location.hash = '';
+                window.history.replaceState(null, null, ' ');
             }
         }
         
@@ -941,57 +860,60 @@
                 
                 currentUser = await res.json();
                 
-                // Check if owner (xotiic._.420)
+                // Check if owner
                 isOwner = currentUser.id === OWNER_ID || currentUser.username === 'xotiic._.420';
                 
                 // Update UI
-                document.getElementById('loginPrompt').classList.add('hidden');
-                document.getElementById('userMenu').classList.remove('hidden');
-                document.getElementById('userName').textContent = currentUser.username;
-                document.getElementById('dropdownName').textContent = currentUser.username;
-                document.getElementById('dropdownId').textContent = `ID: ${currentUser.id}`;
+                document.getElementById('login-prompt').classList.add('hidden');
+                document.getElementById('user-menu').classList.remove('hidden');
+                document.getElementById('login-button').classList.add('hidden');
+                document.getElementById('nav-links').classList.remove('hidden');
                 
-                // Set avatar
+                // Update user info
+                document.getElementById('user-name').textContent = currentUser.username;
+                document.getElementById('dropdown-name').textContent = currentUser.username;
+                document.getElementById('dropdown-id').textContent = `ID: ${currentUser.id}`;
+                document.getElementById('profile-username').textContent = currentUser.username;
+                document.getElementById('profile-id').textContent = currentUser.id;
+                
+                // Avatar
                 if (currentUser.avatar) {
-                    document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
                 }
                 
-                // Show role badge
-                const userBadge = document.getElementById('userBadge');
+                // Badge
+                const badgeDiv = document.getElementById('user-badge');
                 if (isOwner) {
-                    userBadge.innerHTML = '<span class="owner-badge">👑 Bot Owner</span>';
+                    badgeDiv.innerHTML = '<span class="badge-owner px-3 py-1 rounded-full text-xs">👑 Bot Owner</span>';
                     document.querySelectorAll('.owner-only').forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('ownerWelcome').classList.remove('hidden');
-                    document.getElementById('candyAdminControls').classList.remove('hidden');
+                    document.getElementById('owner-welcome').classList.remove('hidden');
+                    document.getElementById('candy-admin-controls').classList.remove('hidden');
                 }
                 
                 // Show dashboard
-                document.getElementById('dashboardSection').classList.remove('hidden');
-                document.getElementById('vendingSection').classList.remove('hidden');
+                showSection('dashboard');
                 
-                // Check premium status
+                // Check premium
                 await checkPremiumStatus();
                 
                 // Fetch data
-                await fetchUserGuilds();
                 await fetchStats();
                 await fetchCandyStock();
-                await fetchUserStats();
+                await fetchServers();
+                await fetchUserGenerations();
                 
                 hideLoading();
-                
-                // Show default section
-                showSection('dashboard');
+                showToast('Logged in successfully!');
                 
             } catch (e) {
                 console.error('Auth failed:', e);
                 hideLoading();
-                alert('Login failed. Please try again.');
+                showToast('Login failed', 'error');
             }
         }
         
         async function checkPremiumStatus() {
-            if (!currentUser) return;
+            if (!currentUser) return false;
             
             try {
                 const response = await fetch(`${API_URL}/api/check-premium/${currentUser.id}`, {
@@ -1002,48 +924,325 @@
                     const data = await response.json();
                     hasPremium = data.hasPremium;
                     
-                    const premiumBadge = document.getElementById('profilePremium');
-                    
                     if (hasPremium) {
-                        premiumBadge.innerHTML = '<span class="premium-badge">Premium</span>';
-                        document.getElementById('premiumGate').classList.add('hidden');
-                        document.getElementById('candyMachine').classList.remove('hidden');
+                        document.getElementById('profile-premium').innerHTML = '<span class="badge-premium">Premium</span>';
+                        document.getElementById('premium-gate').classList.add('hidden');
+                        document.getElementById('candy-machine').classList.remove('hidden');
                         document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
                     } else {
-                        premiumBadge.innerHTML = '<span class="badge">Free</span>';
-                        document.getElementById('premiumGate').classList.remove('hidden');
-                        document.getElementById('candyMachine').classList.add('hidden');
+                        document.getElementById('profile-premium').innerHTML = '<span class="badge">Free</span>';
+                        document.getElementById('premium-gate').classList.remove('hidden');
+                        document.getElementById('candy-machine').classList.add('hidden');
                     }
+                    
+                    return hasPremium;
                 }
             } catch (e) {
                 console.error('Premium check failed:', e);
-                hasPremium = false;
+            }
+            
+            return false;
+        }
+        
+        // ==================== API FUNCTIONS ====================
+        async function fetchStats() {
+            try {
+                const res = await fetch(`${API_URL}/api/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    document.getElementById('stat-servers').textContent = data.total_servers || 0;
+                    document.getElementById('stat-users').textContent = data.total_users || 0;
+                    document.getElementById('stat-premium').textContent = data.premium_users || 0;
+                    
+                    // Update owner stats
+                    if (isOwner) {
+                        document.getElementById('owner-total-users').textContent = data.total_users || 0;
+                        document.getElementById('owner-total-servers').textContent = data.total_servers || 0;
+                        document.getElementById('owner-premium-users').textContent = data.premium_users || 0;
+                    }
+                    
+                    // Update chart
+                    if (data.activity) {
+                        updateActivityChart(data.activity);
+                    }
+                    
+                    // Update admin stats
+                    await fetchAdminStats();
+                }
+            } catch (e) {
+                console.error('Stats fetch failed:', e);
             }
         }
         
-        async function fetchUserGuilds() {
+        async function fetchCandyStock() {
+            try {
+                const res = await fetch(`${API_URL}/api/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    candyItems = Object.entries(data).map(([type, info]) => ({
+                        type,
+                        count: info.count,
+                        name: info.name || type,
+                        flavor: info.flavor || 'Mixed',
+                        emoji: info.emoji || '🍬',
+                        color: info.color || 'from-purple-500 to-pink-500',
+                        cooldown: info.cooldown || 5
+                    }));
+                    
+                    updateCandyGrid();
+                    updateStockChart();
+                    
+                    const total = candyItems.reduce((sum, i) => sum + i.count, 0);
+                    document.getElementById('stat-candy').textContent = total;
+                    document.getElementById('total-candies').textContent = total;
+                    document.getElementById('total-flavors').textContent = candyItems.length;
+                }
+            } catch (e) {
+                console.error('Stock fetch failed:', e);
+                // Mock data
+                candyItems = [
+                    { type: 'nitro', count: 45, name: 'Nitro Blast', flavor: 'Blue Raspberry', emoji: '💎', color: 'from-purple-500 to-pink-500', cooldown: 5 },
+                    { type: 'spotify', count: 120, name: 'Spotify Sours', flavor: 'Green Apple', emoji: '🎵', color: 'from-green-500 to-emerald-500', cooldown: 5 },
+                    { type: 'netflix', count: 30, name: 'Netflix Nibs', flavor: 'Cherry', emoji: '🎬', color: 'from-red-500 to-rose-500', cooldown: 5 }
+                ];
+                updateCandyGrid();
+            }
+        }
+        
+        async function generateCandy(type) {
+            if (cooldown > 0) {
+                showToast(`Please wait ${cooldown}s`, 'warning');
+                return;
+            }
+            
+            if (!hasPremium) {
+                showToast('Premium required!', 'error');
+                return;
+            }
+            
+            const item = candyItems.find(i => i.type === type);
+            if (!item || item.count === 0) {
+                showToast('Out of stock!', 'error');
+                return;
+            }
+            
+            showLoading('Dispensing...');
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/generate/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    item.count--;
+                    
+                    currentResult = data;
+                    document.getElementById('result-modal').classList.add('active');
+                    document.getElementById('result-text').textContent = data.content;
+                    document.getElementById('result-cooldown').innerHTML = `⏱️ ${data.cooldown}s`;
+                    document.getElementById('result-remaining').innerHTML = `🍬 ${data.remaining} left`;
+                    
+                    generations++;
+                    document.getElementById('your-candies').textContent = generations;
+                    document.getElementById('profile-generations').textContent = generations;
+                    
+                    updateCandyGrid();
+                    startCooldown(data.cooldown || 5);
+                    
+                    showToast('Candy dispensed!');
+                } else {
+                    showToast(data.error || 'Failed', 'error');
+                }
+            } catch (e) {
+                console.error('Generation failed:', e);
+                showToast('Failed to connect to bot', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function addToStock() {
+            const type = document.getElementById('admin-candy-select').value;
+            const content = document.getElementById('admin-stock-content').value;
+            
+            if (!type || !content) {
+                showToast('Select a candy and enter content', 'warning');
+                return;
+            }
+            
+            showLoading('Adding stock...');
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, content })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast(`Added ${data.count || 'new'} entries!`);
+                    document.getElementById('admin-stock-content').value = '';
+                    await fetchCandyStock();
+                } else {
+                    showToast(data.error || 'Failed', 'error');
+                }
+            } catch (e) {
+                console.error('Add stock failed:', e);
+                showToast('Failed to connect to bot', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function fetchServers() {
             try {
                 const res = await fetch('https://discord.com/api/users/@me/guilds', {
                     headers: { 'Authorization': `Bearer ${accessToken}` }
                 });
                 
-                if (!res.ok) throw new Error('Failed to fetch guilds');
-                
-                userGuilds = await res.json();
-                
-                // Filter guilds where bot might be (you'd need bot's guild list)
-                // For now, show all
-                displayServers(userGuilds.slice(0, 6));
-                
+                if (res.ok) {
+                    const guilds = await res.json();
+                    displayServers(guilds.slice(0, 6));
+                }
             } catch (e) {
-                console.error('Failed to fetch guilds:', e);
-                userGuilds = [];
+                console.error('Servers fetch failed:', e);
+            }
+        }
+        
+        async function fetchAdminStats() {
+            if (!isOwner && !hasPremium) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    document.getElementById('admin-cpu').textContent = data.cpu + '%';
+                    document.getElementById('admin-cpu-bar').style.width = data.cpu + '%';
+                    
+                    const memPercent = (data.memory / data.memory_total) * 100;
+                    document.getElementById('admin-memory').textContent = Math.round(data.memory) + ' MB';
+                    document.getElementById('admin-memory-bar').style.width = memPercent + '%';
+                    
+                    document.getElementById('admin-uptime').textContent = data.uptime;
+                }
+                
+                // Fetch logs
+                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (logsRes.ok) {
+                    const logs = await logsRes.json();
+                    const logsDiv = document.getElementById('stock-logs');
+                    logsDiv.innerHTML = logs.map(log => `
+                        <div class="text-xs text-gray-400 border-b border-gray-700 pb-1">
+                            <span class="text-pink-400">[${log.time}]</span>
+                            User ${log.userId} generated ${log.type}
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error('Admin stats fetch failed:', e);
+            }
+        }
+        
+        async function fetchUserGenerations() {
+            // This would need an endpoint to get user generation count
+            // For now, use localStorage
+            const saved = localStorage.getItem(`gens_${currentUser?.id}`);
+            generations = saved ? parseInt(saved) : 0;
+            document.getElementById('your-candies').textContent = generations;
+            document.getElementById('profile-generations').textContent = generations;
+        }
+        
+        // ==================== UI FUNCTIONS ====================
+        function showSection(sectionId) {
+            const sections = ['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'];
+            sections.forEach(id => {
+                const el = document.getElementById(id + '-section');
+                if (el) el.classList.add('hidden');
+            });
+            
+            const target = document.getElementById(sectionId + '-section');
+            if (target) target.classList.remove('hidden');
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.section === sectionId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            if (sectionId === 'owner' && isOwner) {
+                fetchOwnerUsers();
+            }
+        }
+        
+        async function fetchOwnerUsers() {
+            try {
+                const res = await fetch(`${API_URL}/api/owner/users`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (res.ok) {
+                    const users = await res.json();
+                    
+                    const tbody = document.getElementById('user-table-body');
+                    tbody.innerHTML = users.slice(0, 10).map(user => `
+                        <tr class="border-b border-gray-700 hover:bg-gray-800/50">
+                            <td class="py-2 px-4 text-sm">${user.id}</td>
+                            <td class="py-2 px-4 text-sm">${user.username}</td>
+                            <td class="py-2 px-4 text-sm">${user.coins}</td>
+                            <td class="py-2 px-4 text-sm">${user.xp || 0}</td>
+                            <td class="py-2 px-4 text-sm">${user.level || 1}</td>
+                            <td class="py-2 px-4 text-sm">
+                                ${user.role === 'owner' ? '<span class="badge-owner">Owner</span>' : 
+                                  user.role === 'premium' ? '<span class="badge-premium">Premium</span>' : 
+                                  '<span class="badge">User</span>'}
+                            </td>
+                            <td class="py-2 px-4 text-sm">
+                                <button onclick="alert('Edit user ${user.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="alert('Delete user ${user.id}')" class="text-red-400 hover:text-red-300">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error('Owner users fetch failed:', e);
             }
         }
         
         function displayServers(servers) {
-            const grid = document.getElementById('serversGrid');
-            const noServers = document.getElementById('noServers');
+            const grid = document.getElementById('servers-grid');
+            const noServers = document.getElementById('no-servers');
             
             if (!servers || servers.length === 0) {
                 grid.innerHTML = '';
@@ -1059,7 +1258,7 @@
                     : 'https://cdn.discordapp.com/embed/avatars/0.png';
                 
                 return `
-                    <div class="glass p-4 hover:border-pink-500 transition-all cursor-pointer">
+                    <div class="server-card">
                         <div class="flex items-center space-x-3 mb-3">
                             <img src="${iconUrl}" class="w-12 h-12 rounded-full">
                             <div>
@@ -1067,71 +1266,20 @@
                                 <p class="text-xs text-gray-400">ID: ${server.id}</p>
                             </div>
                         </div>
-                        <div class="flex space-x-2">
-                            <button onclick="viewServer('${server.id}')" class="btn-secondary text-xs flex-1">
-                                <i class="fas fa-eye mr-1"></i>View
-                            </button>
-                            <button onclick="inviteBot()" class="btn-primary text-xs flex-1">
-                                <i class="fas fa-plus mr-1"></i>Invite
-                            </button>
-                        </div>
+                        <button onclick="viewServer('${server.id}')" class="btn-secondary text-sm w-full">
+                            <i class="fas fa-eye mr-1"></i>View Server
+                        </button>
                     </div>
                 `;
             }).join('');
         }
         
-        // ==================== CANDY VENDING FUNCTIONS ====================
-        
-        async function fetchCandyStock() {
-            try {
-                const response = await fetch(`${API_URL}/api/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (!response.ok) throw new Error('Failed to fetch stock');
-                
-                const data = await response.json();
-                
-                candyItems = Object.entries(data).map(([type, info]) => ({
-                    type,
-                    count: info.count,
-                    name: info.name || type.charAt(0).toUpperCase() + type.slice(1),
-                    flavor: info.flavor || 'Mixed',
-                    emoji: info.emoji || '🍬',
-                    color: info.color || 'from-purple-500 to-pink-500',
-                    cooldown: info.cooldown || 5
-                }));
-                
-                updateCandyGrid();
-                updateCharts();
-                
-                // Update total candies
-                const total = candyItems.reduce((sum, item) => sum + item.count, 0);
-                document.getElementById('statCandy').textContent = total;
-                document.getElementById('totalCandies').textContent = total;
-                document.getElementById('totalFlavors').textContent = candyItems.length;
-                
-            } catch (e) {
-                console.error('Failed to fetch candy stock:', e);
-                // Fallback to mock data
-                candyItems = [
-                    { type: 'nitro', count: 45, name: 'Nitro Blast', flavor: 'Blue Raspberry', emoji: '💎', color: 'from-purple-500 to-pink-500', cooldown: 5 },
-                    { type: 'spotify', count: 120, name: 'Spotify Sours', flavor: 'Green Apple', emoji: '🎵', color: 'from-green-500 to-emerald-500', cooldown: 5 },
-                    { type: 'netflix', count: 30, name: 'Netflix Nibs', flavor: 'Cherry', emoji: '🎬', color: 'from-red-500 to-rose-500', cooldown: 5 },
-                    { type: 'steam', count: 65, name: 'Steam Drops', flavor: 'Cola', emoji: '🎮', color: 'from-gray-700 to-gray-900', cooldown: 5 },
-                    { type: 'discord', count: 85, name: 'Discord Dots', flavor: 'Blueberry', emoji: '💬', color: 'from-indigo-500 to-purple-500', cooldown: 5 },
-                    { type: 'minecraft', count: 200, name: 'Minecraft Blocks', flavor: 'Melon', emoji: '⛏️', color: 'from-green-700 to-lime-600', cooldown: 5 }
-                ];
-                updateCandyGrid();
-            }
-        }
-        
         function updateCandyGrid() {
-            const grid = document.getElementById('candyGrid');
+            const grid = document.getElementById('candy-grid');
+            if (!grid) return;
             
             grid.innerHTML = candyItems.map(item => {
                 const pct = Math.min(100, (item.count / 100) * 100);
-                const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
                 const progressColor = item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high';
                 const isSelected = selectedCandy?.type === item.type;
                 
@@ -1149,8 +1297,7 @@
                             <div class="text-5xl mb-2">${item.emoji}</div>
                             <h3 class="font-bold text-lg">${item.name}</h3>
                             <div class="flavor-tag mt-1">
-                                <i class="fas fa-tag mr-1 text-xs"></i>
-                                ${item.flavor}
+                                <i class="fas fa-tag mr-1"></i>${item.flavor}
                             </div>
                         </div>
                         
@@ -1181,7 +1328,13 @@
             }).join('');
             
             // Update admin select
-            updateAdminSelect();
+            const select = document.getElementById('admin-candy-select');
+            if (select) {
+                select.innerHTML = '<option value="">Select Candy Type</option>';
+                candyItems.forEach(item => {
+                    select.innerHTML += `<option value="${item.type}">${item.name} (${item.count} left)</option>`;
+                });
+            }
         }
         
         function selectCandy(type) {
@@ -1189,82 +1342,12 @@
             updateCandyGrid();
         }
         
-        async function generateCandy(type) {
-            if (cooldown > 0) {
-                alert(`Please wait ${cooldown}s before dispensing more candy!`);
-                return;
-            }
-            
-            if (!hasPremium) {
-                alert('Premium role required!');
-                return;
-            }
-            
-            const item = candyItems.find(i => i.type === type);
-            if (!item || item.count === 0) {
-                alert('Out of stock!');
-                return;
-            }
-            
-            showLoading('Dispensing candy...');
-            
-            try {
-                const response = await fetch(`${API_URL}/api/stock/generate/${type}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        userId: currentUser.id
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Update local count
-                    item.count -= 1;
-                    
-                    // Show result
-                    currentResult = data;
-                    document.getElementById('resultModal').classList.add('active');
-                    document.getElementById('resultTitle').textContent = 'Candy Dispensed! 🍬';
-                    document.getElementById('resultText').textContent = data.content;
-                    document.getElementById('resultCooldown').innerHTML = `⏱️ ${data.cooldown}s`;
-                    document.getElementById('resultRemaining').innerHTML = `🍬 ${data.remaining} left`;
-                    
-                    // Update stats
-                    yourGenerations++;
-                    document.getElementById('yourCandies').textContent = yourGenerations;
-                    document.getElementById('profileCandies').textContent = yourGenerations;
-                    
-                    // Update grid
-                    updateCandyGrid();
-                    
-                    // Start cooldown
-                    startCooldown(data.cooldown || 5);
-                    
-                    // Add to logs
-                    addToLogs(`Dispensed ${item.name}`);
-                    
-                } else {
-                    alert(data.error || 'Failed to generate');
-                }
-            } catch (e) {
-                console.error('Generation failed:', e);
-                alert('Failed to generate stock. Is the bot online?');
-            } finally {
-                hideLoading();
-            }
-        }
-        
         function startCooldown(seconds) {
             cooldown = seconds;
-            document.getElementById('cooldownBar').classList.remove('hidden');
-            document.getElementById('cooldownTimer').textContent = `${cooldown}s`;
-            document.getElementById('cooldownProgress').style.width = '100%';
-            document.getElementById('cooldownDisplay').textContent = `${cooldown}s`;
+            document.getElementById('cooldown-bar').classList.remove('hidden');
+            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
+            document.getElementById('cooldown-progress').style.width = '100%';
+            document.getElementById('cooldown-display').textContent = `${cooldown}s`;
             
             if (cooldownInterval) clearInterval(cooldownInterval);
             
@@ -1274,195 +1357,29 @@
                 const remaining = Math.max(0, seconds - elapsed);
                 const pct = (remaining / seconds) * 100;
                 
-                document.getElementById('cooldownTimer').textContent = `${Math.ceil(remaining)}s`;
-                document.getElementById('cooldownProgress').style.width = `${pct}%`;
-                document.getElementById('cooldownDisplay').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldown-progress').style.width = `${pct}%`;
+                document.getElementById('cooldown-display').textContent = `${Math.ceil(remaining)}s`;
                 
                 if (remaining <= 0) {
                     clearInterval(cooldownInterval);
-                    document.getElementById('cooldownBar').classList.add('hidden');
-                    document.getElementById('cooldownDisplay').textContent = '0s';
+                    document.getElementById('cooldown-bar').classList.add('hidden');
+                    document.getElementById('cooldown-display').textContent = '0s';
                     cooldown = 0;
                 }
             }, 100);
         }
         
-        function addToLogs(message) {
-            const logs = document.getElementById('stockLogs');
-            const time = new Date().toLocaleTimeString();
-            logs.innerHTML = `<div class="text-xs text-gray-400"><span class="text-pink-400">[${time}]</span> ${message}</div>` + logs.innerHTML;
-        }
-        
-        // ==================== ADMIN FUNCTIONS ====================
-        
-        function updateAdminSelect() {
-            const select = document.getElementById('adminCandySelect');
-            if (!select) return;
-            
-            select.innerHTML = '<option value="">Select Candy Type</option>';
-            candyItems.forEach(item => {
-                select.innerHTML += `<option value="${item.type}">${item.name} (${item.count} left)</option>`;
-            });
-        }
-        
-        async function addToStock() {
-            const type = document.getElementById('adminCandySelect').value;
-            const content = document.getElementById('adminStockContent').value;
-            
-            if (!type || !content) {
-                alert('Select a candy type and enter content');
-                return;
-            }
-            
-            showLoading('Adding to stock...');
-            
-            try {
-                const response = await fetch(`${API_URL}/api/stock/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ type, content })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert(`Added ${data.count || 'new'} entries to ${type}!`);
-                    document.getElementById('adminStockContent').value = '';
-                    await fetchCandyStock();
-                } else {
-                    alert(data.error || 'Failed to add stock');
-                }
-            } catch (e) {
-                console.error('Add stock failed:', e);
-                alert('Failed to add stock');
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        function replaceStock() {
-            alert('Replace stock functionality - would replace all entries');
-        }
-        
-        async function refreshCandyStock() {
-            showLoading('Refreshing stock...');
-            await fetchCandyStock();
-            hideLoading();
-        }
-        
-        function showAddCandyModal() {
-            if (!isOwner) {
-                alert('Only the owner can add new candy!');
-                return;
-            }
-            document.getElementById('addCandyModal').classList.add('active');
-        }
-        
-        function closeAddCandyModal() {
-            document.getElementById('addCandyModal').classList.remove('active');
-        }
-        
-        function createNewCandy() {
-            const type = document.getElementById('newCandyType').value;
-            const name = document.getElementById('newCandyName').value;
-            const flavor = document.getElementById('newCandyFlavor').value;
-            const color = document.getElementById('newCandyColor').value;
-            const cooldown = parseInt(document.getElementById('newCandyCooldown').value);
-            
-            if (!type || !name) {
-                alert('Please fill in required fields');
-                return;
-            }
-            
-            // Add to candy items
-            const newCandy = {
-                type,
-                name,
-                flavor: flavor || 'Mixed',
-                color,
-                cooldown,
-                count: 0,
-                emoji: '🍬'
-            };
-            
-            candyItems.push(newCandy);
-            updateCandyGrid();
-            
-            alert(`Candy "${name}" created!`);
-            closeAddCandyModal();
-            
-            // Reset form
-            document.getElementById('newCandyType').value = '';
-            document.getElementById('newCandyName').value = '';
-            document.getElementById('newCandyFlavor').value = '';
-            document.getElementById('newCandyCooldown').value = '5';
-        }
-        
-        // ==================== STATS FUNCTIONS ====================
-        
-        async function fetchStats() {
-            try {
-                const response = await fetch(`${API_URL}/api/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    document.getElementById('statServers').textContent = data.total_servers || 0;
-                    document.getElementById('statUsers').textContent = data.total_users || 0;
-                    document.getElementById('statPremium').textContent = data.premium_users || 0;
-                    
-                    if (data.activity) {
-                        updateChart(data.activity);
-                    }
-                }
-            } catch (e) {
-                console.error('Stats fetch failed:', e);
-                // Fallback to mock data
-                document.getElementById('statServers').textContent = '127';
-                document.getElementById('statUsers').textContent = '45.8K';
-                document.getElementById('statPremium').textContent = '1,234';
-                updateChart([65, 78, 92, 105, 98, 120, 145]);
-            }
-        }
-        
-        async function fetchUserStats() {
-            if (!currentUser) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/api/user/${currentUser.id}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('profileName').textContent = currentUser.username;
-                    document.getElementById('profileId').textContent = currentUser.id;
-                }
-            } catch (e) {
-                console.error('User stats fetch failed:', e);
-                document.getElementById('profileName').textContent = currentUser.username;
-                document.getElementById('profileId').textContent = currentUser.id;
-            }
-        }
-        
-        function updateChart(data) {
-            const ctx = document.getElementById('activityChart').getContext('2d');
-            
-            if (activityChart) {
-                activityChart.destroy();
-            }
+        function updateActivityChart(data) {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+            if (activityChart) activityChart.destroy();
             
             activityChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                     datasets: [{
-                        label: 'Candy Dispensed',
+                        label: 'Generations',
                         data: data,
                         borderColor: '#ff69b4',
                         backgroundColor: 'rgba(255, 105, 180, 0.1)',
@@ -1473,9 +1390,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -1491,170 +1406,54 @@
             });
         }
         
-        function updateCharts() {
-            const ctx2 = document.getElementById('stockChart').getContext('2d');
+        function updateStockChart() {
+            const ctx = document.getElementById('stock-chart').getContext('2d');
+            if (stockChart) stockChart.destroy();
             
-            if (stockChart) {
-                stockChart.destroy();
-            }
-            
-            const labels = candyItems.map(i => i.name);
-            const data = candyItems.map(i => i.count);
-            
-            stockChart = new Chart(ctx2, {
+            stockChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: labels,
+                    labels: candyItems.map(i => i.name),
                     datasets: [{
-                        data: data,
-                        backgroundColor: [
-                            '#ff69b4', '#9b59b6', '#3498db', '#2ecc71', '#f1c40f', '#e74c3c'
-                        ]
+                        data: candyItems.map(i => i.count),
+                        backgroundColor: ['#ff69b4', '#9b59b6', '#3498db', '#2ecc71', '#f1c40f', '#e74c3c']
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            labels: { color: '#9ca3af' }
-                        }
+                        legend: { labels: { color: '#9ca3af' } }
                     }
                 }
             });
         }
         
-        // ==================== OWNER FUNCTIONS ====================
-        
-        async function fetchOwnerData() {
-            if (!isOwner) return;
-            
-            try {
-                const usersRes = await fetch(`${API_URL}/api/owner/users`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (usersRes.ok) {
-                    const users = await usersRes.json();
-                    
-                    document.getElementById('ownerTotalUsers').textContent = users.length;
-                    
-                    const premiumCount = users.filter(u => u.role === 'premium' || u.role === 'owner').length;
-                    document.getElementById('ownerPremiumUsers').textContent = premiumCount;
-                    
-                    // Populate table
-                    const tbody = document.getElementById('userTableBody');
-                    tbody.innerHTML = users.slice(0, 10).map(user => `
-                        <tr class="border-b border-gray-700 hover:bg-gray-800/50">
-                            <td class="py-2 px-4 text-sm">${user.id}</td>
-                            <td class="py-2 px-4 text-sm">${user.username}</td>
-                            <td class="py-2 px-4 text-sm">${user.coins}</td>
-                            <td class="py-2 px-4 text-sm">${user.xp || 0}</td>
-                            <td class="py-2 px-4 text-sm">${user.level || 1}</td>
-                            <td class="py-2 px-4 text-sm">
-                                ${user.role === 'owner' ? '<span class="owner-badge">Owner</span>' : 
-                                  user.role === 'premium' ? '<span class="premium-badge">Premium</span>' : 
-                                  '<span class="badge">User</span>'}
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-                
-                const serversRes = await fetch(`${API_URL}/api/owner/servers`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (serversRes.ok) {
-                    const servers = await serversRes.json();
-                    document.getElementById('ownerTotalServers').textContent = servers.length;
-                }
-                
-            } catch (e) {
-                console.error('Owner data fetch failed:', e);
-            }
-        }
-        
-        // ==================== UTILITY FUNCTIONS ====================
-        
-        function showSection(sectionId) {
-            const sections = ['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'];
-            sections.forEach(id => {
-                const el = document.getElementById(id + 'Section');
-                if (el) el.classList.add('hidden');
-            });
-            
-            const target = document.getElementById(sectionId + 'Section');
-            if (target) target.classList.remove('hidden');
-            
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.section === sectionId) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            // Load section-specific data
-            if (sectionId === 'owner' && isOwner) {
-                fetchOwnerData();
-            } else if (sectionId === 'admin') {
-                fetchAdminStats();
-            }
-        }
-        
-        async function fetchAdminStats() {
-            try {
-                const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (statsRes.ok) {
-                    const data = await statsRes.json();
-                    
-                    document.getElementById('adminCpu').textContent = data.cpu + '%';
-                    document.getElementById('adminCpuBar').style.width = data.cpu + '%';
-                    
-                    const memPercent = (data.memory / data.memory_total) * 100;
-                    document.getElementById('adminMemory').textContent = Math.round(data.memory) + ' MB';
-                    document.getElementById('adminMemoryBar').style.width = memPercent + '%';
-                    
-                    document.getElementById('adminUptime').textContent = data.uptime;
-                    document.getElementById('adminDbSize').textContent = data.dbSize + ' MB';
-                }
-                
-                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (logsRes.ok) {
-                    const logs = await logsRes.json();
-                    const logsDiv = document.getElementById('stockLogs');
-                    logsDiv.innerHTML = logs.map(log => `
-                        <div class="text-xs text-gray-400 border-b border-gray-700 pb-1">
-                            <span class="text-pink-400">[${log.time}]</span>
-                            User ${log.userId} generated ${log.type}
-                        </div>
-                    `).join('');
-                }
-                
-            } catch (e) {
-                console.error('Admin stats fetch failed:', e);
-            }
-        }
-        
+        // ==================== UTILITIES ====================
         function showLoading(text) {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            document.getElementById('loadingOverlay').classList.add('flex');
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
         }
         
         function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-            document.getElementById('loadingOverlay').classList.remove('flex');
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('loading-overlay').classList.remove('flex');
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? 'linear-gradient(135deg, #ff4444, #ff6666)' : 
+                                 type === 'warning' ? 'linear-gradient(135deg, #ffaa44, #ffbb66)' : 
+                                 'linear-gradient(135deg, #1a1a2a, #0f0f1a)';
+            toast.classList.add('show');
+            
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
         
         function toggleUserMenu() {
-            document.getElementById('userDropdown').classList.toggle('hidden');
+            document.getElementById('user-dropdown').classList.toggle('hidden');
         }
         
         function logout() {
@@ -1663,29 +1462,22 @@
             isOwner = false;
             hasPremium = false;
             
-            document.getElementById('loginPrompt').classList.remove('hidden');
-            document.getElementById('userMenu').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.add('hidden');
-            document.getElementById('vendingSection').classList.add('hidden');
-            document.getElementById('serversSection').classList.add('hidden');
-            document.getElementById('premiumSection').classList.add('hidden');
-            document.getElementById('adminSection').classList.add('hidden');
-            document.getElementById('ownerSection').classList.add('hidden');
+            document.getElementById('login-prompt').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+            document.getElementById('login-button').classList.remove('hidden');
+            document.getElementById('nav-links').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('vending-section').classList.add('hidden');
             
             document.querySelectorAll('.owner-only, .admin-only').forEach(el => el.classList.add('hidden'));
-            
-            showSection('dashboard');
+            showToast('Logged out');
         }
         
         function refreshData() {
-            showLoading('Refreshing data...');
-            Promise.all([
-                fetchStats(),
-                fetchCandyStock(),
-                fetchUserStats()
-            ]).then(() => {
+            showLoading('Refreshing...');
+            Promise.all([fetchStats(), fetchCandyStock()]).then(() => {
                 hideLoading();
-                document.getElementById('lastUpdated').textContent = 'just now';
+                showToast('Data refreshed');
             }).catch(() => hideLoading());
         }
         
@@ -1694,63 +1486,79 @@
         }
         
         function viewServer(serverId) {
-            alert(`Server settings for ${serverId} would open here`);
-        }
-        
-        function copyResult() {
-            if (currentResult) {
-                navigator.clipboard.writeText(currentResult.content);
-                alert('Copied to clipboard!');
-            }
-        }
-        
-        function closeResultModal() {
-            document.getElementById('resultModal').classList.remove('active');
-        }
-        
-        function backupDatabase() {
-            alert('Database backup started!');
-        }
-        
-        function executeSQL() {
-            alert('SQL Query interface would open here');
-        }
-        
-        function syncDatabase() {
-            alert('Database sync started!');
-        }
-        
-        function clearCache() {
-            alert('Cache cleared!');
-        }
-        
-        function viewLogs() {
-            alert('Opening logs...');
+            showToast(`Server ${serverId} selected`);
         }
         
         function checkPremiumStatus() {
             checkPremiumStatus();
         }
         
-        // ==================== INIT ====================
-        
-        // Handle OAuth redirect
-        handleAuth();
-        
-        // Check URL hash for section
-        if (window.location.hash) {
-            const section = window.location.hash.substring(1);
-            setTimeout(() => {
-                if (['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'].includes(section)) {
-                    showSection(section);
-                }
-            }, 100);
+        function showAddCandyModal() {
+            if (!isOwner) {
+                showToast('Only owner can add candy', 'error');
+                return;
+            }
+            document.getElementById('add-candy-modal').classList.add('active');
         }
         
-        // Close dropdown when clicking outside
+        function closeAddCandyModal() {
+            document.getElementById('add-candy-modal').classList.remove('active');
+        }
+        
+        function closeResultModal() {
+            document.getElementById('result-modal').classList.remove('active');
+        }
+        
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult.content);
+                showToast('Copied!');
+            }
+        }
+        
+        function refreshCandyStock() {
+            showLoading('Refreshing...');
+            fetchCandyStock().then(() => {
+                hideLoading();
+                showToast('Stock refreshed');
+            });
+        }
+        
+        function createNewCandy() {
+            const type = document.getElementById('new-candy-type').value;
+            const name = document.getElementById('new-candy-name').value;
+            
+            if (!type || !name) {
+                showToast('Fill required fields', 'warning');
+                return;
+            }
+            
+            candyItems.push({
+                type,
+                name,
+                flavor: document.getElementById('new-candy-flavor').value || 'Mixed',
+                color: document.getElementById('new-candy-color').value,
+                cooldown: parseInt(document.getElementById('new-candy-cooldown').value) || 5,
+                count: 0,
+                emoji: '🍬'
+            });
+            
+            updateCandyGrid();
+            closeAddCandyModal();
+            showToast('Candy created!');
+        }
+        
+        function replaceStock() {
+            showToast('Replace stock feature coming soon', 'warning');
+        }
+        
+        // ==================== INIT ====================
+        handleAuth();
+        
+        // Close dropdown on click outside
         window.onclick = function(e) {
-            if (!e.target.matches('#userMenu, #userMenu *')) {
-                document.getElementById('userDropdown').classList.add('hidden');
+            if (!e.target.matches('#user-menu, #user-menu *')) {
+                document.getElementById('user-dropdown').classList.add('hidden');
             }
         };
     </script>
