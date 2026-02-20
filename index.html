@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT - Candy Vending Machine</title>
+    <title>XULT - Bot Dashboard & Candy Vending Machine</title>
     
-    <!-- Tailwind -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,49 +22,85 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
         
         body {
             background: #0a0a0f;
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
         }
         
+        /* Glassmorphism */
         .glass {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
         }
         
         .glass-dark {
             background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .hidden {
-            display: none !important;
+        /* Vending Machine */
+        .vending-machine {
+            background: linear-gradient(135deg, #1a0f1a 0%, #0f0f1a 100%);
+            border: 3px solid #ff1493;
+            border-radius: 2rem;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(255, 20, 147, 0.3);
+        }
+        
+        .vending-machine::before {
+            content: '🍬 CANDY VENDING 🍬';
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff1493, #9b59b6);
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid gold;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.5);
         }
         
         .candy-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            background: linear-gradient(135deg, #1a1a2a 0%, #0f0f1a 100%);
             border: 2px solid #ff69b4;
-            border-radius: 1rem;
-            transition: all 0.2s;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
         
         .candy-card:hover {
-            transform: translateY(-2px);
-            border-color: #ff1493;
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
+            transform: translateY(-5px);
+            border-color: gold;
+            box-shadow: 0 20px 30px rgba(255, 105, 180, 0.3);
+        }
+        
+        .candy-card.selected {
+            border-color: gold;
+            box-shadow: 0 0 30px gold;
         }
         
         .candy-stripes {
             display: flex;
-            height: 4px;
+            height: 6px;
             width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         
         .stripe-pink { background: #ff69b4; flex: 1; }
@@ -70,46 +109,16 @@
         .stripe-green { background: #2ecc71; flex: 1; }
         .stripe-yellow { background: #f1c40f; flex: 1; }
         
-        .candy-wrapper {
-            position: relative;
-            padding: 2rem;
-            background: linear-gradient(135deg, #2a1a1a, #1a0f0f);
-            border-radius: 1rem;
-            border: 2px solid #ffd700;
-        }
-        
-        .candy-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff69b4, #9b59b6, #3498db, #2ecc71, #f1c40f);
-        }
-        
-        .candy-image {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            filter: drop-shadow(0 10px 15px rgba(255, 105, 180, 0.3));
-            transition: transform 0.3s;
-        }
-        
-        .candy-image:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
         .progress-bar {
             height: 8px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 4px;
             overflow: hidden;
         }
         
         .progress-fill {
             height: 100%;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
         }
         
         .progress-low { background: #ff4444; }
@@ -124,30 +133,51 @@
             font-weight: 600;
         }
         
-        .badge-success {
-            background: rgba(68, 255, 68, 0.2);
-            color: #44ff44;
-            border: 1px solid #44ff44;
+        .badge-premium {
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            color: white;
         }
         
         .badge-owner {
-            background: rgba(255, 215, 0, 0.2);
-            color: gold;
-            border: 1px solid gold;
+            background: linear-gradient(135deg, gold, orange);
+            color: black;
         }
         
-        .badge-premium {
-            background: rgba(255, 105, 180, 0.2);
-            color: #ff69b4;
-            border: 1px solid #ff69b4;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 3px solid #ff69b4;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .loading-spinner {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top: 3px solid #ff69b4;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 105, 180, 0.2);
+            border-top: 4px solid #ff69b4;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
             animation: spin 1s linear infinite;
         }
         
@@ -160,11 +190,13 @@
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            color: #9ca3af;
         }
         
         .tab:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
         }
         
         .tab.active {
@@ -172,160 +204,169 @@
             color: white;
         }
         
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2a 0%, #0f0f1a 100%);
+            border: 1px solid #2a2a3a;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: #ff69b4;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2a3a;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ff69b4;
+        }
+        
         .input-field {
-            background: #1a1a2a;
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid #2a2a3a;
             border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
             color: white;
             width: 100%;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
         
         .input-field:focus {
             outline: none;
             border-color: #ff69b4;
-            box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.2);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 2px solid #ff69b4;
+        .cooldown-timer {
+            background: rgba(255, 105, 180, 0.1);
+            border: 1px solid #ff69b4;
             border-radius: 1rem;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+            padding: 1rem;
         }
         
-        .server-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 1px solid #2a2a3a;
-            border-radius: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
         
-        .server-card:hover {
-            border-color: #ff69b4;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
+        ::-webkit-scrollbar-track {
+            background: #1a1a2a;
         }
         
-        .admin-tab {
-            background: linear-gradient(135deg, #ff4444, #ff69b4);
-        }
-        
-        .vending-machine {
-            background: linear-gradient(135deg, #2a1a1a, #1a0f0f);
-            border: 3px solid #ffd700;
-            border-radius: 2rem;
-            padding: 2rem;
-            position: relative;
-        }
-        
-        .vending-machine::before {
-            content: '🍬';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
+        ::-webkit-scrollbar-thumb {
             background: #ff69b4;
-            color: white;
-            padding: 0.5rem 2rem;
-            border-radius: 2rem;
-            font-size: 1.5rem;
-            border: 2px solid #ffd700;
+            border-radius: 4px;
         }
         
-        .candy-shelf {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff1493;
         }
         
-        .flavor-tag {
-            display: inline-flex;
-            align-items: center;
+        .owner-badge {
+            background: linear-gradient(135deg, gold, orange);
+            color: black;
             padding: 0.25rem 0.75rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
+            border-radius: 9999px;
             font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
     </style>
 </head>
-<body class="bg-[#0a0a0f] text-white">
-    <!-- Navbar -->
+<body>
+    <!-- Navigation -->
     <nav class="glass fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-bolt text-2xl text-purple-500"></i>
-                    <span class="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                    <i class="fas fa-candy-cane text-3xl text-pink-500"></i>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
                         XULT
                     </span>
                 </div>
                 
-                <!-- Navigation -->
-                <div id="nav-links" class="hidden md:flex items-center space-x-6">
-                    <a href="#" onclick="showSection('dashboard'); return false;" class="tab active" data-section="dashboard">Dashboard</a>
-                    <a href="#" onclick="showSection('servers'); return false;" class="tab" data-section="servers">Servers</a>
-                    <a href="#" onclick="showSection('vending'); return false;" class="tab" data-section="vending">
-                        <i class="fas fa-candy-cane mr-1"></i>Candy
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-2">
+                    <a href="#" onclick="showSection('dashboard'); return false;" class="tab" data-section="dashboard">
+                        <i class="fas fa-chart-pie mr-2"></i>Dashboard
                     </a>
-                    <a href="#" onclick="showSection('premium'); return false;" class="tab" data-section="premium">Premium</a>
+                    <a href="#" onclick="showSection('vending'); return false;" class="tab active" data-section="vending">
+                        <i class="fas fa-candy-cane mr-2"></i>Vending
+                    </a>
+                    <a href="#" onclick="showSection('servers'); return false;" class="tab" data-section="servers">
+                        <i class="fas fa-server mr-2"></i>Servers
+                    </a>
+                    <a href="#" onclick="showSection('premium'); return false;" class="tab" data-section="premium">
+                        <i class="fas fa-crown mr-2"></i>Premium
+                    </a>
                     <a href="#" onclick="showSection('admin'); return false;" class="tab hidden admin-only" data-section="admin">
-                        <i class="fas fa-crown mr-1"></i>Admin
+                        <i class="fas fa-shield-alt mr-2"></i>Admin
                     </a>
                     <a href="#" onclick="showSection('owner'); return false;" class="tab hidden owner-only" data-section="owner">
-                        <i class="fas fa-crown mr-1"></i>Owner
+                        <i class="fas fa-crown mr-2"></i>Owner
                     </a>
-                </div>
-                
-                <!-- Auth Buttons -->
-                <div id="auth-buttons">
-                    <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
-                        <i class="fab fa-discord"></i>
-                        <span>Login with Discord</span>
-                    </button>
                 </div>
                 
                 <!-- User Menu -->
-                <div id="user-menu" class="hidden relative">
-                    <button onclick="toggleMenu()" class="flex items-center space-x-3">
-                        <img id="user-avatar" src="" class="w-8 h-8 rounded-full border-2 border-purple-500">
-                        <span id="user-name" class="text-sm font-medium"></span>
+                <div id="userMenu" class="relative">
+                    <button onclick="toggleUserMenu()" class="flex items-center space-x-3 bg-white/5 px-4 py-2 rounded-full border border-gray-800 hover:border-pink-500 transition-all">
+                        <img id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full">
+                        <span id="userName" class="font-medium hidden md:inline">Not logged in</span>
                         <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                     </button>
                     
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
+                    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
                         <div class="px-4 py-2 border-b border-gray-700">
                             <p class="text-xs text-gray-400">Logged in as</p>
-                            <p id="dropdown-name" class="text-sm font-medium"></p>
-                            <p id="dropdown-id" class="text-xs text-gray-400 mt-1"></p>
-                            <div id="user-role-badge" class="mt-2"></div>
+                            <p id="dropdownName" class="font-medium"></p>
+                            <p id="dropdownId" class="text-xs text-gray-400 mt-1"></p>
+                            <div id="userBadge" class="mt-2"></div>
                         </div>
                         <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            Logout
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </div>
                 </div>
@@ -334,405 +375,427 @@
     </nav>
     
     <!-- Main Content -->
-    <main class="pt-16">
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden items-center justify-center">
-            <div class="text-center">
-                <div class="loading-spinner mx-auto mb-4"></div>
-                <p class="text-gray-300" id="loading-text">Loading Candy Machine...</p>
+    <main class="pt-20 pb-12 px-4">
+        <div class="container mx-auto">
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p id="loadingText" class="text-gray-300">Loading...</p>
+                </div>
             </div>
-        </div>
-        
-        <!-- Login Prompt -->
-        <section id="login-prompt" class="container mx-auto px-4 py-16">
-            <div class="max-w-md mx-auto text-center">
-                <i class="fas fa-candy-cane text-6xl text-pink-500 mb-6"></i>
-                <h1 class="text-4xl font-bold mb-4">Welcome to XULT Candy</h1>
-                <p class="text-gray-400 mb-8">The sweetest vending machine on Discord! Login to start collecting.</p>
-                <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-8 py-4 rounded-xl text-lg font-semibold flex items-center justify-center space-x-3 mx-auto">
-                    <i class="fab fa-discord text-2xl"></i>
-                    <span>Login with Discord</span>
+            
+            <!-- Login Prompt -->
+            <div id="loginPrompt" class="max-w-md mx-auto text-center py-16">
+                <i class="fas fa-candy-cane text-7xl text-pink-500 mb-6"></i>
+                <h1 class="text-4xl font-bold mb-4">Welcome to XULT</h1>
+                <p class="text-gray-400 mb-8">Login with Discord to access the bot dashboard and candy vending machine</p>
+                <button onclick="loginWithDiscord()" class="btn-primary text-lg px-8 py-4">
+                    <i class="fab fa-discord mr-2"></i>Login with Discord
                 </button>
             </div>
-        </section>
-        
-        <!-- Dashboard Section -->
-        <section id="dashboard" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
             
-            <!-- Welcome Banner for Owner -->
-            <div id="owner-welcome" class="hidden glass rounded-xl p-6 mb-8 border-2 border-yellow-500">
-                <div class="flex items-center">
-                    <i class="fas fa-crown text-4xl text-yellow-500 mr-4"></i>
-                    <div>
-                        <h2 class="text-2xl font-bold">Welcome back, xotiic._.420! 👑</h2>
-                        <p class="text-gray-300">You have full system access to manage everything.</p>
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <h1 class="text-3xl font-bold">Dashboard</h1>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Last updated: <span id="lastUpdated">just now</span></span>
+                        <button onclick="refreshData()" class="btn-secondary text-sm">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div class="glass rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-server text-2xl text-blue-500"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="stat-servers">0</div>
-                    <div class="text-sm text-gray-400">Servers with Bot</div>
                 </div>
                 
-                <div class="glass rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-users text-2xl text-green-500"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="stat-users">0</div>
-                    <div class="text-sm text-gray-400">Total Users</div>
-                </div>
-                
-                <div class="glass rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-candy-cane text-2xl text-pink-500"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="stat-candy">0</div>
-                    <div class="text-sm text-gray-400">Candy Pieces</div>
-                </div>
-                
-                <div class="glass rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-crown text-2xl text-yellow-500"></i>
-                    </div>
-                    <div class="text-2xl font-bold" id="stat-premium">0</div>
-                    <div class="text-sm text-gray-400">Premium Users</div>
-                </div>
-            </div>
-            
-            <!-- Activity Chart -->
-            <div class="glass rounded-xl p-6 mb-8">
-                <h2 class="text-lg font-semibold mb-4">Candy Dispensed (Last 7 Days)</h2>
-                <canvas id="activityChart" height="100"></canvas>
-            </div>
-            
-            <!-- User Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4">Your Information</h2>
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Username</span>
-                            <span id="profile-username" class="font-medium">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">User ID</span>
-                            <span id="profile-id" class="font-medium">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Premium Status</span>
-                            <span id="profile-premium" class="badge badge-warning">Checking...</span>
+                <!-- Owner Welcome Banner -->
+                <div id="ownerWelcome" class="hidden glass p-6 mb-8 border-2 border-yellow-500">
+                    <div class="flex items-center">
+                        <i class="fas fa-crown text-4xl text-yellow-500 mr-4"></i>
+                        <div>
+                            <h2 class="text-2xl font-bold">Welcome back, xotiic._.420! 👑</h2>
+                            <p class="text-gray-400">You have full system access and can manage everything.</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="showSection('vending')" class="bg-pink-600 hover:bg-pink-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-candy-cane mr-2"></i>
-                            Candy Machine
-                        </button>
-                        <button onclick="showSection('servers')" class="bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-server mr-2"></i>
-                            View Servers
-                        </button>
-                        <button onclick="inviteBot()" class="bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-plus mr-2"></i>
-                            Invite Bot
-                        </button>
-                        <button onclick="window.open('https://discord.gg/pQBKywjW7h', '_blank')" class="bg-gray-600 hover:bg-gray-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-question-circle mr-2"></i>
-                            Support
-                        </button>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-server text-2xl text-blue-500"></i>
+                        </div>
+                        <div class="text-3xl font-bold" id="statServers">0</div>
+                        <div class="text-sm text-gray-400">Servers</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-users text-2xl text-green-500"></i>
+                        </div>
+                        <div class="text-3xl font-bold" id="statUsers">0</div>
+                        <div class="text-sm text-gray-400">Users</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-candy-cane text-2xl text-pink-500"></i>
+                        </div>
+                        <div class="text-3xl font-bold" id="statCandy">0</div>
+                        <div class="text-sm text-gray-400">Candy Pieces</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <i class="fas fa-crown text-2xl text-yellow-500"></i>
+                        </div>
+                        <div class="text-3xl font-bold" id="statPremium">0</div>
+                        <div class="text-sm text-gray-400">Premium Users</div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">Candy Dispensed (7 Days)</h2>
+                        <canvas id="activityChart" height="200"></canvas>
+                    </div>
+                    
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">Stock Distribution</h2>
+                        <canvas id="stockChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="showSection('vending')" class="btn-primary">
+                                <i class="fas fa-candy-cane mr-2"></i>Vending Machine
+                            </button>
+                            <button onclick="inviteBot()" class="btn-secondary">
+                                <i class="fab fa-discord mr-2"></i>Invite Bot
+                            </button>
+                            <button onclick="window.open('https://discord.gg/pQBKywjW7h')" class="btn-secondary">
+                                <i class="fas fa-question-circle mr-2"></i>Support
+                            </button>
+                            <button onclick="refreshData()" class="btn-secondary">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">Your Stats</h2>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Username</span>
+                                <span id="profileName" class="font-medium">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">User ID</span>
+                                <span id="profileId" class="font-medium">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Premium Status</span>
+                                <span id="profilePremium" class="badge">Checking...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Your Candies</span>
+                                <span id="profileCandies" class="font-medium">0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- Servers Section -->
-        <section id="servers" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Your Servers with XULT</h1>
             
-            <div id="servers-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Filled by JS -->
-            </div>
-            
-            <div id="no-servers-message" class="hidden text-center py-16">
-                <i class="fas fa-server text-6xl text-gray-600 mb-4"></i>
-                <h3 class="text-xl font-semibold mb-2">No Servers Found</h3>
-                <p class="text-gray-400 mb-4">XULT isn't in any of your servers yet.</p>
-                <button onclick="inviteBot()" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg">
-                    <i class="fab fa-discord mr-2"></i>
-                    Invite XULT to a Server
-                </button>
-            </div>
-        </section>
-        
-        <!-- Vending Machine Section -->
-        <section id="vending" class="container mx-auto px-4 py-8 hidden">
-            <div class="vending-machine">
+            <!-- Vending Machine Section -->
+            <div id="vendingSection" class="vending-machine">
                 <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
                     🍬 Candy Vending Machine 🍬
                 </h1>
                 
                 <!-- Premium Gate -->
-                <div id="premium-gate" class="text-center py-12">
-                    <div class="glass rounded-xl p-8 max-w-md mx-auto border-2 border-pink-500">
-                        <i class="fas fa-crown text-5xl text-yellow-500 mb-4"></i>
+                <div id="premiumGate" class="text-center py-12">
+                    <div class="glass p-8 max-w-md mx-auto border-2 border-pink-500">
+                        <i class="fas fa-lock text-5xl text-pink-500 mb-4"></i>
                         <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
-                        <p class="text-gray-400 text-sm mb-4">You need the premium role to use the candy vending machine.</p>
+                        <p class="text-gray-400 text-sm mb-4">You need the premium role to use the candy vending machine</p>
                         <div class="bg-gray-800 rounded-lg p-3 mb-4">
                             <p class="text-xs text-gray-400">Required Role ID:</p>
                             <code class="text-pink-400 font-mono">1474136325912399994</code>
                         </div>
-                        <button onclick="checkPremiumStatus()" class="bg-pink-600 hover:bg-pink-700 px-6 py-2 rounded-lg text-sm">
-                            <i class="fas fa-sync-alt mr-2"></i>
-                            Check Premium Status
+                        <button onclick="checkPremiumStatus()" class="btn-primary">
+                            <i class="fas fa-sync-alt mr-2"></i>Check Premium Status
                         </button>
                     </div>
                 </div>
                 
-                <!-- Candy Machine (Hidden until premium) -->
-                <div id="candy-machine" class="hidden">
-                    <!-- Admin Controls (Only for xotiic._.420) -->
-                    <div id="candy-admin-controls" class="hidden glass rounded-lg p-4 mb-6 border-2 border-yellow-500">
+                <!-- Candy Machine Content -->
+                <div id="candyMachine" class="hidden">
+                    <!-- Admin Controls -->
+                    <div id="candyAdminControls" class="hidden glass p-4 mb-6 border-2 border-yellow-500">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
                                 <i class="fas fa-crown text-yellow-500"></i>
                                 <span class="font-semibold">Candy Shop Manager</span>
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="showAddCandyModal()" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">
-                                    <i class="fas fa-plus mr-1"></i>
-                                    New Candy
+                                <button onclick="showAddCandyModal()" class="btn-primary text-sm">
+                                    <i class="fas fa-plus mr-1"></i>New Candy
                                 </button>
-                                <button onclick="refreshCandyStock()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">
-                                    <i class="fas fa-sync-alt mr-1"></i>
-                                    Refresh
+                                <button onclick="refreshCandyStock()" class="btn-secondary text-sm">
+                                    <i class="fas fa-sync-alt mr-1"></i>Refresh
                                 </button>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Stats -->
+                    <!-- Stats Row -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="glass rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-pink-400" id="total-candies">0</div>
+                        <div class="glass p-4 text-center">
+                            <div class="text-2xl font-bold text-pink-400" id="totalCandies">0</div>
                             <div class="text-xs text-gray-400">Total Pieces</div>
                         </div>
-                        <div class="glass rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-purple-400" id="total-flavors">0</div>
+                        <div class="glass p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-400" id="totalFlavors">0</div>
                             <div class="text-xs text-gray-400">Flavors</div>
                         </div>
-                        <div class="glass rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-yellow-400" id="your-candies">0</div>
+                        <div class="glass p-4 text-center">
+                            <div class="text-2xl font-bold text-yellow-400" id="yourCandies">0</div>
                             <div class="text-xs text-gray-400">Your Generations</div>
                         </div>
-                        <div class="glass rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-green-400" id="cooldown-display">0s</div>
+                        <div class="glass p-4 text-center">
+                            <div class="text-2xl font-bold text-green-400" id="cooldownDisplay">0s</div>
                             <div class="text-xs text-gray-400">Cooldown</div>
                         </div>
                     </div>
                     
                     <!-- Cooldown Bar -->
-                    <div id="cooldown-bar" class="hidden glass rounded-lg p-4 mb-6 border border-yellow-500/30">
+                    <div id="cooldownBar" class="hidden cooldown-timer mb-6">
                         <div class="flex items-center space-x-3">
                             <i class="fas fa-hourglass-half text-yellow-500"></i>
                             <div class="flex-1">
                                 <div class="flex justify-between text-xs mb-1">
                                     <span class="text-yellow-500">Cooldown</span>
-                                    <span id="cooldown-timer" class="text-yellow-500 font-mono">5s</span>
+                                    <span id="cooldownTimer" class="text-yellow-500 font-mono">5s</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div id="cooldown-progress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
+                                    <div id="cooldownProgress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Candy Grid -->
-                    <div id="candy-grid" class="candy-shelf">
-                        <!-- Filled by JS -->
+                    <div id="candyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Filled by JavaScript -->
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- Premium Section -->
-        <section id="premium" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8 flex items-center">
-                <i class="fas fa-crown text-yellow-500 mr-3"></i>
-                Premium Features
-            </h1>
             
-            <div class="glass rounded-xl p-8 text-center max-w-2xl mx-auto">
-                <i class="fas fa-crown text-6xl text-yellow-500 mb-4"></i>
-                <h2 class="text-2xl font-bold mb-4">Premium Access</h2>
-                <p class="text-gray-400 mb-6">Get the premium role in our main server to unlock:</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="bg-gray-800/50 p-3 rounded-lg">
-                        <i class="fas fa-candy-cane text-pink-500 mb-2"></i>
-                        <p>Candy Vending Machine</p>
-                    </div>
-                    <div class="bg-gray-800/50 p-3 rounded-lg">
-                        <i class="fas fa-bolt text-yellow-500 mb-2"></i>
-                        <p>Reduced Cooldowns</p>
-                    </div>
-                    <div class="bg-gray-800/50 p-3 rounded-lg">
-                        <i class="fas fa-gem text-blue-500 mb-2"></i>
-                        <p>Exclusive Stock</p>
-                    </div>
-                    <div class="bg-gray-800/50 p-3 rounded-lg">
-                        <i class="fas fa-headset text-green-500 mb-2"></i>
-                        <p>Priority Support</p>
-                    </div>
+            <!-- Servers Section -->
+            <div id="serversSection" class="hidden">
+                <h1 class="text-3xl font-bold mb-8">Your Servers with XULT</h1>
+                <div id="serversGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Filled by JavaScript -->
                 </div>
-                <div class="bg-gray-800 rounded-lg p-4">
-                    <p class="text-sm text-gray-300 mb-2">Required Role ID:</p>
-                    <code class="bg-gray-900 px-3 py-1 rounded text-pink-400 text-lg">1474136325912399994</code>
+                <div id="noServers" class="hidden text-center py-16">
+                    <i class="fas fa-server text-6xl text-gray-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">No Servers Found</h3>
+                    <p class="text-gray-400 mb-4">XULT isn't in any of your servers yet</p>
+                    <button onclick="inviteBot()" class="btn-primary">
+                        <i class="fab fa-discord mr-2"></i>Invite XULT to a Server
+                    </button>
                 </div>
             </div>
-        </section>
-        
-        <!-- Admin Section -->
-        <section id="admin" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8 flex items-center">
-                <i class="fas fa-shield-alt text-red-500 mr-3"></i>
-                Admin Panel
-            </h1>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Stock Management -->
-                <div class="lg:col-span-2">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Candy Stock Management</h2>
+            <!-- Premium Section -->
+            <div id="premiumSection" class="hidden max-w-2xl mx-auto">
+                <div class="glass p-8 text-center">
+                    <i class="fas fa-crown text-6xl text-yellow-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold mb-4">Premium Features</h2>
+                    <p class="text-gray-400 mb-6">Get the premium role in our main server to unlock exclusive features</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <i class="fas fa-candy-cane text-pink-500 text-2xl mb-2"></i>
+                            <h3 class="font-semibold">Candy Vending</h3>
+                            <p class="text-sm text-gray-400">Access to all candy types</p>
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <i class="fas fa-bolt text-yellow-500 text-2xl mb-2"></i>
+                            <h3 class="font-semibold">Reduced Cooldowns</h3>
+                            <p class="text-sm text-gray-400">5s instead of 30s</p>
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <i class="fas fa-gem text-blue-500 text-2xl mb-2"></i>
+                            <h3 class="font-semibold">Exclusive Stock</h3>
+                            <p class="text-sm text-gray-400">Premium-only items</p>
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <i class="fas fa-headset text-green-500 text-2xl mb-2"></i>
+                            <h3 class="font-semibold">Priority Support</h3>
+                            <p class="text-sm text-gray-400">Fast response time</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <p class="text-sm text-gray-300 mb-2">Required Role ID:</p>
+                        <code class="bg-gray-900 px-3 py-1 rounded text-pink-400 text-lg">1474136325912399994</code>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Section -->
+            <div id="adminSection" class="hidden">
+                <h1 class="text-3xl font-bold mb-8 flex items-center">
+                    <i class="fas fa-shield-alt text-red-500 mr-3"></i>Admin Panel
+                </h1>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Stock Management -->
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">Stock Management</h2>
                         <div class="space-y-4">
-                            <div class="flex space-x-2">
-                                <select id="admin-candy-select" class="input-field text-sm flex-1">
-                                    <option value="">Select Candy</option>
-                                </select>
-                                <button onclick="loadCandyForEdit()" class="bg-blue-600 hover:bg-blue-700 px-4 rounded-lg text-sm">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="deleteCandyType()" class="bg-red-600 hover:bg-red-700 px-4 rounded-lg text-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                            <select id="adminCandySelect" class="input-field">
+                                <option value="">Select Candy Type</option>
+                            </select>
                             
-                            <textarea id="admin-stock-content" rows="5" class="input-field text-sm" placeholder="Stock content (one per line, double line between entries)"></textarea>
+                            <textarea id="adminStockContent" rows="5" class="input-field" placeholder="Paste stock content here (one per line)"></textarea>
                             
                             <div class="grid grid-cols-2 gap-2">
-                                <button onclick="addToStock()" class="bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-plus mr-1"></i>
-                                    Add to Stock
+                                <button onclick="addToStock()" class="btn-primary text-sm">
+                                    <i class="fas fa-plus mr-1"></i>Add to Stock
                                 </button>
-                                <button onclick="replaceStock()" class="bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-sync mr-1"></i>
-                                    Replace Stock
+                                <button onclick="replaceStock()" class="btn-secondary text-sm">
+                                    <i class="fas fa-sync mr-1"></i>Replace Stock
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="glass p-6">
+                        <h2 class="text-lg font-semibold mb-4">System Stats</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400">CPU</span>
+                                    <span id="adminCpu">-</span>
+                                </div>
+                                <div class="progress-bar mt-1">
+                                    <div id="adminCpuBar" class="progress-fill bg-blue-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400">Memory</span>
+                                    <span id="adminMemory">-</span>
+                                </div>
+                                <div class="progress-bar mt-1">
+                                    <div id="adminMemoryBar" class="progress-fill bg-green-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400">Uptime</span>
+                                    <span id="adminUptime">-</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400">DB Size</span>
+                                    <span id="adminDbSize">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4">
+                                <button onclick="backupDatabase()" class="btn-secondary w-full">
+                                    <i class="fas fa-database mr-1"></i>Backup Database
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Quick Stats -->
-                <div>
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">System Stats</h2>
-                        <div class="space-y-3">
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">CPU</span>
-                                    <span id="admin-cpu">23%</span>
-                                </div>
-                                <div class="progress-bar mt-1">
-                                    <div id="admin-cpu-bar" class="progress-fill" style="width: 23%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Memory</span>
-                                    <span id="admin-memory">512 MB</span>
-                                </div>
-                                <div class="progress-bar mt-1">
-                                    <div id="admin-memory-bar" class="progress-fill" style="width: 50%"></div>
-                                </div>
-                            </div>
-                            <div class="pt-4">
-                                <button onclick="backupDatabase()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-database mr-1"></i>
-                                    Backup Database
-                                </button>
-                            </div>
-                        </div>
+                <!-- Stock Usage Logs -->
+                <div class="glass p-6 mt-6">
+                    <h2 class="text-lg font-semibold mb-4">Recent Generations</h2>
+                    <div id="stockLogs" class="space-y-2 max-h-60 overflow-y-auto">
+                        <!-- Filled by JavaScript -->
                     </div>
                 </div>
             </div>
             
-            <!-- Stock Usage Logs -->
-            <div class="glass rounded-xl p-6 mt-6">
-                <h2 class="text-lg font-semibold mb-4">Recent Generations</h2>
-                <div id="stock-logs" class="space-y-2 max-h-60 overflow-y-auto">
-                    <!-- Filled by JS -->
+            <!-- Owner Section -->
+            <div id="ownerSection" class="hidden">
+                <h1 class="text-3xl font-bold mb-8 flex items-center">
+                    <i class="fas fa-crown text-yellow-500 mr-3"></i>Owner Panel
+                </h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div class="text-sm text-gray-400">Total Users</div>
+                        <div class="text-3xl font-bold" id="ownerTotalUsers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-sm text-gray-400">Total Servers</div>
+                        <div class="text-3xl font-bold" id="ownerTotalServers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-sm text-gray-400">Premium Users</div>
+                        <div class="text-3xl font-bold" id="ownerPremiumUsers">0</div>
+                    </div>
+                </div>
+                
+                <!-- Users Table -->
+                <div class="glass p-6 mb-6">
+                    <h2 class="text-lg font-semibold mb-4">User Management</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">ID</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Username</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Coins</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">XP</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Level</th>
+                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Role</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Filled by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Database Controls -->
+                <div class="glass p-6">
+                    <h2 class="text-lg font-semibold mb-4">Database Controls</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="executeSQL()" class="btn-secondary">
+                            <i class="fas fa-terminal mr-2"></i>SQL Query
+                        </button>
+                        <button onclick="syncDatabase()" class="btn-secondary">
+                            <i class="fas fa-sync mr-2"></i>Sync DB
+                        </button>
+                        <button onclick="clearCache()" class="btn-secondary">
+                            <i class="fas fa-broom mr-2"></i>Clear Cache
+                        </button>
+                        <button onclick="viewLogs()" class="btn-secondary">
+                            <i class="fas fa-history mr-2"></i>View Logs
+                        </button>
+                    </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- Owner Section -->
-        <section id="owner" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8 flex items-center">
-                <i class="fas fa-crown text-yellow-500 mr-3"></i>
-                Owner Panel
-            </h1>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="glass rounded-xl p-6">
-                    <div class="text-sm text-gray-400">Total Users</div>
-                    <div class="text-3xl font-bold" id="owner-total-users">0</div>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <div class="text-sm text-gray-400">Total Servers</div>
-                    <div class="text-3xl font-bold" id="owner-total-servers">0</div>
-                </div>
-                <div class="glass rounded-xl p-6">
-                    <div class="text-sm text-gray-400">Premium Users</div>
-                    <div class="text-3xl font-bold" id="owner-premium-users">0</div>
-                </div>
-            </div>
-            
-            <div class="glass rounded-xl p-6">
-                <h2 class="text-lg font-semibold mb-4">Database Controls</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button onclick="executeSQL()" class="bg-red-600 hover:bg-red-700 py-3 rounded-lg text-sm">
-                        <i class="fas fa-terminal mr-2"></i>
-                        SQL Query
-                    </button>
-                    <button onclick="syncDatabase()" class="bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-sm">
-                        <i class="fas fa-sync mr-2"></i>
-                        Sync DB
-                    </button>
-                    <button onclick="clearCache()" class="bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg text-sm">
-                        <i class="fas fa-broom mr-2"></i>
-                        Clear Cache
-                    </button>
-                    <button onclick="viewLogs()" class="bg-purple-600 hover:bg-purple-700 py-3 rounded-lg text-sm">
-                        <i class="fas fa-history mr-2"></i>
-                        View Logs
-                    </button>
-                </div>
-            </div>
-        </section>
+        </div>
     </main>
     
     <!-- Add Candy Modal -->
-    <div id="add-candy-modal" class="modal">
+    <div id="addCandyModal" class="modal">
         <div class="modal-content">
             <h2 class="text-2xl font-bold mb-4 flex items-center">
                 <i class="fas fa-candy-cane text-pink-500 mr-2"></i>
@@ -742,27 +805,22 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Stock Type (internal)</label>
-                    <input type="text" id="new-candy-type" placeholder="e.g., nitro" class="input-field">
+                    <input type="text" id="newCandyType" placeholder="e.g., nitro" class="input-field">
                 </div>
                 
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Candy Name</label>
-                    <input type="text" id="new-candy-name" placeholder="e.g., Nitro Blast" class="input-field">
+                    <input type="text" id="newCandyName" placeholder="e.g., Nitro Blast" class="input-field">
                 </div>
                 
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Flavor</label>
-                    <input type="text" id="new-candy-flavor" placeholder="e.g., Blue Raspberry" class="input-field">
-                </div>
-                
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Description</label>
-                    <input type="text" id="new-candy-desc" placeholder="Tastes like lightning!" class="input-field">
+                    <input type="text" id="newCandyFlavor" placeholder="e.g., Blue Raspberry" class="input-field">
                 </div>
                 
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Color Gradient</label>
-                    <select id="new-candy-color" class="input-field">
+                    <select id="newCandyColor" class="input-field">
                         <option value="from-purple-500 to-pink-500">Purple → Pink</option>
                         <option value="from-blue-500 to-cyan-500">Blue → Cyan</option>
                         <option value="from-green-500 to-emerald-500">Green → Emerald</option>
@@ -773,26 +831,15 @@
                 
                 <div>
                     <label class="block text-sm text-gray-400 mb-1">Cooldown (seconds)</label>
-                    <input type="number" id="new-candy-cooldown" value="5" class="input-field">
-                </div>
-                
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Candy PNG URL (optional)</label>
-                    <input type="text" id="new-candy-image" placeholder="https://example.com/candy.png" class="input-field">
-                    <p class="text-xs text-gray-500 mt-1">Or upload PNG file below</p>
-                </div>
-                
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Upload PNG</label>
-                    <input type="file" id="new-candy-file" accept="image/png" class="input-field">
+                    <input type="number" id="newCandyCooldown" value="5" class="input-field">
                 </div>
                 
                 <div class="flex space-x-2 pt-4">
-                    <button onclick="createNewCandy()" class="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded-lg">
+                    <button onclick="createNewCandy()" class="flex-1 btn-primary">
                         <i class="fas fa-save mr-1"></i>
                         Create Candy
                     </button>
-                    <button onclick="closeAddCandyModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 py-2 rounded-lg">
+                    <button onclick="closeAddCandyModal()" class="flex-1 btn-secondary">
                         Cancel
                     </button>
                 </div>
@@ -801,52 +848,45 @@
     </div>
     
     <!-- Result Modal -->
-    <div id="result-modal" class="modal">
+    <div id="resultModal" class="modal">
         <div class="modal-content">
             <div class="text-center mb-4">
                 <i class="fas fa-candy-cane text-5xl text-pink-500 mb-2"></i>
-                <h3 class="text-xl font-bold" id="result-title">Candy Dispensed!</h3>
+                <h3 class="text-xl font-bold" id="resultTitle">Candy Dispensed!</h3>
             </div>
             
             <div class="bg-gray-900 rounded-lg p-3 mb-4">
-                <pre id="result-text" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
+                <pre id="resultText" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
             </div>
             
             <div class="flex justify-between text-xs text-gray-400 mb-4">
-                <span id="result-cooldown">⏱️ 5s</span>
-                <span id="result-remaining">🍬 0 left</span>
+                <span id="resultCooldown">⏱️ 5s</span>
+                <span id="resultRemaining">🍬 0 left</span>
             </div>
             
             <div class="flex space-x-2">
-                <button onclick="copyResult()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                <button onclick="copyResult()" class="flex-1 btn-primary">
                     <i class="fas fa-copy mr-1"></i>
                     Copy
                 </button>
-                <button onclick="closeModal()" class="flex-1 glass hover:bg-gray-800 py-2 rounded-lg text-sm">
+                <button onclick="closeResultModal()" class="flex-1 btn-secondary">
                     Close
                 </button>
             </div>
         </div>
     </div>
     
-    <!-- Footer -->
-    <footer class="border-t border-gray-800 mt-12 py-6">
-        <div class="container mx-auto px-4 text-center text-sm text-gray-400">
-            <p>© 2024 XULT - Ultimate Discord Bot</p>
-            <p class="text-xs mt-1">Owner: xotiic._.420 | Premium Role: 1474136325912399994</p>
-        </div>
-    </footer>
-    
     <script>
-        // ==================== CONFIG ====================
-        const API_URL = 'https://ultbotb.onrender.com';
-        const API_KEY = 'your-api-key-here';
+        // ==================== CONFIGURATION ====================
+        const API_URL = 'http://localhost:5000';  // Change to your bot's API URL
+        const API_KEY = 'your-api-key-here';      // Get from bot's api_key.txt
         const DISCORD_CLIENT_ID = '1417284780675956766';
         const REDIRECT_URI = window.location.origin;
         
-        // IDs
+        // IDs from your bot
         const OWNER_ID = '1302203907782606880';
         const PREMIUM_ROLE_ID = '1474136325912399994';
+        const MAIN_SERVER_ID = '1344385779627069541';
         
         // State
         let currentUser = null;
@@ -860,19 +900,11 @@
         let currentResult = null;
         let userGuilds = [];
         let activityChart = null;
-        let candyImages = {};
+        let stockChart = null;
+        let yourGenerations = 0;
         
-        // Default candy data
-        const DEFAULT_CANDY = {
-            nitro: { name: 'Nitro Blast', flavor: 'Blue Raspberry', emoji: '💎', color: 'from-purple-500 to-pink-500', cooldown: 5 },
-            spotify: { name: 'Spotify Sours', flavor: 'Green Apple', emoji: '🎵', color: 'from-green-500 to-emerald-500', cooldown: 5 },
-            netflix: { name: 'Netflix Nibs', flavor: 'Cherry', emoji: '🎬', color: 'from-red-500 to-rose-500', cooldown: 5 },
-            steam: { name: 'Steam Drops', flavor: 'Cola', emoji: '🎮', color: 'from-gray-700 to-gray-900', cooldown: 5 },
-            discord: { name: 'Discord Dots', flavor: 'Blueberry', emoji: '💬', color: 'from-indigo-500 to-purple-500', cooldown: 5 },
-            minecraft: { name: 'Minecraft Blocks', flavor: 'Melon', emoji: '⛏️', color: 'from-green-700 to-lime-600', cooldown: 5 }
-        };
+        // ==================== AUTH FUNCTIONS ====================
         
-        // ==================== AUTH ====================
         function loginWithDiscord() {
             const params = new URLSearchParams({
                 client_id: DISCORD_CLIENT_ID,
@@ -913,31 +945,29 @@
                 isOwner = currentUser.id === OWNER_ID || currentUser.username === 'xotiic._.420';
                 
                 // Update UI
-                document.getElementById('auth-buttons').classList.add('hidden');
-                document.getElementById('user-menu').classList.remove('hidden');
-                document.getElementById('nav-links').classList.remove('hidden');
-                document.getElementById('login-prompt').classList.add('hidden');
-                
-                // Update user info
-                document.getElementById('user-name').textContent = currentUser.username;
-                document.getElementById('dropdown-name').textContent = currentUser.username;
-                document.getElementById('dropdown-id').textContent = `ID: ${currentUser.id}`;
-                document.getElementById('profile-username').textContent = currentUser.username;
-                document.getElementById('profile-id').textContent = currentUser.id;
+                document.getElementById('loginPrompt').classList.add('hidden');
+                document.getElementById('userMenu').classList.remove('hidden');
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('dropdownName').textContent = currentUser.username;
+                document.getElementById('dropdownId').textContent = `ID: ${currentUser.id}`;
                 
                 // Set avatar
-                document.getElementById('user-avatar').src = currentUser.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`
-                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                if (currentUser.avatar) {
+                    document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                }
                 
                 // Show role badge
-                const roleBadge = document.getElementById('user-role-badge');
+                const userBadge = document.getElementById('userBadge');
                 if (isOwner) {
-                    roleBadge.innerHTML = '<span class="badge-owner px-3 py-1 rounded-full text-xs">👑 Bot Owner</span>';
+                    userBadge.innerHTML = '<span class="owner-badge">👑 Bot Owner</span>';
                     document.querySelectorAll('.owner-only').forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('owner-welcome').classList.remove('hidden');
-                    document.getElementById('candy-admin-controls').classList.remove('hidden');
+                    document.getElementById('ownerWelcome').classList.remove('hidden');
+                    document.getElementById('candyAdminControls').classList.remove('hidden');
                 }
+                
+                // Show dashboard
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('vendingSection').classList.remove('hidden');
                 
                 // Check premium status
                 await checkPremiumStatus();
@@ -945,12 +975,13 @@
                 // Fetch data
                 await fetchUserGuilds();
                 await fetchStats();
-                await loadCandyStock();
-                await loadCandyImages();
+                await fetchCandyStock();
+                await fetchUserStats();
                 
-                // Show dashboard
-                showSection('dashboard');
                 hideLoading();
+                
+                // Show default section
+                showSection('dashboard');
                 
             } catch (e) {
                 console.error('Auth failed:', e);
@@ -963,19 +994,26 @@
             if (!currentUser) return;
             
             try {
-                // In a real app, this would call your bot API
-                // For demo, check if user is owner or has specific ID
-                hasPremium = isOwner || currentUser.id === '123456789'; // Demo condition
+                const response = await fetch(`${API_URL}/api/check-premium/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
                 
-                if (hasPremium) {
-                    document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('premium-gate').classList.add('hidden');
-                    document.getElementById('candy-machine').classList.remove('hidden');
-                    document.getElementById('profile-premium').innerHTML = '<span class="badge-premium">Premium</span>';
-                } else {
-                    document.getElementById('premium-gate').classList.remove('hidden');
-                    document.getElementById('candy-machine').classList.add('hidden');
-                    document.getElementById('profile-premium').innerHTML = '<span class="badge-warning">Free</span>';
+                if (response.ok) {
+                    const data = await response.json();
+                    hasPremium = data.hasPremium;
+                    
+                    const premiumBadge = document.getElementById('profilePremium');
+                    
+                    if (hasPremium) {
+                        premiumBadge.innerHTML = '<span class="premium-badge">Premium</span>';
+                        document.getElementById('premiumGate').classList.add('hidden');
+                        document.getElementById('candyMachine').classList.remove('hidden');
+                        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                    } else {
+                        premiumBadge.innerHTML = '<span class="badge">Free</span>';
+                        document.getElementById('premiumGate').classList.remove('hidden');
+                        document.getElementById('candyMachine').classList.add('hidden');
+                    }
                 }
             } catch (e) {
                 console.error('Premium check failed:', e);
@@ -993,9 +1031,9 @@
                 
                 userGuilds = await res.json();
                 
-                // For demo, show first 6 guilds
-                const demoGuilds = userGuilds.slice(0, 6);
-                displayServers(demoGuilds);
+                // Filter guilds where bot might be (you'd need bot's guild list)
+                // For now, show all
+                displayServers(userGuilds.slice(0, 6));
                 
             } catch (e) {
                 console.error('Failed to fetch guilds:', e);
@@ -1004,39 +1042,37 @@
         }
         
         function displayServers(servers) {
-            const container = document.getElementById('servers-container');
-            const noServersMsg = document.getElementById('no-servers-message');
+            const grid = document.getElementById('serversGrid');
+            const noServers = document.getElementById('noServers');
             
             if (!servers || servers.length === 0) {
-                container.innerHTML = '';
-                noServersMsg.classList.remove('hidden');
+                grid.innerHTML = '';
+                noServers.classList.remove('hidden');
                 return;
             }
             
-            noServersMsg.classList.add('hidden');
+            noServers.classList.add('hidden');
             
-            container.innerHTML = servers.map(server => {
+            grid.innerHTML = servers.map(server => {
                 const iconUrl = server.icon 
                     ? `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png`
                     : 'https://cdn.discordapp.com/embed/avatars/0.png';
                 
                 return `
-                    <div class="server-card p-4">
+                    <div class="glass p-4 hover:border-pink-500 transition-all cursor-pointer">
                         <div class="flex items-center space-x-3 mb-3">
                             <img src="${iconUrl}" class="w-12 h-12 rounded-full">
-                            <div class="flex-1">
+                            <div>
                                 <h3 class="font-semibold">${server.name}</h3>
                                 <p class="text-xs text-gray-400">ID: ${server.id}</p>
                             </div>
                         </div>
-                        <div class="mt-3 grid grid-cols-2 gap-2">
-                            <button onclick="alert('Server settings for ${server.id}')" class="bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
-                                <i class="fas fa-cog mr-1"></i>
-                                Manage
+                        <div class="flex space-x-2">
+                            <button onclick="viewServer('${server.id}')" class="btn-secondary text-xs flex-1">
+                                <i class="fas fa-eye mr-1"></i>View
                             </button>
-                            <button onclick="alert('Stats for ${server.id}')" class="bg-blue-600 hover:bg-blue-700 py-1 rounded text-xs">
-                                <i class="fas fa-chart-line mr-1"></i>
-                                Stats
+                            <button onclick="inviteBot()" class="btn-primary text-xs flex-1">
+                                <i class="fas fa-plus mr-1"></i>Invite
                             </button>
                         </div>
                     </div>
@@ -1044,70 +1080,63 @@
             }).join('');
         }
         
-        // ==================== CANDY FUNCTIONS ====================
-        async function loadCandyStock() {
+        // ==================== CANDY VENDING FUNCTIONS ====================
+        
+        async function fetchCandyStock() {
             try {
-                // In a real app, fetch from API
-                // For demo, use mock data
-                const mockStock = {
-                    nitro: 45,
-                    spotify: 120,
-                    netflix: 30,
-                    steam: 65,
-                    discord: 85,
-                    minecraft: 200
-                };
+                const response = await fetch(`${API_URL}/api/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
                 
-                candyItems = Object.entries(mockStock).map(([type, count]) => ({
+                if (!response.ok) throw new Error('Failed to fetch stock');
+                
+                const data = await response.json();
+                
+                candyItems = Object.entries(data).map(([type, info]) => ({
                     type,
-                    count,
-                    ...DEFAULT_CANDY[type] || { name: type, flavor: 'Mixed', emoji: '🍬', color: 'from-purple-500 to-pink-500', cooldown: 5 },
-                    image: candyImages[type] || null
+                    count: info.count,
+                    name: info.name || type.charAt(0).toUpperCase() + type.slice(1),
+                    flavor: info.flavor || 'Mixed',
+                    emoji: info.emoji || '🍬',
+                    color: info.color || 'from-purple-500 to-pink-500',
+                    cooldown: info.cooldown || 5
                 }));
                 
                 updateCandyGrid();
-                updateStats();
+                updateCharts();
+                
+                // Update total candies
+                const total = candyItems.reduce((sum, item) => sum + item.count, 0);
+                document.getElementById('statCandy').textContent = total;
+                document.getElementById('totalCandies').textContent = total;
+                document.getElementById('totalFlavors').textContent = candyItems.length;
                 
             } catch (e) {
-                console.error('Failed to load candy:', e);
-            }
-        }
-        
-        function loadCandyImages() {
-            // Load from localStorage
-            const saved = localStorage.getItem('candyImages');
-            if (saved) {
-                candyImages = JSON.parse(saved);
-            } else {
-                // Default images (you can replace with actual PNG URLs)
-                candyImages = {
-                    nitro: 'https://i.imgur.com/your-nitro.png',
-                    spotify: 'https://i.imgoker/your-spotify.png',
-                    netflix: 'https://i.imgur.com/your-netflix.png',
-                    steam: 'https://i.imgur.com/your-steam.png',
-                    discord: 'https://i.imgur.com/your-discord.png',
-                    minecraft: 'https://i.imgur.com/your-minecraft.png'
-                };
+                console.error('Failed to fetch candy stock:', e);
+                // Fallback to mock data
+                candyItems = [
+                    { type: 'nitro', count: 45, name: 'Nitro Blast', flavor: 'Blue Raspberry', emoji: '💎', color: 'from-purple-500 to-pink-500', cooldown: 5 },
+                    { type: 'spotify', count: 120, name: 'Spotify Sours', flavor: 'Green Apple', emoji: '🎵', color: 'from-green-500 to-emerald-500', cooldown: 5 },
+                    { type: 'netflix', count: 30, name: 'Netflix Nibs', flavor: 'Cherry', emoji: '🎬', color: 'from-red-500 to-rose-500', cooldown: 5 },
+                    { type: 'steam', count: 65, name: 'Steam Drops', flavor: 'Cola', emoji: '🎮', color: 'from-gray-700 to-gray-900', cooldown: 5 },
+                    { type: 'discord', count: 85, name: 'Discord Dots', flavor: 'Blueberry', emoji: '💬', color: 'from-indigo-500 to-purple-500', cooldown: 5 },
+                    { type: 'minecraft', count: 200, name: 'Minecraft Blocks', flavor: 'Melon', emoji: '⛏️', color: 'from-green-700 to-lime-600', cooldown: 5 }
+                ];
+                updateCandyGrid();
             }
         }
         
         function updateCandyGrid() {
-            const grid = document.getElementById('candy-grid');
-            if (!grid) return;
-            
-            const total = candyItems.reduce((sum, i) => sum + i.count, 0);
-            document.getElementById('total-candies').textContent = total;
-            document.getElementById('total-flavors').textContent = candyItems.length;
-            document.getElementById('stat-candy').textContent = total;
+            const grid = document.getElementById('candyGrid');
             
             grid.innerHTML = candyItems.map(item => {
                 const pct = Math.min(100, (item.count / 100) * 100);
                 const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
                 const progressColor = item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high';
+                const isSelected = selectedCandy?.type === item.type;
                 
                 return `
-                    <div class="candy-card ${selectedCandy?.type === item.type ? 'border-pink-500 shadow-lg' : ''}" 
-                         onclick="selectCandy('${item.type}')">
+                    <div class="candy-card ${isSelected ? 'selected' : ''}" onclick="selectCandy('${item.type}')">
                         <div class="candy-stripes">
                             <div class="stripe-pink"></div>
                             <div class="stripe-purple"></div>
@@ -1116,41 +1145,36 @@
                             <div class="stripe-yellow"></div>
                         </div>
                         
-                        <div class="p-4">
-                            <div class="text-center mb-3">
-                                ${item.image ? 
-                                    `<img src="${item.image}" class="candy-image mx-auto">` : 
-                                    `<div class="text-5xl mb-2">${item.emoji}</div>`
-                                }
-                                <h3 class="font-bold text-lg">${item.name}</h3>
-                                <div class="flavor-tag mx-auto mt-1">
-                                    <i class="fas fa-tag mr-1 text-xs"></i>
-                                    ${item.flavor}
-                                </div>
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-2">${item.emoji}</div>
+                            <h3 class="font-bold text-lg">${item.name}</h3>
+                            <div class="flavor-tag mt-1">
+                                <i class="fas fa-tag mr-1 text-xs"></i>
+                                ${item.flavor}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">Stock</span>
+                                <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'} font-bold">${item.count}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${progressColor}" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-1 text-gray-400 text-xs">
+                                <i class="fas fa-clock"></i>
+                                <span>${item.cooldown}s</span>
                             </div>
                             
-                            <div class="mb-3">
-                                <div class="flex justify-between text-xs mb-1">
-                                    <span class="text-gray-400">Stock</span>
-                                    <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'} font-bold">${item.count}</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill ${progressColor}" style="width: ${pct}%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-1 text-gray-400 text-xs">
-                                    <i class="fas fa-clock"></i>
-                                    <span>${item.cooldown}s</span>
-                                </div>
-                                
-                                <button onclick="event.stopPropagation(); generateCandy('${item.type}')" 
-                                        class="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
-                                        ${item.count === 0 ? 'disabled' : ''}>
-                                    ${item.count === 0 ? 'Sold Out' : 'Dispense'}
-                                </button>
-                            </div>
+                            <button onclick="event.stopPropagation(); generateCandy('${item.type}')" 
+                                    class="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${item.count === 0 ? 'disabled' : ''}>
+                                ${item.count === 0 ? 'Sold Out' : 'Dispense'}
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1171,48 +1195,76 @@
                 return;
             }
             
+            if (!hasPremium) {
+                alert('Premium role required!');
+                return;
+            }
+            
             const item = candyItems.find(i => i.type === type);
             if (!item || item.count === 0) {
                 alert('Out of stock!');
                 return;
             }
             
-            // Simulate generation
-            item.count -= 1;
+            showLoading('Dispensing candy...');
             
-            // Mock result
-            currentResult = {
-                success: true,
-                content: `Your ${item.name} code: XULT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
-                cooldown: item.cooldown,
-                remaining: item.count
-            };
-            
-            // Show result
-            document.getElementById('result-modal').classList.add('active');
-            document.getElementById('result-title').textContent = 'Candy Dispensed! 🍬';
-            document.getElementById('result-text').textContent = currentResult.content;
-            document.getElementById('result-cooldown').innerHTML = `⏱️ ${currentResult.cooldown}s`;
-            document.getElementById('result-remaining').innerHTML = `🍬 ${currentResult.remaining} left`;
-            
-            // Update stats
-            const yourCandies = parseInt(document.getElementById('your-candies').textContent) + 1;
-            document.getElementById('your-candies').textContent = yourCandies;
-            
-            // Update grid
-            updateCandyGrid();
-            startCooldown(item.cooldown);
-            
-            // Add to logs
-            addToLogs(`${item.name} dispensed by ${currentUser?.username}`);
+            try {
+                const response = await fetch(`${API_URL}/api/stock/generate/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local count
+                    item.count -= 1;
+                    
+                    // Show result
+                    currentResult = data;
+                    document.getElementById('resultModal').classList.add('active');
+                    document.getElementById('resultTitle').textContent = 'Candy Dispensed! 🍬';
+                    document.getElementById('resultText').textContent = data.content;
+                    document.getElementById('resultCooldown').innerHTML = `⏱️ ${data.cooldown}s`;
+                    document.getElementById('resultRemaining').innerHTML = `🍬 ${data.remaining} left`;
+                    
+                    // Update stats
+                    yourGenerations++;
+                    document.getElementById('yourCandies').textContent = yourGenerations;
+                    document.getElementById('profileCandies').textContent = yourGenerations;
+                    
+                    // Update grid
+                    updateCandyGrid();
+                    
+                    // Start cooldown
+                    startCooldown(data.cooldown || 5);
+                    
+                    // Add to logs
+                    addToLogs(`Dispensed ${item.name}`);
+                    
+                } else {
+                    alert(data.error || 'Failed to generate');
+                }
+            } catch (e) {
+                console.error('Generation failed:', e);
+                alert('Failed to generate stock. Is the bot online?');
+            } finally {
+                hideLoading();
+            }
         }
         
         function startCooldown(seconds) {
             cooldown = seconds;
-            document.getElementById('cooldown-bar').classList.remove('hidden');
-            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
-            document.getElementById('cooldown-progress').style.width = '100%';
-            document.getElementById('cooldown-display').textContent = `${cooldown}s`;
+            document.getElementById('cooldownBar').classList.remove('hidden');
+            document.getElementById('cooldownTimer').textContent = `${cooldown}s`;
+            document.getElementById('cooldownProgress').style.width = '100%';
+            document.getElementById('cooldownDisplay').textContent = `${cooldown}s`;
             
             if (cooldownInterval) clearInterval(cooldownInterval);
             
@@ -1222,34 +1274,83 @@
                 const remaining = Math.max(0, seconds - elapsed);
                 const pct = (remaining / seconds) * 100;
                 
-                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
-                document.getElementById('cooldown-progress').style.width = `${pct}%`;
-                document.getElementById('cooldown-display').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldownTimer').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldownProgress').style.width = `${pct}%`;
+                document.getElementById('cooldownDisplay').textContent = `${Math.ceil(remaining)}s`;
                 
                 if (remaining <= 0) {
                     clearInterval(cooldownInterval);
-                    document.getElementById('cooldown-bar').classList.add('hidden');
-                    document.getElementById('cooldown-display').textContent = '0s';
+                    document.getElementById('cooldownBar').classList.add('hidden');
+                    document.getElementById('cooldownDisplay').textContent = '0s';
                     cooldown = 0;
                 }
             }, 100);
         }
         
         function addToLogs(message) {
-            const logs = document.getElementById('stock-logs');
+            const logs = document.getElementById('stockLogs');
             const time = new Date().toLocaleTimeString();
             logs.innerHTML = `<div class="text-xs text-gray-400"><span class="text-pink-400">[${time}]</span> ${message}</div>` + logs.innerHTML;
         }
         
         // ==================== ADMIN FUNCTIONS ====================
+        
         function updateAdminSelect() {
-            const select = document.getElementById('admin-candy-select');
+            const select = document.getElementById('adminCandySelect');
             if (!select) return;
             
-            select.innerHTML = '<option value="">Select Candy</option>';
+            select.innerHTML = '<option value="">Select Candy Type</option>';
             candyItems.forEach(item => {
-                select.innerHTML += `<option value="${item.type}">${item.name}</option>`;
+                select.innerHTML += `<option value="${item.type}">${item.name} (${item.count} left)</option>`;
             });
+        }
+        
+        async function addToStock() {
+            const type = document.getElementById('adminCandySelect').value;
+            const content = document.getElementById('adminStockContent').value;
+            
+            if (!type || !content) {
+                alert('Select a candy type and enter content');
+                return;
+            }
+            
+            showLoading('Adding to stock...');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/stock/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, content })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Added ${data.count || 'new'} entries to ${type}!`);
+                    document.getElementById('adminStockContent').value = '';
+                    await fetchCandyStock();
+                } else {
+                    alert(data.error || 'Failed to add stock');
+                }
+            } catch (e) {
+                console.error('Add stock failed:', e);
+                alert('Failed to add stock');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function replaceStock() {
+            alert('Replace stock functionality - would replace all entries');
+        }
+        
+        async function refreshCandyStock() {
+            showLoading('Refreshing stock...');
+            await fetchCandyStock();
+            hideLoading();
         }
         
         function showAddCandyModal() {
@@ -1257,22 +1358,19 @@
                 alert('Only the owner can add new candy!');
                 return;
             }
-            document.getElementById('add-candy-modal').classList.add('active');
+            document.getElementById('addCandyModal').classList.add('active');
         }
         
         function closeAddCandyModal() {
-            document.getElementById('add-candy-modal').classList.remove('active');
+            document.getElementById('addCandyModal').classList.remove('active');
         }
         
         function createNewCandy() {
-            const type = document.getElementById('new-candy-type').value;
-            const name = document.getElementById('new-candy-name').value;
-            const flavor = document.getElementById('new-candy-flavor').value;
-            const desc = document.getElementById('new-candy-desc').value;
-            const color = document.getElementById('new-candy-color').value;
-            const cooldown = parseInt(document.getElementById('new-candy-cooldown').value);
-            const imageUrl = document.getElementById('new-candy-image').value;
-            const file = document.getElementById('new-candy-file').files[0];
+            const type = document.getElementById('newCandyType').value;
+            const name = document.getElementById('newCandyName').value;
+            const flavor = document.getElementById('newCandyFlavor').value;
+            const color = document.getElementById('newCandyColor').value;
+            const cooldown = parseInt(document.getElementById('newCandyCooldown').value);
             
             if (!type || !name) {
                 alert('Please fill in required fields');
@@ -1284,144 +1382,71 @@
                 type,
                 name,
                 flavor: flavor || 'Mixed',
-                description: desc || `${name} candy`,
                 color,
                 cooldown,
                 count: 0,
-                emoji: '🍬',
-                image: imageUrl || null
+                emoji: '🍬'
             };
             
             candyItems.push(newCandy);
-            
-            // Handle image upload
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    candyImages[type] = e.target.result;
-                    localStorage.setItem('candyImages', JSON.stringify(candyImages));
-                    newCandy.image = e.target.result;
-                    updateCandyGrid();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                updateCandyGrid();
-            }
+            updateCandyGrid();
             
             alert(`Candy "${name}" created!`);
             closeAddCandyModal();
             
             // Reset form
-            document.getElementById('new-candy-type').value = '';
-            document.getElementById('new-candy-name').value = '';
-            document.getElementById('new-candy-flavor').value = '';
-            document.getElementById('new-candy-desc').value = '';
-            document.getElementById('new-candy-image').value = '';
-            document.getElementById('new-candy-file').value = '';
-        }
-        
-        function loadCandyForEdit() {
-            const type = document.getElementById('admin-candy-select').value;
-            if (!type) {
-                alert('Select a candy');
-                return;
-            }
-            
-            const candy = candyItems.find(c => c.type === type);
-            if (!candy) return;
-            
-            // For demo, just show alert
-            alert(`Editing ${candy.name}\nCurrent stock: ${candy.count}`);
-        }
-        
-        function deleteCandyType() {
-            const type = document.getElementById('admin-candy-select').value;
-            if (!type) {
-                alert('Select a candy');
-                return;
-            }
-            
-            if (!isOwner) {
-                alert('Only the owner can delete candy!');
-                return;
-            }
-            
-            if (confirm(`Delete ${type} candy?`)) {
-                candyItems = candyItems.filter(c => c.type !== type);
-                updateCandyGrid();
-                alert('Candy deleted');
-            }
-        }
-        
-        async function addToStock() {
-            const type = document.getElementById('admin-candy-select').value;
-            const content = document.getElementById('admin-stock-content').value;
-            
-            if (!type || !content) {
-                alert('Select candy and enter content');
-                return;
-            }
-            
-            // Split content into entries
-            const entries = content.split('\n').filter(line => line.trim());
-            
-            // Add to candy count
-            const candy = candyItems.find(c => c.type === type);
-            if (candy) {
-                candy.count += entries.length;
-                updateCandyGrid();
-                addToLogs(`Added ${entries.length} pieces to ${candy.name}`);
-            }
-            
-            document.getElementById('admin-stock-content').value = '';
-            alert(`Added ${entries.length} pieces to stock!`);
-        }
-        
-        function replaceStock() {
-            const type = document.getElementById('admin-candy-select').value;
-            const content = document.getElementById('admin-stock-content').value;
-            
-            if (!type || !content) {
-                alert('Select candy and enter content');
-                return;
-            }
-            
-            if (!isOwner) {
-                alert('Only owner can replace stock!');
-                return;
-            }
-            
-            if (confirm(`Replace all ${type} stock?`)) {
-                const entries = content.split('\n').filter(line => line.trim());
-                const candy = candyItems.find(c => c.type === type);
-                if (candy) {
-                    candy.count = entries.length;
-                    updateCandyGrid();
-                    addToLogs(`Replaced ${candy.name} stock with ${entries.length} pieces`);
-                }
-                document.getElementById('admin-stock-content').value = '';
-                alert('Stock replaced!');
-            }
+            document.getElementById('newCandyType').value = '';
+            document.getElementById('newCandyName').value = '';
+            document.getElementById('newCandyFlavor').value = '';
+            document.getElementById('newCandyCooldown').value = '5';
         }
         
         // ==================== STATS FUNCTIONS ====================
+        
         async function fetchStats() {
             try {
-                // Mock stats
-                document.getElementById('stat-servers').textContent = '127';
-                document.getElementById('stat-users').textContent = '45.8K';
-                document.getElementById('stat-premium').textContent = '1,234';
+                const response = await fetch(`${API_URL}/api/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
                 
-                if (isOwner) {
-                    document.getElementById('owner-total-users').textContent = '45,892';
-                    document.getElementById('owner-total-servers').textContent = '127';
-                    document.getElementById('owner-premium-users').textContent = '1,234';
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    document.getElementById('statServers').textContent = data.total_servers || 0;
+                    document.getElementById('statUsers').textContent = data.total_users || 0;
+                    document.getElementById('statPremium').textContent = data.premium_users || 0;
+                    
+                    if (data.activity) {
+                        updateChart(data.activity);
+                    }
                 }
-                
-                updateChart([65, 78, 92, 105, 98, 120, 145]);
-                
             } catch (e) {
                 console.error('Stats fetch failed:', e);
+                // Fallback to mock data
+                document.getElementById('statServers').textContent = '127';
+                document.getElementById('statUsers').textContent = '45.8K';
+                document.getElementById('statPremium').textContent = '1,234';
+                updateChart([65, 78, 92, 105, 98, 120, 145]);
+            }
+        }
+        
+        async function fetchUserStats() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/user/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('profileName').textContent = currentUser.username;
+                    document.getElementById('profileId').textContent = currentUser.id;
+                }
+            } catch (e) {
+                console.error('User stats fetch failed:', e);
+                document.getElementById('profileName').textContent = currentUser.username;
+                document.getElementById('profileId').textContent = currentUser.id;
             }
         }
         
@@ -1466,20 +1491,102 @@
             });
         }
         
-        function updateStats() {
-            const total = candyItems.reduce((sum, i) => sum + i.count, 0);
-            document.getElementById('total-candies').textContent = total;
-            document.getElementById('total-flavors').textContent = candyItems.length;
+        function updateCharts() {
+            const ctx2 = document.getElementById('stockChart').getContext('2d');
+            
+            if (stockChart) {
+                stockChart.destroy();
+            }
+            
+            const labels = candyItems.map(i => i.name);
+            const data = candyItems.map(i => i.count);
+            
+            stockChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#ff69b4', '#9b59b6', '#3498db', '#2ecc71', '#f1c40f', '#e74c3c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // ==================== OWNER FUNCTIONS ====================
+        
+        async function fetchOwnerData() {
+            if (!isOwner) return;
+            
+            try {
+                const usersRes = await fetch(`${API_URL}/api/owner/users`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (usersRes.ok) {
+                    const users = await usersRes.json();
+                    
+                    document.getElementById('ownerTotalUsers').textContent = users.length;
+                    
+                    const premiumCount = users.filter(u => u.role === 'premium' || u.role === 'owner').length;
+                    document.getElementById('ownerPremiumUsers').textContent = premiumCount;
+                    
+                    // Populate table
+                    const tbody = document.getElementById('userTableBody');
+                    tbody.innerHTML = users.slice(0, 10).map(user => `
+                        <tr class="border-b border-gray-700 hover:bg-gray-800/50">
+                            <td class="py-2 px-4 text-sm">${user.id}</td>
+                            <td class="py-2 px-4 text-sm">${user.username}</td>
+                            <td class="py-2 px-4 text-sm">${user.coins}</td>
+                            <td class="py-2 px-4 text-sm">${user.xp || 0}</td>
+                            <td class="py-2 px-4 text-sm">${user.level || 1}</td>
+                            <td class="py-2 px-4 text-sm">
+                                ${user.role === 'owner' ? '<span class="owner-badge">Owner</span>' : 
+                                  user.role === 'premium' ? '<span class="premium-badge">Premium</span>' : 
+                                  '<span class="badge">User</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                
+                const serversRes = await fetch(`${API_URL}/api/owner/servers`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (serversRes.ok) {
+                    const servers = await serversRes.json();
+                    document.getElementById('ownerTotalServers').textContent = servers.length;
+                }
+                
+            } catch (e) {
+                console.error('Owner data fetch failed:', e);
+            }
         }
         
         // ==================== UTILITY FUNCTIONS ====================
+        
         function showSection(sectionId) {
-            const sections = ['dashboard', 'servers', 'vending', 'premium', 'admin', 'owner'];
+            const sections = ['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'];
             sections.forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+                const el = document.getElementById(id + 'Section');
+                if (el) el.classList.add('hidden');
             });
-            document.getElementById(sectionId).classList.remove('hidden');
             
+            const target = document.getElementById(sectionId + 'Section');
+            if (target) target.classList.remove('hidden');
+            
+            // Update active tab
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
                 if (tab.dataset.section === sectionId) {
@@ -1487,22 +1594,67 @@
                 }
             });
             
-            window.location.hash = sectionId;
+            // Load section-specific data
+            if (sectionId === 'owner' && isOwner) {
+                fetchOwnerData();
+            } else if (sectionId === 'admin') {
+                fetchAdminStats();
+            }
+        }
+        
+        async function fetchAdminStats() {
+            try {
+                const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (statsRes.ok) {
+                    const data = await statsRes.json();
+                    
+                    document.getElementById('adminCpu').textContent = data.cpu + '%';
+                    document.getElementById('adminCpuBar').style.width = data.cpu + '%';
+                    
+                    const memPercent = (data.memory / data.memory_total) * 100;
+                    document.getElementById('adminMemory').textContent = Math.round(data.memory) + ' MB';
+                    document.getElementById('adminMemoryBar').style.width = memPercent + '%';
+                    
+                    document.getElementById('adminUptime').textContent = data.uptime;
+                    document.getElementById('adminDbSize').textContent = data.dbSize + ' MB';
+                }
+                
+                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (logsRes.ok) {
+                    const logs = await logsRes.json();
+                    const logsDiv = document.getElementById('stockLogs');
+                    logsDiv.innerHTML = logs.map(log => `
+                        <div class="text-xs text-gray-400 border-b border-gray-700 pb-1">
+                            <span class="text-pink-400">[${log.time}]</span>
+                            User ${log.userId} generated ${log.type}
+                        </div>
+                    `).join('');
+                }
+                
+            } catch (e) {
+                console.error('Admin stats fetch failed:', e);
+            }
         }
         
         function showLoading(text) {
-            document.getElementById('loading-text').textContent = text;
-            document.getElementById('loading-overlay').classList.remove('hidden');
-            document.getElementById('loading-overlay').classList.add('flex');
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').classList.add('flex');
         }
         
         function hideLoading() {
-            document.getElementById('loading-overlay').classList.add('hidden');
-            document.getElementById('loading-overlay').classList.remove('flex');
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('loadingOverlay').classList.remove('flex');
         }
         
-        function toggleMenu() {
-            document.getElementById('user-dropdown').classList.toggle('hidden');
+        function toggleUserMenu() {
+            document.getElementById('userDropdown').classList.toggle('hidden');
         }
         
         function logout() {
@@ -1511,27 +1663,38 @@
             isOwner = false;
             hasPremium = false;
             
-            document.getElementById('auth-buttons').classList.remove('hidden');
-            document.getElementById('user-menu').classList.add('hidden');
-            document.getElementById('nav-links').classList.add('hidden');
-            document.getElementById('login-prompt').classList.remove('hidden');
+            document.getElementById('loginPrompt').classList.remove('hidden');
+            document.getElementById('userMenu').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('vendingSection').classList.add('hidden');
+            document.getElementById('serversSection').classList.add('hidden');
+            document.getElementById('premiumSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
+            document.getElementById('ownerSection').classList.add('hidden');
             
             document.querySelectorAll('.owner-only, .admin-only').forEach(el => el.classList.add('hidden'));
-            document.getElementById('candy-admin-controls').classList.add('hidden');
             
             showSection('dashboard');
+        }
+        
+        function refreshData() {
+            showLoading('Refreshing data...');
+            Promise.all([
+                fetchStats(),
+                fetchCandyStock(),
+                fetchUserStats()
+            ]).then(() => {
+                hideLoading();
+                document.getElementById('lastUpdated').textContent = 'just now';
+            }).catch(() => hideLoading());
         }
         
         function inviteBot() {
             window.open(`https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`, '_blank');
         }
         
-        function refreshCandyStock() {
-            loadCandyStock();
-        }
-        
-        function checkPremiumStatus() {
-            checkPremiumStatus();
+        function viewServer(serverId) {
+            alert(`Server settings for ${serverId} would open here`);
         }
         
         function copyResult() {
@@ -1541,13 +1704,12 @@
             }
         }
         
-        function closeModal() {
-            document.getElementById('result-modal').classList.remove('active');
+        function closeResultModal() {
+            document.getElementById('resultModal').classList.remove('active');
         }
         
-        // Admin functions
         function backupDatabase() {
-            alert('Database backup created!');
+            alert('Database backup started!');
         }
         
         function executeSQL() {
@@ -1555,7 +1717,7 @@
         }
         
         function syncDatabase() {
-            alert('Database synced!');
+            alert('Database sync started!');
         }
         
         function clearCache() {
@@ -1566,14 +1728,20 @@
             alert('Opening logs...');
         }
         
+        function checkPremiumStatus() {
+            checkPremiumStatus();
+        }
+        
         // ==================== INIT ====================
+        
+        // Handle OAuth redirect
         handleAuth();
         
-        // Check URL hash
+        // Check URL hash for section
         if (window.location.hash) {
             const section = window.location.hash.substring(1);
             setTimeout(() => {
-                if (['dashboard', 'servers', 'vending', 'premium', 'admin', 'owner'].includes(section)) {
+                if (['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'].includes(section)) {
                     showSection(section);
                 }
             }, 100);
@@ -1581,8 +1749,8 @@
         
         // Close dropdown when clicking outside
         window.onclick = function(e) {
-            if (!e.target.matches('#user-menu, #user-menu *')) {
-                document.getElementById('user-dropdown').classList.add('hidden');
+            if (!e.target.matches('#userMenu, #userMenu *')) {
+                document.getElementById('userDropdown').classList.add('hidden');
             }
         };
     </script>
