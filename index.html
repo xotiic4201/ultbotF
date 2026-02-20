@@ -13,9 +13,20 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #43e97b;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --dark: #1a1a2e;
+            --light: #f5f5f5;
+            --discord: #5865F2;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
             color: #fff;
             overflow-x: hidden;
@@ -51,6 +62,84 @@
                 transform: translateY(-1000px) rotate(720deg);
                 opacity: 0;
             }
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .login-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a8c0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .discord-btn {
+            background: var(--discord);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            border: 2px solid transparent;
+        }
+
+        .discord-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4);
+        }
+
+        .discord-btn img {
+            width: 24px;
+            height: 24px;
         }
 
         /* Navigation */
@@ -93,6 +182,7 @@
             font-weight: 500;
             transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
         .nav-links a:hover {
@@ -107,7 +197,7 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             transition: width 0.3s ease;
         }
 
@@ -137,11 +227,38 @@
         }
 
         .user-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             padding: 0.2rem 0.5rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+        }
+
+        .badge-owner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .badge-admin {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, var(--success) 0%, #38f9d7 100%);
+        }
+
+        .logout-btn {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
         }
 
         /* Main container */
@@ -166,7 +283,6 @@
             padding: 1.5rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
@@ -175,22 +291,6 @@
             transform: translateY(-5px);
             border-color: #a8c0ff;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
-        }
-
-        .stat-card:hover::before {
-            transform: translateX(0);
         }
 
         .stat-icon {
@@ -211,12 +311,6 @@
             margin-top: 0.5rem;
         }
 
-        .stat-change {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            color: #a8c0ff;
-        }
-
         /* Chart container */
         .chart-container {
             background: rgba(255, 255, 255, 0.1);
@@ -234,6 +328,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .section-title {
@@ -244,6 +340,7 @@
         .section-actions {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -258,18 +355,28 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border: none;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border: none;
         }
 
         /* Vending machine grid */
@@ -287,7 +394,6 @@
             padding: 1.5rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
@@ -296,27 +402,6 @@
             transform: scale(1.02);
             border-color: #a8c0ff;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .vending-item::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transform: rotate(45deg) translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .vending-item:hover::before {
-            transform: rotate(45deg) translateX(100%);
         }
 
         .item-header {
@@ -359,22 +444,11 @@
             margin-top: 1rem;
         }
 
-        .item-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #a8c0ff;
-        }
-
-        .item-price span {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
         .generate-btn {
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: #fff;
             font-weight: 600;
             cursor: pointer;
@@ -415,6 +489,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         th {
@@ -450,7 +525,7 @@
         }
 
         .role-premium {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            background: linear-gradient(135deg, var(--success) 0%, #38f9d7 100%);
         }
 
         .role-user {
@@ -473,7 +548,7 @@
         }
 
         .action-btn.danger:hover {
-            background: #ff4757;
+            background: var(--danger);
         }
 
         /* Modal */
@@ -496,7 +571,7 @@
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border-radius: 20px;
             padding: 2rem;
             max-width: 500px;
@@ -565,19 +640,24 @@
         }
 
         /* Toast notification */
-        .toast {
+        .toast-container {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
+            z-index: 3000;
+        }
+
+        .toast {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 10px;
             padding: 1rem 1.5rem;
+            margin-top: 0.5rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
             transform: translateX(400px);
             transition: transform 0.3s ease;
-            z-index: 3000;
+            max-width: 300px;
         }
 
         .toast.show {
@@ -585,15 +665,15 @@
         }
 
         .toast.success {
-            border-left: 4px solid #43e97b;
+            border-left: 4px solid var(--success);
         }
 
         .toast.error {
-            border-left: 4px solid #ff4757;
+            border-left: 4px solid var(--danger);
         }
 
         .toast.warning {
-            border-left: 4px solid #ffa502;
+            border-left: 4px solid var(--warning);
         }
 
         /* Tabs */
@@ -603,6 +683,7 @@
             margin-bottom: 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .tab {
@@ -610,14 +691,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .tab:hover {
-            color: #a8c0ff;
+            color: #fff;
         }
 
         .tab.active {
-            color: #a8c0ff;
+            color: #fff;
+            font-weight: 600;
         }
 
         .tab.active::after {
@@ -627,7 +710,7 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         }
 
         .tab-content {
@@ -636,6 +719,18 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Search bar */
@@ -659,27 +754,21 @@
             border-color: #a8c0ff;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .vending-grid {
-                grid-template-columns: 1fr;
-            }
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Loading animation */
-        .loading {
+        /* Loading states */
+        .loading-spinner {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -689,12 +778,55 @@
             to { transform: rotate(360deg); }
         }
 
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--danger);
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 10px;
+            border: 1px solid var(--danger);
+        }
+
+        .retry-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
         /* Status indicators */
         .status-online {
             display: inline-block;
             width: 10px;
             height: 10px;
-            background: #43e97b;
+            background: var(--success);
             border-radius: 50%;
             margin-right: 0.5rem;
             animation: pulse 2s infinite;
@@ -712,338 +844,355 @@
             }
         }
 
-        /* Progress bar */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
-            transition: width 0.3s ease;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vending-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="animated-bg" id="animatedBg"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">XULT BOT</div>
-            <div class="nav-links">
-                <a href="#" onclick="switchTab('dashboard')">Dashboard</a>
-                <a href="#" onclick="switchTab('vending')">Vending Machine</a>
-                <a href="#" onclick="switchTab('users')">Users</a>
-                <a href="#" onclick="switchTab('premium')">Premium</a>
-                <a href="#" onclick="switchTab('servers')">Servers</a>
-                <a href="#" onclick="switchTab('logs')">Logs</a>
-                <a href="#" onclick="switchTab('system')">System</a>
-                <div class="user-info" id="userInfo">
-                    <div class="loading" id="userLoading"></div>
-                </div>
-            </div>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">XULT</div>
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Login with Discord to access your dashboard</p>
+            <button class="discord-btn" onclick="loginWithDiscord()">
+                <img src="https://cdn.prod.website-files.com/6257adef93867e50d84b30e5/65a4fe71d7c6a3e7d8e6a17b_Discord%20Logo%20-%20White.png" alt="Discord">
+                Login with Discord
+            </button>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('dashboard')" data-tab="dashboard">Dashboard</div>
-            <div class="tab" onclick="switchTab('vending')" data-tab="vending">Vending Machine</div>
-            <div class="tab" onclick="switchTab('users')" data-tab="users">Users</div>
-            <div class="tab" onclick="switchTab('premium')" data-tab="premium">Premium</div>
-            <div class="tab" onclick="switchTab('servers')" data-tab="servers">Servers</div>
-            <div class="tab" onclick="switchTab('logs')" data-tab="logs">Logs</div>
-            <div class="tab" onclick="switchTab('system')" data-tab="system">System</div>
-        </div>
+    <!-- Main Dashboard (Hidden by default) -->
+    <div id="dashboard" style="display: none;">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo" onclick="switchTab('dashboard')">XULT BOT</div>
+                <div class="nav-links">
+                    <a onclick="switchTab('dashboard')">Dashboard</a>
+                    <a onclick="switchTab('vending')">Vending Machine</a>
+                    <a onclick="switchTab('users')">Users</a>
+                    <a onclick="switchTab('premium')">Premium</a>
+                    <a onclick="switchTab('servers')">Servers</a>
+                    <a onclick="switchTab('logs')">Logs</a>
+                    <a onclick="switchTab('system')">System</a>
+                    <div class="user-info" id="userInfo">
+                        <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
+                        <span class="user-name" id="userName"></span>
+                        <span class="user-badge" id="userBadge"></span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
 
-        <!-- Dashboard Tab -->
-        <div id="dashboard-tab" class="tab-content active">
-            <div class="stats-grid" id="statsGrid">
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-title">Total Users</div>
-                    <div class="stat-value" id="totalUsers">0</div>
-                    <div class="stat-change" id="userChange">+0 today</div>
+        <div class="container">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('dashboard')" data-tab="dashboard">Dashboard</div>
+                <div class="tab" onclick="switchTab('vending')" data-tab="vending">Vending Machine</div>
+                <div class="tab" onclick="switchTab('users')" data-tab="users">Users</div>
+                <div class="tab" onclick="switchTab('premium')" data-tab="premium">Premium</div>
+                <div class="tab" onclick="switchTab('servers')" data-tab="servers">Servers</div>
+                <div class="tab" onclick="switchTab('logs')" data-tab="logs">Logs</div>
+                <div class="tab" onclick="switchTab('system')" data-tab="system">System</div>
+            </div>
+
+            <!-- Loading overlay for tab switches -->
+            <div id="tabLoading" style="display: none;" class="loading-spinner">
+                <div class="loading"></div>
+                <p style="margin-top: 1rem;">Loading...</p>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="loading-spinner" style="display: none;" id="statsLoading">
+                            <div class="loading"></div>
+                        </div>
+                        <div id="statsContent">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-title">Total Users</div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🖥️</div>
+                        <div class="stat-title">Servers</div>
+                        <div class="stat-value" id="totalServers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-title">Commands Today</div>
+                        <div class="stat-value" id="totalCommands">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-title">Premium Users</div>
+                        <div class="stat-value" id="premiumUsers">0</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🖥️</div>
-                    <div class="stat-title">Servers</div>
-                    <div class="stat-value" id="totalServers">0</div>
-                    <div class="stat-change" id="serverChange">active</div>
+
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-title">Commands Today</div>
-                    <div class="stat-value" id="totalCommands">0</div>
-                    <div class="stat-change" id="commandChange">24h usage</div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activity</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshDashboard()">🔄 Refresh</button>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💎</div>
-                    <div class="stat-title">Premium Users</div>
-                    <div class="stat-value" id="premiumUsers">0</div>
-                    <div class="stat-change" id="premiumChange">active</div>
+
+                <div class="table-container">
+                    <div id="activityLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <div id="activityError" class="error-message" style="display: none;"></div>
+                    <table id="recentActivityTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Item</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivityBody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <canvas id="activityChart"></canvas>
-            </div>
-
-            <div class="section-header">
-                <h2 class="section-title">Recent Activity</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshDashboard()">🔄 Refresh</button>
+            <!-- Vending Machine Tab -->
+            <div id="vending-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">🎰 Vending Machine</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshStock()">🔄 Refresh</button>
+                        <button class="btn btn-primary" onclick="showAddStockModal()" id="addStockBtn">➕ Add Stock</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="table-container">
-                <table id="recentActivityTable">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Action</th>
-                            <th>Item</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentActivityBody">
-                        <tr>
-                            <td colspan="4" style="text-align: center;">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Vending Machine Tab -->
-        <div id="vending-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">🎰 Vending Machine</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshStock()">🔄 Refresh</button>
-                    <button class="btn btn-primary" onclick="showAddStockModal()" id="addStockBtn">➕ Add Stock</button>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search stock types..." id="stockSearch" onkeyup="filterStock()">
                 </div>
-            </div>
 
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search stock types..." id="stockSearch" onkeyup="filterStock()">
-            </div>
-
-            <div class="vending-grid" id="vendingGrid">
-                <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                <div id="stockLoading" class="loading-spinner" style="display: none;">
                     <div class="loading"></div>
-                    <p>Loading vending machine...</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Users Tab -->
-        <div id="users-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">👥 User Management</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshUsers()">🔄 Refresh</button>
-                </div>
+                <div id="stockError" class="error-message" style="display: none;"></div>
+                <div class="vending-grid" id="vendingGrid"></div>
             </div>
 
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search users by ID or username..." id="userSearch" onkeyup="filterUsers()">
-            </div>
-
-            <div class="table-container">
-                <table id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Role</th>
-                            <th>Coins</th>
-                            <th>Level</th>
-                            <th>Premium</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersBody">
-                        <tr>
-                            <td colspan="7" style="text-align: center;">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Premium Tab -->
-        <div id="premium-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">💎 Premium Management</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshPremium()">🔄 Refresh</button>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">💎</div>
-                    <div class="stat-title">Total Premium</div>
-                    <div class="stat-value" id="totalPremium">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-title">Usage Today</div>
-                    <div class="stat-value" id="premiumUsage">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⏳</div>
-                    <div class="stat-title">Expiring Soon</div>
-                    <div class="stat-value" id="expiringSoon">0</div>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <table id="premiumTable">
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>Username</th>
-                            <th>Granted</th>
-                            <th>Expires</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="premiumBody">
-                        <tr>
-                            <td colspan="6" style="text-align: center;">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Servers Tab -->
-        <div id="servers-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">🖥️ Server Management</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshServers()">🔄 Refresh</button>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <table id="serversTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Members</th>
-                            <th>Owner</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="serversBody">
-                        <tr>
-                            <td colspan="6" style="text-align: center;">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Logs Tab -->
-        <div id="logs-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">📋 System Logs</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshLogs()">🔄 Refresh</button>
-                    <button class="btn btn-primary" onclick="clearLogs()">🗑️ Clear</button>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <table id="logsTable">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Type</th>
-                            <th>User</th>
-                            <th>Action</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logsBody">
-                        <tr>
-                            <td colspan="5" style="text-align: center;">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- System Tab -->
-        <div id="system-tab" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">⚙️ System Control</h2>
-                <div class="section-actions">
-                    <button class="btn" onclick="refreshSystem()">🔄 Refresh</button>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">💻</div>
-                    <div class="stat-title">CPU Usage</div>
-                    <div class="stat-value" id="cpuUsage">0%</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="cpuBar" style="width: 0%"></div>
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">👥 User Management</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshUsers()">🔄 Refresh</button>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🧠</div>
-                    <div class="stat-title">Memory Usage</div>
-                    <div class="stat-value" id="memoryUsage">0 MB</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="memoryBar" style="width: 0%"></div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search users by ID or username..." id="userSearch" onkeyup="filterUsers()">
+                </div>
+
+                <div class="table-container">
+                    <div id="usersLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <div id="usersError" class="error-message" style="display: none;"></div>
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Coins</th>
+                                <th>Level</th>
+                                <th>Premium</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Premium Tab -->
+            <div id="premium-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">💎 Premium Management</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshPremium()">🔄 Refresh</button>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⏰</div>
-                    <div class="stat-title">Uptime</div>
-                    <div class="stat-value" id="uptime">0h 0m</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-title">Total Premium</div>
+                        <div class="stat-value" id="totalPremium">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-title">Usage Today</div>
+                        <div class="stat-value" id="premiumUsage">0</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💾</div>
-                    <div class="stat-title">Database Size</div>
-                    <div class="stat-value" id="dbSize">0 MB</div>
+
+                <div class="table-container">
+                    <div id="premiumLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <div id="premiumError" class="error-message" style="display: none;"></div>
+                    <table id="premiumTable">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Granted</th>
+                                <th>Expires</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="premiumBody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="section-header">
-                <h2 class="section-title">Database Actions</h2>
+            <!-- Servers Tab -->
+            <div id="servers-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">🖥️ Server Management</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshServers()">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div id="serversLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <div id="serversError" class="error-message" style="display: none;"></div>
+                    <table id="serversTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Members</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serversBody"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                <button class="btn" onclick="backupDatabase()">💾 Backup DB</button>
-                <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
-                <button class="btn" onclick="syncDatabases()">🔄 Sync DBs</button>
-                <button class="btn btn-primary" onclick="showSqlModal()">📝 Execute SQL</button>
+            <!-- Logs Tab -->
+            <div id="logs-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">📋 System Logs</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshLogs()">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div id="logsLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <div id="logsError" class="error-message" style="display: none;"></div>
+                    <table id="logsTable">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsBody"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="section-header">
-                <h2 class="section-title">Real-time Logs</h2>
-            </div>
+            <!-- System Tab -->
+            <div id="system-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">⚙️ System Control</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="refreshSystem()">🔄 Refresh</button>
+                    </div>
+                </div>
 
-            <div class="table-container">
-                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; font-family: monospace; height: 300px; overflow-y: auto;" id="realTimeLogs">
-                    <div>System ready...</div>
+                <div id="systemLoading" class="loading-spinner" style="display: none;">
+                    <div class="loading"></div>
+                </div>
+                <div id="systemError" class="error-message" style="display: none;"></div>
+                
+                <div id="systemContent">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">💻</div>
+                            <div class="stat-title">CPU Usage</div>
+                            <div class="stat-value" id="cpuUsage">0%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="cpuBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🧠</div>
+                            <div class="stat-title">Memory Usage</div>
+                            <div class="stat-value" id="memoryUsage">0 MB</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="memoryBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⏰</div>
+                            <div class="stat-title">Uptime</div>
+                            <div class="stat-value" id="uptime">0h 0m</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💾</div>
+                            <div class="stat-title">Database Size</div>
+                            <div class="stat-value" id="dbSize">0 MB</div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2 class="section-title">Database Actions</h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <button class="btn" onclick="backupDatabase()">💾 Backup DB</button>
+                        <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
+                        <button class="btn" onclick="syncDatabases()">🔄 Sync DBs</button>
+                        <button class="btn btn-primary" onclick="showSqlModal()">📝 Execute SQL</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1097,35 +1246,48 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <div id="toastMessage"></div>
-    </div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Configuration
         const API_BASE = window.location.origin;
-        const API_KEY = '{{API_KEY}}'; // Will be replaced by backend
-        const OWNER_ID = '{{OWNER_ID}}'; // Your Discord ID
-        const PREMIUM_ROLE_ID = '{{PREMIUM_ROLE_ID}}';
+        const CLIENT_ID = 'YOUR_DISCORD_CLIENT_ID'; // Replace with your Discord app client ID
+        const REDIRECT_URI = encodeURIComponent(window.location.origin + '/callback');
+        const OWNER_ID = '1302203907782606880'; // Your Discord ID
 
         // State
         let currentUser = null;
         let userRole = 'user';
+        let accessToken = localStorage.getItem('discord_token');
         let stockData = {};
-        let users = [];
-        let servers = [];
-        let logs = [];
-        let premiumUsers = [];
         let activityChart = null;
         let cooldowns = {};
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
-            await checkUser();
-            await loadDashboard();
             createBackground();
+            
+            // Check if we have a token in URL (OAuth callback)
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                const params = new URLSearchParams(hash);
+                const token = params.get('access_token');
+                if (token) {
+                    accessToken = token;
+                    localStorage.setItem('discord_token', token);
+                    window.location.hash = '';
+                }
+            }
+            
+            if (accessToken) {
+                await loadUser();
+                showDashboard();
+                loadDashboard();
+            } else {
+                showLogin();
+            }
         });
 
         // Create animated background
@@ -1142,70 +1304,110 @@
             }
         }
 
-        // Check user
-        async function checkUser() {
+        // Discord OAuth
+        function loginWithDiscord() {
+            const scopes = ['identify', 'guilds'];
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes.join('%20')}`;
+            window.location.href = url;
+        }
+
+        // Load user data from Discord
+        async function loadUser() {
             try {
-                // Simulate Discord OAuth - in production, implement proper OAuth
-                // For now, we'll check if user is owner via prompt
-                const userId = prompt("Enter your Discord ID (for testing):", OWNER_ID);
-                if (userId === OWNER_ID) {
+                const response = await fetch('https://discord.com/api/users/@me', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load user');
+                
+                currentUser = await response.json();
+                
+                // Check if user is owner
+                if (currentUser.id === OWNER_ID) {
                     userRole = 'owner';
-                    currentUser = { id: userId, username: 'xotiic._.420', avatar: null };
                 } else {
-                    // Check premium status
-                    const response = await fetch(`${API_BASE}/api/check-premium/${userId}`, {
-                        headers: { 'Authorization': `Bearer ${API_KEY}` }
-                    });
+                    // Check premium status from bot
+                    await checkPremiumStatus();
+                }
+                
+                updateUserInfo();
+                
+            } catch (error) {
+                console.error('Error loading user:', error);
+                showToast('Failed to load user data', 'error');
+                logout();
+            }
+        }
+
+        // Check premium status from bot
+        async function checkPremiumStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/check-premium/${currentUser.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${getApiKey()}`
+                    }
+                });
+                
+                if (response.ok) {
                     const data = await response.json();
                     if (data.hasPremium) {
                         userRole = 'premium';
                     }
-                    currentUser = { id: userId, username: 'User-' + userId, avatar: null };
                 }
-                
-                updateUserInfo();
-                updateUIBasedOnRole();
             } catch (error) {
-                console.error('Error checking user:', error);
-                showToast('Error checking user', 'error');
+                console.error('Error checking premium:', error);
             }
+        }
+
+        // Get API key from server
+        function getApiKey() {
+            // You'll need to implement this - either embed in page or fetch from server
+            return 'YOUR_API_KEY';
         }
 
         function updateUserInfo() {
-            const userInfo = document.getElementById('userInfo');
-            if (currentUser) {
-                userInfo.innerHTML = `
-                    <img class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
-                    <span class="user-name">${currentUser.username}</span>
-                    ${userRole !== 'user' ? `<span class="user-badge">${userRole.toUpperCase()}</span>` : ''}
-                `;
+            document.getElementById('userAvatar').src = currentUser.avatar 
+                ? `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            document.getElementById('userName').textContent = currentUser.username;
+            
+            const badge = document.getElementById('userBadge');
+            if (userRole === 'owner') {
+                badge.textContent = 'OWNER';
+                badge.className = 'user-badge badge-owner';
+            } else if (userRole === 'admin') {
+                badge.textContent = 'ADMIN';
+                badge.className = 'user-badge badge-admin';
+            } else if (userRole === 'premium') {
+                badge.textContent = 'PREMIUM';
+                badge.className = 'user-badge badge-premium';
+            } else {
+                badge.style.display = 'none';
             }
         }
 
-        function updateUIBasedOnRole() {
-            // Show/hide admin controls based on role
-            const adminElements = document.querySelectorAll('.admin-only');
-            const ownerElements = document.querySelectorAll('.owner-only');
-            
-            adminElements.forEach(el => {
-                el.style.display = (userRole === 'admin' || userRole === 'owner') ? 'block' : 'none';
-            });
-            
-            ownerElements.forEach(el => {
-                el.style.display = userRole === 'owner' ? 'block' : 'none';
-            });
-
-            // Enable/disable generate buttons based on premium
-            if (userRole === 'user') {
-                document.querySelectorAll('.generate-btn').forEach(btn => {
-                    btn.disabled = true;
-                    btn.title = 'Premium required';
-                });
-            }
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
         }
 
-        // Tab switching
-        function switchTab(tabName) {
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('discord_token');
+            accessToken = null;
+            currentUser = null;
+            showLogin();
+        }
+
+        // Tab switching with loading states
+        async function switchTab(tabName) {
+            // Update active tab
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
@@ -1214,28 +1416,67 @@
             
             // Load tab data
             switch(tabName) {
-                case 'dashboard': loadDashboard(); break;
-                case 'vending': loadVendingMachine(); break;
-                case 'users': loadUsers(); break;
-                case 'premium': loadPremium(); break;
-                case 'servers': loadServers(); break;
-                case 'logs': loadLogs(); break;
-                case 'system': loadSystem(); break;
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'vending':
+                    loadVendingMachine();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'premium':
+                    loadPremium();
+                    break;
+                case 'servers':
+                    loadServers();
+                    break;
+                case 'logs':
+                    loadLogs();
+                    break;
+                case 'system':
+                    loadSystem();
+                    break;
+            }
+        }
+
+        // API helper with error handling
+        async function apiRequest(endpoint, options = {}) {
+            const headers = {
+                'Authorization': `Bearer ${getApiKey()}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    ...options,
+                    headers
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.error || `API error: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`API request failed: ${endpoint}`, error);
+                throw error;
             }
         }
 
         // Dashboard
         async function loadDashboard() {
             try {
-                const response = await fetch(`${API_BASE}/api/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const data = await response.json();
+                showTabLoading();
                 
-                document.getElementById('totalUsers').textContent = data.total_users || 0;
-                document.getElementById('totalServers').textContent = data.total_servers || 0;
-                document.getElementById('totalCommands').textContent = data.total_commands || 0;
-                document.getElementById('premiumUsers').textContent = data.premium_users || 0;
+                const stats = await apiRequest('/api/stats');
+                
+                document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                document.getElementById('totalServers').textContent = stats.total_servers || 0;
+                document.getElementById('totalCommands').textContent = stats.total_commands || 0;
+                document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
                 
                 // Update chart
                 if (activityChart) {
@@ -1249,7 +1490,7 @@
                         labels: ['7d ago', '6d ago', '5d ago', '4d ago', '3d ago', '2d ago', 'Today'],
                         datasets: [{
                             label: 'Commands',
-                            data: data.activity || [10, 20, 15, 25, 30, 35, 40],
+                            data: stats.activity || [0, 0, 0, 0, 0, 0, 0],
                             borderColor: '#a8c0ff',
                             backgroundColor: 'rgba(168, 192, 255, 0.1)',
                             tension: 0.4,
@@ -1266,6 +1507,7 @@
                         },
                         scales: {
                             y: {
+                                beginAtZero: true,
                                 grid: { color: 'rgba(255,255,255,0.1)' },
                                 ticks: { color: '#fff' }
                             },
@@ -1277,62 +1519,68 @@
                     }
                 });
                 
-                // Load recent activity
                 await loadRecentActivity();
+                hideTabLoading();
+                
             } catch (error) {
-                console.error('Error loading dashboard:', error);
+                hideTabLoading();
+                showError('dashboard', error.message);
             }
         }
 
         async function loadRecentActivity() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/logs/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const logs = await response.json();
+                document.getElementById('activityLoading').style.display = 'block';
+                document.getElementById('activityError').style.display = 'none';
+                
+                const logs = await apiRequest('/api/admin/logs/stock');
                 
                 const tbody = document.getElementById('recentActivityBody');
-                if (logs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No recent activity</td></tr>';
-                    return;
+                if (!logs || logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No recent activity</td></tr>';
+                } else {
+                    tbody.innerHTML = logs.slice(0, 10).map(log => `
+                        <tr>
+                            <td>${log.userId}</td>
+                            <td>${log.type}</td>
+                            <td>${log.item || log.type}</td>
+                            <td>${log.time}</td>
+                        </tr>
+                    `).join('');
                 }
                 
-                tbody.innerHTML = logs.slice(0, 10).map(log => `
-                    <tr>
-                        <td>${log.userId}</td>
-                        <td>Generated</td>
-                        <td>${log.type}</td>
-                        <td>${log.time}</td>
-                    </tr>
-                `).join('');
             } catch (error) {
-                console.error('Error loading activity:', error);
+                document.getElementById('activityError').textContent = error.message;
+                document.getElementById('activityError').style.display = 'block';
+            } finally {
+                document.getElementById('activityLoading').style.display = 'none';
             }
         }
 
         // Vending Machine
         async function loadVendingMachine() {
-            const grid = document.getElementById('vendingGrid');
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><div class="loading"></div><p>Loading vending machine...</p></div>';
-            
             try {
-                const response = await fetch(`${API_BASE}/api/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                stockData = await response.json();
+                document.getElementById('stockLoading').style.display = 'block';
+                document.getElementById('stockError').style.display = 'none';
+                document.getElementById('vendingGrid').innerHTML = '';
+                
+                stockData = await apiRequest('/api/stock');
                 
                 renderVendingMachine();
+                
             } catch (error) {
-                console.error('Error loading stock:', error);
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #ff4757;">Error loading stock</div>';
+                document.getElementById('stockError').textContent = error.message;
+                document.getElementById('stockError').style.display = 'block';
+            } finally {
+                document.getElementById('stockLoading').style.display = 'none';
             }
         }
 
         function renderVendingMachine() {
             const grid = document.getElementById('vendingGrid');
             
-            if (Object.keys(stockData).length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">No stock available</div>';
+            if (!stockData || Object.keys(stockData).length === 0) {
+                grid.innerHTML = '<div class="empty-state">No stock available</div>';
                 return;
             }
             
@@ -1345,8 +1593,11 @@
                     <div class="item-name">${data.name || type}</div>
                     <div class="item-desc">${data.description || 'Generate premium accounts'}</div>
                     <div class="item-footer">
-                        <div class="item-price">FREE <span>premium only</span></div>
-                        <button class="generate-btn" onclick="generateStock('${type}')" ${userRole === 'user' ? 'disabled' : ''}>GENERATE</button>
+                        <div class="item-price">${data.count > 0 ? 'Available' : 'Out of stock'}</div>
+                        <button class="generate-btn" onclick="generateStock('${type}')" 
+                            ${userRole === 'user' || data.count === 0 ? 'disabled' : ''}>
+                            GENERATE
+                        </button>
                     </div>
                     ${cooldowns[type] ? `<div class="cooldown-badge">${cooldowns[type]}s</div>` : ''}
                 </div>
@@ -1364,19 +1615,13 @@
             btn.innerHTML = '<div class="loading"></div>';
             
             try {
-                const response = await fetch(`${API_BASE}/api/stock/generate/${type}`, {
+                const data = await apiRequest(`/api/stock/generate/${type}`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({ userId: currentUser.id })
                 });
                 
-                const data = await response.json();
-                
                 if (data.success) {
-                    showToast(`Stock generated! Check your DMs`, 'success');
+                    showToast('Stock generated! Check your DMs', 'success');
                     
                     // Update stock count
                     if (stockData[type]) {
@@ -1399,8 +1644,7 @@
                     showToast(data.error || 'Failed to generate stock', 'error');
                 }
             } catch (error) {
-                console.error('Error generating stock:', error);
-                showToast('Error generating stock', 'error');
+                showToast(error.message, 'error');
             }
             
             btn.disabled = false;
@@ -1424,26 +1668,28 @@
 
         // User Management
         async function loadUsers() {
-            const endpoint = userRole === 'owner' ? '/api/owner/users' : '/api/admin/users';
-            
             try {
-                const response = await fetch(`${API_BASE}${endpoint}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                users = await response.json();
+                document.getElementById('usersLoading').style.display = 'block';
+                document.getElementById('usersError').style.display = 'none';
                 
-                renderUsers();
+                const endpoint = userRole === 'owner' ? '/api/owner/users' : '/api/admin/users';
+                const users = await apiRequest(endpoint);
+                
+                renderUsers(users);
+                
             } catch (error) {
-                console.error('Error loading users:', error);
-                document.getElementById('usersBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ff4757;">Error loading users</td></tr>';
+                document.getElementById('usersError').textContent = error.message;
+                document.getElementById('usersError').style.display = 'block';
+            } finally {
+                document.getElementById('usersLoading').style.display = 'none';
             }
         }
 
-        function renderUsers() {
+        function renderUsers(users) {
             const tbody = document.getElementById('usersBody');
             
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users found</td></tr>';
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found</td></tr>';
                 return;
             }
             
@@ -1451,17 +1697,17 @@
                 <tr>
                     <td>${user.id}</td>
                     <td>${user.username}</td>
-                    <td><span class="role-badge role-${user.role}">${user.role}</span></td>
+                    <td><span class="role-badge role-${user.role || 'user'}">${user.role || 'user'}</span></td>
                     <td>${user.coins}</td>
                     <td>${user.level}</td>
                     <td>${user.premium ? '✅' : '❌'}</td>
                     <td>
                         ${userRole === 'owner' ? `
-                            <button class="action-btn" onclick="editUser(${user.id})">✏️</button>
-                            <button class="action-btn danger" onclick="jailUser(${user.id})">🔒</button>
-                            <button class="action-btn" onclick="togglePremium(${user.id})">💎</button>
+                            <button class="action-btn" onclick="editUser('${user.id}')">✏️</button>
+                            <button class="action-btn danger" onclick="jailUser('${user.id}')">🔒</button>
+                            <button class="action-btn" onclick="togglePremium('${user.id}')">💎</button>
                         ` : ''}
-                        <button class="action-btn" onclick="viewUserDetails(${user.id})">👁️</button>
+                        <button class="action-btn" onclick="viewUserDetails('${user.id}')">👁️</button>
                     </td>
                 </tr>
             `).join('');
@@ -1473,80 +1719,85 @@
             
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                if (text.includes(search)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                row.style.display = text.includes(search) ? '' : 'none';
             });
         }
 
         // Premium Management
         async function loadPremium() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/premium`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const data = await response.json();
+                document.getElementById('premiumLoading').style.display = 'block';
+                document.getElementById('premiumError').style.display = 'none';
+                
+                const data = await apiRequest('/api/admin/premium');
                 
                 document.getElementById('totalPremium').textContent = data.total || 0;
-                document.getElementById('premiumUsage').textContent = '24h data';
-                document.getElementById('expiringSoon').textContent = '0';
+                document.getElementById('premiumUsage').textContent = 'N/A';
                 
                 // Load premium users list
                 await loadPremiumUsers();
+                
             } catch (error) {
-                console.error('Error loading premium:', error);
+                document.getElementById('premiumError').textContent = error.message;
+                document.getElementById('premiumError').style.display = 'block';
+            } finally {
+                document.getElementById('premiumLoading').style.display = 'none';
             }
         }
 
         async function loadPremiumUsers() {
-            // This would need a separate endpoint
             const tbody = document.getElementById('premiumBody');
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading premium users...</td></tr>';
             
-            // Simulate data for now
-            setTimeout(() => {
-                tbody.innerHTML = `
+            try {
+                // You'll need to implement this endpoint
+                const users = await apiRequest('/api/admin/premium/users');
+                
+                tbody.innerHTML = users.map(user => `
                     <tr>
-                        <td>123456789</td>
-                        <td>PremiumUser1</td>
-                        <td>2024-01-01</td>
-                        <td>2024-02-01</td>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.granted_at || 'N/A'}</td>
+                        <td>${user.expires_at || 'Never'}</td>
                         <td><span class="role-badge role-premium">Active</span></td>
                         <td>
-                            <button class="action-btn" onclick="revokePremium(123456789)">Revoke</button>
-                            <button class="action-btn" onclick="extendPremium(123456789)">Extend</button>
+                            <button class="action-btn" onclick="revokePremium('${user.id}')">Revoke</button>
+                            <button class="action-btn" onclick="extendPremium('${user.id}')">Extend</button>
                         </td>
                     </tr>
-                `;
-            }, 1000);
+                `).join('');
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6" class="error-message">Failed to load premium users</td></tr>';
+            }
         }
 
         // Servers
         async function loadServers() {
             if (userRole !== 'owner') {
-                document.getElementById('serversBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Only owner can view servers</td></tr>';
+                document.getElementById('serversBody').innerHTML = '<tr><td colspan="6" class="empty-state">Only owner can view servers</td></tr>';
                 return;
             }
             
             try {
-                const response = await fetch(`${API_BASE}/api/owner/servers`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                servers = await response.json();
+                document.getElementById('serversLoading').style.display = 'block';
+                document.getElementById('serversError').style.display = 'none';
                 
-                renderServers();
+                const servers = await apiRequest('/api/owner/servers');
+                
+                renderServers(servers);
+                
             } catch (error) {
-                console.error('Error loading servers:', error);
+                document.getElementById('serversError').textContent = error.message;
+                document.getElementById('serversError').style.display = 'block';
+            } finally {
+                document.getElementById('serversLoading').style.display = 'none';
             }
         }
 
-        function renderServers() {
+        function renderServers(servers) {
             const tbody = document.getElementById('serversBody');
             
-            if (servers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No servers found</td></tr>';
+            if (!servers || servers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No servers found</td></tr>';
                 return;
             }
             
@@ -1558,8 +1809,8 @@
                     <td>${server.owner}</td>
                     <td><span class="status-online"></span>Online</td>
                     <td>
-                        <button class="action-btn" onclick="forceSync(${server.id})">🔄 Sync</button>
-                        <button class="action-btn" onclick="viewServerDetails(${server.id})">👁️</button>
+                        <button class="action-btn" onclick="forceSync('${server.id}')">🔄 Sync</button>
+                        <button class="action-btn" onclick="viewServerDetails('${server.id}')">👁️</button>
                     </td>
                 </tr>
             `).join('');
@@ -1568,32 +1819,35 @@
         // Logs
         async function loadLogs() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/logs/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                logs = await response.json();
+                document.getElementById('logsLoading').style.display = 'block';
+                document.getElementById('logsError').style.display = 'none';
                 
-                renderLogs();
+                const logs = await apiRequest('/api/admin/logs/stock');
+                
+                renderLogs(logs);
+                
             } catch (error) {
-                console.error('Error loading logs:', error);
+                document.getElementById('logsError').textContent = error.message;
+                document.getElementById('logsError').style.display = 'block';
+            } finally {
+                document.getElementById('logsLoading').style.display = 'none';
             }
         }
 
-        function renderLogs() {
+        function renderLogs(logs) {
             const tbody = document.getElementById('logsBody');
             
-            if (logs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No logs found</td></tr>';
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No logs found</td></tr>';
                 return;
             }
             
             tbody.innerHTML = logs.map(log => `
                 <tr>
                     <td>${log.time}</td>
-                    <td>Generation</td>
                     <td>${log.userId}</td>
-                    <td>Generated ${log.type}</td>
-                    <td>Stock used</td>
+                    <td>${log.type}</td>
+                    <td>Generated ${log.item || log.type}</td>
                 </tr>
             `).join('');
         }
@@ -1601,26 +1855,34 @@
         // System
         async function loadSystem() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const data = await response.json();
+                document.getElementById('systemLoading').style.display = 'block';
+                document.getElementById('systemError').style.display = 'none';
+                document.getElementById('systemContent').style.display = 'none';
+                
+                const data = await apiRequest('/api/admin/stats');
                 
                 document.getElementById('cpuUsage').textContent = data.cpu + '%';
                 document.getElementById('cpuBar').style.width = data.cpu + '%';
                 
-                document.getElementById('memoryUsage').textContent = Math.round(data.memory) + ' MB';
+                const memoryMB = Math.round(data.memory);
+                document.getElementById('memoryUsage').textContent = memoryMB + ' MB';
                 const memoryPercent = (data.memory / data.memory_total) * 100;
                 document.getElementById('memoryBar').style.width = memoryPercent + '%';
                 
                 document.getElementById('uptime').textContent = data.uptime;
                 document.getElementById('dbSize').textContent = data.dbSize + ' MB';
+                
+                document.getElementById('systemContent').style.display = 'block';
+                
             } catch (error) {
-                console.error('Error loading system stats:', error);
+                document.getElementById('systemError').textContent = error.message;
+                document.getElementById('systemError').style.display = 'block';
+            } finally {
+                document.getElementById('systemLoading').style.display = 'none';
             }
         }
 
-        // Admin/Owner Actions
+        // Modal functions
         function showAddStockModal() {
             if (userRole === 'user') {
                 showToast('Admin access required', 'warning');
@@ -1631,6 +1893,8 @@
 
         function hideAddStockModal() {
             document.getElementById('addStockModal').classList.remove('active');
+            document.getElementById('stockType').value = '';
+            document.getElementById('stockContent').value = '';
         }
 
         async function addStock() {
@@ -1643,29 +1907,18 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/api/stock/add`, {
+                const data = await apiRequest('/api/stock/add', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({ type, content })
                 });
-                
-                const data = await response.json();
                 
                 if (data.success) {
                     showToast(`Added ${data.count} stock entries`, 'success');
                     hideAddStockModal();
                     loadVendingMachine();
-                    document.getElementById('stockType').value = '';
-                    document.getElementById('stockContent').value = '';
-                } else {
-                    showToast(data.error || 'Failed to add stock', 'error');
                 }
             } catch (error) {
-                console.error('Error adding stock:', error);
-                showToast('Error adding stock', 'error');
+                showToast(error.message, 'error');
             }
         }
 
@@ -1693,63 +1946,121 @@
             
             document.getElementById('sqlResult').value = 'Executing...';
             
-            // Simulate SQL execution
-            setTimeout(() => {
-                document.getElementById('sqlResult').value = 'Query executed successfully\nAffected rows: 0';
+            try {
+                const data = await apiRequest('/api/admin/sql', {
+                    method: 'POST',
+                    body: JSON.stringify({ query })
+                });
+                
+                document.getElementById('sqlResult').value = JSON.stringify(data, null, 2);
                 showToast('Query executed', 'success');
-            }, 1000);
+            } catch (error) {
+                document.getElementById('sqlResult').value = 'Error: ' + error.message;
+            }
         }
 
-        function backupDatabase() {
-            showToast('Database backup started', 'success');
+        // System actions
+        async function backupDatabase() {
+            try {
+                showToast('Starting database backup...', 'info');
+                await apiRequest('/api/admin/backup', { method: 'POST' });
+                showToast('Database backup completed', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
-        function clearCache() {
-            showToast('Cache cleared', 'success');
+        async function clearCache() {
+            try {
+                showToast('Clearing cache...', 'info');
+                await apiRequest('/api/admin/cache/clear', { method: 'POST' });
+                showToast('Cache cleared', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
-        function syncDatabases() {
-            showToast('Database sync started', 'success');
+        async function syncDatabases() {
+            try {
+                showToast('Syncing databases...', 'info');
+                await apiRequest('/api/admin/sync', { method: 'POST' });
+                showToast('Database sync completed', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
+        // User actions
         function editUser(userId) {
+            // Implement edit user modal
             showToast(`Edit user ${userId}`, 'info');
         }
 
-        function jailUser(userId) {
-            showToast(`Jailed user ${userId}`, 'warning');
+        async function jailUser(userId) {
+            if (!confirm(`Are you sure you want to jail user ${userId}?`)) return;
+            
+            try {
+                await apiRequest(`/api/admin/users/${userId}/jail`, { method: 'POST' });
+                showToast(`User ${userId} has been jailed`, 'success');
+                loadUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
-        function togglePremium(userId) {
-            showToast(`Toggled premium for ${userId}`, 'success');
-        }
-
-        function revokePremium(userId) {
-            showToast(`Revoked premium from ${userId}`, 'warning');
-        }
-
-        function extendPremium(userId) {
-            showToast(`Extended premium for ${userId}`, 'success');
+        async function togglePremium(userId) {
+            try {
+                await apiRequest(`/api/admin/users/${userId}/premium/toggle`, { method: 'POST' });
+                showToast(`Toggled premium for ${userId}`, 'success');
+                loadUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
         function viewUserDetails(userId) {
+            // Implement user details modal
             showToast(`Viewing details for ${userId}`, 'info');
         }
 
-        function forceSync(serverId) {
-            showToast(`Syncing server ${serverId}`, 'info');
+        async function revokePremium(userId) {
+            try {
+                await apiRequest(`/api/admin/users/${userId}/premium/revoke`, { method: 'POST' });
+                showToast(`Revoked premium from ${userId}`, 'success');
+                loadPremium();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function extendPremium(userId) {
+            const days = prompt('Enter number of days to extend:', '30');
+            if (!days) return;
+            
+            try {
+                await apiRequest(`/api/admin/users/${userId}/premium/extend`, {
+                    method: 'POST',
+                    body: JSON.stringify({ days: parseInt(days) })
+                });
+                showToast(`Extended premium for ${userId}`, 'success');
+                loadPremium();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function forceSync(serverId) {
+            try {
+                showToast(`Syncing server ${serverId}...`, 'info');
+                await apiRequest(`/api/admin/servers/${serverId}/sync`, { method: 'POST' });
+                showToast(`Server ${serverId} synced`, 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
 
         function viewServerDetails(serverId) {
             showToast(`Viewing server ${serverId}`, 'info');
-        }
-
-        function clearLogs() {
-            if (userRole !== 'owner') {
-                showToast('Owner access required', 'warning');
-                return;
-            }
-            showToast('Logs cleared', 'success');
         }
 
         // Refresh functions
@@ -1788,31 +2099,40 @@
             showToast('System stats refreshed', 'success');
         }
 
-        // Real-time logs (simulated)
-        setInterval(() => {
-            const logsDiv = document.getElementById('realTimeLogs');
-            if (logsDiv) {
-                const time = new Date().toLocaleTimeString();
-                const actions = ['User generated stock', 'Database backup', 'Cache cleared', 'Premium granted'];
-                const action = actions[Math.floor(Math.random() * actions.length)];
-                
-                logsDiv.innerHTML = `<div>[${time}] ${action}</div>` + logsDiv.innerHTML;
-                if (logsDiv.children.length > 50) {
-                    logsDiv.removeChild(logsDiv.lastChild);
-                }
+        // UI Helpers
+        function showTabLoading() {
+            document.getElementById('tabLoading').style.display = 'block';
+        }
+
+        function hideTabLoading() {
+            document.getElementById('tabLoading').style.display = 'none';
+        }
+
+        function showError(tab, message) {
+            const errorDiv = document.getElementById(`${tab}Error`);
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
             }
-        }, 5000);
+        }
 
         // Toast notification
         function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
             
-            toast.className = 'toast show ' + type;
-            toastMessage.textContent = message;
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
             
             setTimeout(() => {
                 toast.classList.remove('show');
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 300);
             }, 3000);
         }
     </script>
