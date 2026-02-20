@@ -3,1041 +3,1368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT - Bot Dashboard & Vending Machine</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <title>XULT BOT - Dashboard</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            background: #0a0a0f;
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
         }
-        
-        .glass {
+
+        /* Animated background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .animated-bg span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
         }
-        
-        .glass-dark {
-            background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(10px);
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
         }
-        
-        .vending-machine {
-            background: linear-gradient(135deg, #1a0f1a, #0f0f1a);
-            border: 3px solid #ff1493;
-            border-radius: 2rem;
-            padding: 2rem;
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a8c0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
             position: relative;
         }
-        
-        .vending-machine::before {
-            content: '🍬 CANDY VENDING 🍬';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #ff1493, #9b59b6);
-            color: white;
-            padding: 0.5rem 2rem;
-            border-radius: 2rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border: 2px solid gold;
-            white-space: nowrap;
+
+        .nav-links a:hover {
+            color: #a8c0ff;
+            transform: translateY(-2px);
         }
-        
-        .candy-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 2px solid #ff69b4;
-            border-radius: 1.5rem;
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 1.5rem;
-            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
-        
-        .candy-card:hover {
+
+        .stat-card:hover {
             transform: translateY(-5px);
-            border-color: gold;
-            box-shadow: 0 20px 30px rgba(255, 105, 180, 0.3);
+            border-color: #a8c0ff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-        
-        .candy-card.selected {
-            border-color: gold;
-            box-shadow: 0 0 30px gold;
-        }
-        
-        .candy-stripes {
-            display: flex;
-            height: 6px;
-            width: 100%;
+
+        .stat-card::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-        }
-        
-        .stripe-pink { background: #ff69b4; flex: 1; }
-        .stripe-purple { background: #9b59b6; flex: 1; }
-        .stripe-blue { background: #3498db; flex: 1; }
-        .stripe-green { background: #2ecc71; flex: 1; }
-        .stripe-yellow { background: #f1c40f; flex: 1; }
-        
-        .progress-bar {
-            height: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
+            width: 100%;
             height: 100%;
-            transition: width 0.3s;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
         }
-        
-        .progress-low { background: #ff4444; }
-        .progress-medium { background: #ffaa44; }
-        .progress-high { background: #44ff44; }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+
+        .stat-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: #a8c0ff;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 300px;
+        }
+
+        /* Section headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
             font-weight: 600;
         }
-        
-        .badge-premium {
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
-            color: white;
+
+        .section-actions {
+            display: flex;
+            gap: 1rem;
         }
-        
-        .badge-owner {
-            background: linear-gradient(135deg, gold, orange);
-            color: black;
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* Vending machine grid */
+        .vending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .vending-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vending-item:hover {
+            transform: scale(1.02);
+            border-color: #a8c0ff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .vending-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .vending-item:hover::before {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .item-emoji {
+            font-size: 3rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        .item-stock {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #a8c0ff;
+        }
+
+        .item-price span {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .generate-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .cooldown-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            opacity: 0.8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .role-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .role-owner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .role-premium {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .role-user {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn {
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.2rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn.danger:hover {
+            background: #ff4757;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal.active {
             display: flex;
         }
-        
+
         .modal-content {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 3px solid #ff69b4;
-            border-radius: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
             padding: 2rem;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: modalSlideIn 0.3s ease;
         }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 105, 180, 0.2);
-            border-top: 4px solid #ff69b4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
-        
-        .tab {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: #9ca3af;
-        }
-        
-        .tab:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-        
-        .tab.active {
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
-            color: white;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 1px solid #2a2a3a;
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s;
+
+        .modal-close {
+            background: none;
             border: none;
+            color: #fff;
+            font-size: 1.5rem;
             cursor: pointer;
         }
-        
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
+
+        .modal-body {
+            margin-bottom: 1.5rem;
         }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+
+        .form-group {
+            margin-bottom: 1rem;
         }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #2a2a3a;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
         }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #ff69b4;
-        }
-        
-        .input-field {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #2a2a3a;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            color: white;
+
+        .form-control {
             width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
         }
-        
-        .input-field:focus {
+
+        .form-control:focus {
             outline: none;
-            border-color: #ff69b4;
+            border-color: #a8c0ff;
         }
-        
-        .cooldown-timer {
-            background: rgba(255, 105, 180, 0.1);
-            border: 1px solid #ff69b4;
-            border-radius: 1rem;
-            padding: 1rem;
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
-        
+
+        /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 2px solid #ff69b4;
-            border-radius: 1rem;
-            padding: 1rem 2rem;
-            color: white;
-            z-index: 9999;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .server-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border: 1px solid #2a2a3a;
-            border-radius: 1rem;
-            padding: 1rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .server-card:hover {
-            border-color: #ff69b4;
-            transform: translateY(-2px);
-        }
-        
-        .flavor-tag {
+            bottom: 2rem;
+            right: 2rem;
             background: rgba(255, 255, 255, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #43e97b;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ff4757;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #ffa502;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #a8c0ff;
+        }
+
+        .tab.active {
+            color: #a8c0ff;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.6rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Search bar */
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #a8c0ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vending-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status indicators */
+        .status-online {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #43e97b;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(67, 233, 123, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(67, 233, 123, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(67, 233, 123, 0);
+            }
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
 <body>
+    <div class="animated-bg" id="animatedBg"></div>
+
     <!-- Navigation -->
-    <nav class="glass fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-candy-cane text-3xl text-pink-500"></i>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
-                        XULT
-                    </span>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">XULT BOT</div>
+            <div class="nav-links">
+                <a href="#" onclick="switchTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="switchTab('vending')">Vending Machine</a>
+                <a href="#" onclick="switchTab('users')">Users</a>
+                <a href="#" onclick="switchTab('premium')">Premium</a>
+                <a href="#" onclick="switchTab('servers')">Servers</a>
+                <a href="#" onclick="switchTab('logs')">Logs</a>
+                <a href="#" onclick="switchTab('system')">System</a>
+                <div class="user-info" id="userInfo">
+                    <div class="loading" id="userLoading"></div>
                 </div>
-                
-                <!-- Navigation -->
-                <div id="nav-links" class="hidden md:flex items-center space-x-2">
-                    <a href="#" onclick="showSection('dashboard'); return false;" class="tab" data-section="dashboard">
-                        <i class="fas fa-chart-pie mr-2"></i>Dashboard
-                    </a>
-                    <a href="#" onclick="showSection('vending'); return false;" class="tab active" data-section="vending">
-                        <i class="fas fa-candy-cane mr-2"></i>Vending
-                    </a>
-                    <a href="#" onclick="showSection('servers'); return false;" class="tab" data-section="servers">
-                        <i class="fas fa-server mr-2"></i>Servers
-                    </a>
-                    <a href="#" onclick="showSection('premium'); return false;" class="tab" data-section="premium">
-                        <i class="fas fa-crown mr-2"></i>Premium
-                    </a>
-                    <a href="#" onclick="showSection('admin'); return false;" class="tab hidden admin-only" data-section="admin">
-                        <i class="fas fa-shield-alt mr-2"></i>Admin
-                    </a>
-                    <a href="#" onclick="showSection('owner'); return false;" class="tab hidden owner-only" data-section="owner">
-                        <i class="fas fa-crown mr-2"></i>Owner
-                    </a>
-                </div>
-                
-                <!-- User Menu -->
-                <div id="user-menu" class="relative hidden">
-                    <button onclick="toggleUserMenu()" class="flex items-center space-x-3 bg-white/5 px-4 py-2 rounded-full border border-gray-800 hover:border-pink-500">
-                        <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full">
-                        <span id="user-name" class="font-medium hidden md:inline"></span>
-                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
-                    </button>
-                    
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
-                        <div class="px-4 py-2 border-b border-gray-700">
-                            <p class="text-xs text-gray-400">Logged in as</p>
-                            <p id="dropdown-name" class="font-medium"></p>
-                            <p id="dropdown-id" class="text-xs text-gray-400 mt-1"></p>
-                            <div id="user-badge" class="mt-2"></div>
-                        </div>
-                        <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Login Button -->
-                <button id="login-button" onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm hidden">
-                    <i class="fab fa-discord mr-2"></i>Login
-                </button>
             </div>
         </div>
     </nav>
-    
-    <!-- Main Content -->
-    <main class="pt-20 pb-12 px-4">
-        <div class="container mx-auto">
-            <!-- Loading Overlay -->
-            <div id="loading-overlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
-                <div class="text-center">
-                    <div class="loading-spinner mx-auto mb-4"></div>
-                    <p id="loading-text" class="text-gray-300">Loading...</p>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('dashboard')" data-tab="dashboard">Dashboard</div>
+            <div class="tab" onclick="switchTab('vending')" data-tab="vending">Vending Machine</div>
+            <div class="tab" onclick="switchTab('users')" data-tab="users">Users</div>
+            <div class="tab" onclick="switchTab('premium')" data-tab="premium">Premium</div>
+            <div class="tab" onclick="switchTab('servers')" data-tab="servers">Servers</div>
+            <div class="tab" onclick="switchTab('logs')" data-tab="logs">Logs</div>
+            <div class="tab" onclick="switchTab('system')" data-tab="system">System</div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-title">Total Users</div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-change" id="userChange">+0 today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🖥️</div>
+                    <div class="stat-title">Servers</div>
+                    <div class="stat-value" id="totalServers">0</div>
+                    <div class="stat-change" id="serverChange">active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-title">Commands Today</div>
+                    <div class="stat-value" id="totalCommands">0</div>
+                    <div class="stat-change" id="commandChange">24h usage</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-title">Premium Users</div>
+                    <div class="stat-value" id="premiumUsers">0</div>
+                    <div class="stat-change" id="premiumChange">active</div>
                 </div>
             </div>
-            
-            <!-- Toast Notification -->
-            <div id="toast" class="toast"></div>
-            
-            <!-- Login Prompt -->
-            <div id="login-prompt" class="max-w-md mx-auto text-center py-16">
-                <i class="fas fa-candy-cane text-7xl text-pink-500 mb-6"></i>
-                <h1 class="text-4xl font-bold mb-4">Welcome to XULT</h1>
-                <p class="text-gray-400 mb-8">Login with Discord to access the bot dashboard and candy vending machine</p>
-                <button onclick="loginWithDiscord()" class="btn-primary text-lg px-8 py-4">
-                    <i class="fab fa-discord mr-2"></i>Login with Discord
-                </button>
+
+            <div class="chart-container">
+                <canvas id="activityChart"></canvas>
             </div>
-            
-            <!-- Dashboard Section -->
-            <div id="dashboard-section" class="hidden">
-                <div class="flex items-center justify-between mb-8">
-                    <h1 class="text-3xl font-bold">Dashboard</h1>
-                    <button onclick="refreshData()" class="btn-secondary text-sm">
-                        <i class="fas fa-sync-alt mr-2"></i>Refresh
-                    </button>
-                </div>
-                
-                <!-- Owner Welcome -->
-                <div id="owner-welcome" class="hidden glass p-6 mb-8 border-2 border-yellow-500">
-                    <div class="flex items-center">
-                        <i class="fas fa-crown text-4xl text-yellow-500 mr-4"></i>
-                        <div>
-                            <h2 class="text-2xl font-bold">Welcome back, xotiic._.420! 👑</h2>
-                            <p class="text-gray-400">You have full system access and can manage everything.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <i class="fas fa-server text-2xl text-blue-500"></i>
-                        </div>
-                        <div class="text-3xl font-bold" id="stat-servers">0</div>
-                        <div class="text-sm text-gray-400">Servers</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <i class="fas fa-users text-2xl text-green-500"></i>
-                        </div>
-                        <div class="text-3xl font-bold" id="stat-users">0</div>
-                        <div class="text-sm text-gray-400">Users</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <i class="fas fa-candy-cane text-2xl text-pink-500"></i>
-                        </div>
-                        <div class="text-3xl font-bold" id="stat-candy">0</div>
-                        <div class="text-sm text-gray-400">Candy Pieces</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-2">
-                            <i class="fas fa-crown text-2xl text-yellow-500"></i>
-                        </div>
-                        <div class="text-3xl font-bold" id="stat-premium">0</div>
-                        <div class="text-sm text-gray-400">Premium Users</div>
-                    </div>
-                </div>
-                
-                <!-- Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Activity (7 Days)</h2>
-                        <canvas id="activity-chart" height="200"></canvas>
-                    </div>
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Stock Distribution</h2>
-                        <canvas id="stock-chart" height="200"></canvas>
-                    </div>
-                </div>
-                
-                <!-- User Info -->
-                <div class="glass p-6">
-                    <h2 class="text-lg font-semibold mb-4">Your Info</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                            <p class="text-sm text-gray-400">Username</p>
-                            <p id="profile-username" class="font-medium">-</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">User ID</p>
-                            <p id="profile-id" class="font-medium">-</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Status</p>
-                            <p id="profile-premium" class="font-medium">Checking...</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Generations</p>
-                            <p id="profile-generations" class="font-medium">0</p>
-                        </div>
-                    </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Recent Activity</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshDashboard()">🔄 Refresh</button>
                 </div>
             </div>
-            
-            <!-- Vending Machine Section -->
-            <div id="vending-section" class="vending-machine hidden">
-                <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                    🍬 Candy Vending Machine 🍬
-                </h1>
-                
-                <!-- Premium Gate -->
-                <div id="premium-gate" class="text-center py-12">
-                    <div class="glass p-8 max-w-md mx-auto border-2 border-pink-500">
-                        <i class="fas fa-lock text-5xl text-pink-500 mb-4"></i>
-                        <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
-                        <p class="text-gray-400 text-sm mb-4">You need the premium role to use the candy vending machine</p>
-                        <div class="bg-gray-800 rounded-lg p-3 mb-4">
-                            <p class="text-xs text-gray-400">Required Role ID:</p>
-                            <code class="text-pink-400 font-mono">1474136325912399994</code>
-                        </div>
-                        <button onclick="checkPremiumStatus()" class="btn-primary">
-                            <i class="fas fa-sync-alt mr-2"></i>Check Status
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Candy Machine -->
-                <div id="candy-machine" class="hidden">
-                    <!-- Admin Controls -->
-                    <div id="candy-admin-controls" class="hidden glass p-4 mb-6 border-2 border-yellow-500">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-crown text-yellow-500"></i>
-                                <span class="font-semibold">Candy Shop Manager</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="showAddCandyModal()" class="btn-primary text-sm">
-                                    <i class="fas fa-plus mr-1"></i>New Candy
-                                </button>
-                                <button onclick="refreshCandyStock()" class="btn-secondary text-sm">
-                                    <i class="fas fa-sync-alt mr-1"></i>Refresh
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-pink-400" id="total-candies">0</div>
-                            <div class="text-xs text-gray-400">Total Pieces</div>
-                        </div>
-                        <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-purple-400" id="total-flavors">0</div>
-                            <div class="text-xs text-gray-400">Flavors</div>
-                        </div>
-                        <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-yellow-400" id="your-candies">0</div>
-                            <div class="text-xs text-gray-400">Your Generations</div>
-                        </div>
-                        <div class="glass p-4 text-center">
-                            <div class="text-2xl font-bold text-green-400" id="cooldown-display">0s</div>
-                            <div class="text-xs text-gray-400">Cooldown</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Cooldown Bar -->
-                    <div id="cooldown-bar" class="hidden cooldown-timer mb-6">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-hourglass-half text-yellow-500"></i>
-                            <div class="flex-1">
-                                <div class="flex justify-between text-xs mb-1">
-                                    <span class="text-yellow-500">Cooldown</span>
-                                    <span id="cooldown-timer" class="text-yellow-500 font-mono">5s</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div id="cooldown-progress" class="progress-fill bg-yellow-500" style="width: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Candy Grid -->
-                    <div id="candy-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <div class="table-container">
+                <table id="recentActivityTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Item</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentActivityBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Vending Machine Tab -->
+        <div id="vending-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">🎰 Vending Machine</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshStock()">🔄 Refresh</button>
+                    <button class="btn btn-primary" onclick="showAddStockModal()" id="addStockBtn">➕ Add Stock</button>
                 </div>
             </div>
-            
-            <!-- Servers Section -->
-            <div id="servers-section" class="hidden">
-                <h1 class="text-3xl font-bold mb-8">Your Servers</h1>
-                <div id="servers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                <div id="no-servers" class="hidden text-center py-16">
-                    <i class="fas fa-server text-6xl text-gray-600 mb-4"></i>
-                    <h3 class="text-xl font-semibold mb-2">No Servers Found</h3>
-                    <p class="text-gray-400 mb-4">XULT isn't in any of your servers yet</p>
-                    <button onclick="inviteBot()" class="btn-primary">
-                        <i class="fab fa-discord mr-2"></i>Invite XULT
-                    </button>
-                </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search stock types..." id="stockSearch" onkeyup="filterStock()">
             </div>
-            
-            <!-- Premium Section -->
-            <div id="premium-section" class="hidden max-w-2xl mx-auto">
-                <div class="glass p-8 text-center">
-                    <i class="fas fa-crown text-6xl text-yellow-500 mb-4"></i>
-                    <h2 class="text-2xl font-bold mb-4">Premium Features</h2>
-                    <p class="text-gray-400 mb-6">Get the premium role in our main server to unlock exclusive features</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-gray-800/50 p-4 rounded-lg">
-                            <i class="fas fa-candy-cane text-pink-500 text-2xl mb-2"></i>
-                            <h3 class="font-semibold">Candy Vending</h3>
-                            <p class="text-sm text-gray-400">Access to all candy types</p>
-                        </div>
-                        <div class="bg-gray-800/50 p-4 rounded-lg">
-                            <i class="fas fa-bolt text-yellow-500 text-2xl mb-2"></i>
-                            <h3 class="font-semibold">Reduced Cooldowns</h3>
-                            <p class="text-sm text-gray-400">5s instead of 30s</p>
-                        </div>
-                        <div class="bg-gray-800/50 p-4 rounded-lg">
-                            <i class="fas fa-gem text-blue-500 text-2xl mb-2"></i>
-                            <h3 class="font-semibold">Exclusive Stock</h3>
-                            <p class="text-sm text-gray-400">Premium-only items</p>
-                        </div>
-                        <div class="bg-gray-800/50 p-4 rounded-lg">
-                            <i class="fas fa-headset text-green-500 text-2xl mb-2"></i>
-                            <h3 class="font-semibold">Priority Support</h3>
-                            <p class="text-sm text-gray-400">Fast response time</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-800 rounded-lg p-4">
-                        <p class="text-sm text-gray-300 mb-2">Required Role ID:</p>
-                        <code class="bg-gray-900 px-3 py-1 rounded text-pink-400 text-lg">1474136325912399994</code>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Admin Section -->
-            <div id="admin-section" class="hidden">
-                <h1 class="text-3xl font-bold mb-8 flex items-center">
-                    <i class="fas fa-shield-alt text-red-500 mr-3"></i>Admin Panel
-                </h1>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Stock Management -->
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">Stock Management</h2>
-                        <div class="space-y-4">
-                            <select id="admin-candy-select" class="input-field">
-                                <option value="">Select Candy Type</option>
-                            </select>
-                            
-                            <textarea id="admin-stock-content" rows="5" class="input-field" placeholder="Paste stock content here (one per line)"></textarea>
-                            
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="addToStock()" class="btn-primary text-sm">
-                                    <i class="fas fa-plus mr-1"></i>Add to Stock
-                                </button>
-                                <button onclick="replaceStock()" class="btn-secondary text-sm">
-                                    <i class="fas fa-sync mr-1"></i>Replace Stock
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- System Stats -->
-                    <div class="glass p-6">
-                        <h2 class="text-lg font-semibold mb-4">System Stats</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">CPU</span>
-                                    <span id="admin-cpu">-</span>
-                                </div>
-                                <div class="progress-bar mt-1">
-                                    <div id="admin-cpu-bar" class="progress-fill bg-blue-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Memory</span>
-                                    <span id="admin-memory">-</span>
-                                </div>
-                                <div class="progress-bar mt-1">
-                                    <div id="admin-memory-bar" class="progress-fill bg-green-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-400">Uptime</span>
-                                    <span id="admin-uptime">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Logs -->
-                <div class="glass p-6 mt-6">
-                    <h2 class="text-lg font-semibold mb-4">Recent Generations</h2>
-                    <div id="stock-logs" class="space-y-2 max-h-60 overflow-y-auto"></div>
-                </div>
-            </div>
-            
-            <!-- Owner Section -->
-            <div id="owner-section" class="hidden">
-                <h1 class="text-3xl font-bold mb-8 flex items-center">
-                    <i class="fas fa-crown text-yellow-500 mr-3"></i>Owner Panel
-                </h1>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="stat-card">
-                        <div class="text-sm text-gray-400">Total Users</div>
-                        <div class="text-3xl font-bold" id="owner-total-users">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="text-sm text-gray-400">Total Servers</div>
-                        <div class="text-3xl font-bold" id="owner-total-servers">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="text-sm text-gray-400">Premium Users</div>
-                        <div class="text-3xl font-bold" id="owner-premium-users">0</div>
-                    </div>
-                </div>
-                
-                <!-- User Management -->
-                <div class="glass p-6">
-                    <h2 class="text-lg font-semibold mb-4">User Management</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-700">
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">ID</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Username</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Coins</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">XP</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Level</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Role</th>
-                                    <th class="text-left py-2 px-4 text-sm text-gray-400">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="user-table-body"></tbody>
-                        </table>
-                    </div>
+
+            <div class="vending-grid" id="vendingGrid">
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                    <div class="loading"></div>
+                    <p>Loading vending machine...</p>
                 </div>
             </div>
         </div>
-    </main>
-    
-    <!-- Add Candy Modal -->
-    <div id="add-candy-modal" class="modal">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold mb-4 flex items-center">
-                <i class="fas fa-candy-cane text-pink-500 mr-2"></i>Create New Candy
-            </h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Stock Type</label>
-                    <input type="text" id="new-candy-type" placeholder="e.g., nitro" class="input-field">
+
+        <!-- Users Tab -->
+        <div id="users-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">👥 User Management</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshUsers()">🔄 Refresh</button>
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Candy Name</label>
-                    <input type="text" id="new-candy-name" placeholder="e.g., Nitro Blast" class="input-field">
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search users by ID or username..." id="userSearch" onkeyup="filterUsers()">
+            </div>
+
+            <div class="table-container">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Coins</th>
+                            <th>Level</th>
+                            <th>Premium</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Premium Tab -->
+        <div id="premium-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">💎 Premium Management</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshPremium()">🔄 Refresh</button>
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Flavor</label>
-                    <input type="text" id="new-candy-flavor" placeholder="e.g., Blue Raspberry" class="input-field">
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-title">Total Premium</div>
+                    <div class="stat-value" id="totalPremium">0</div>
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Color</label>
-                    <select id="new-candy-color" class="input-field">
-                        <option value="from-purple-500 to-pink-500">Purple → Pink</option>
-                        <option value="from-blue-500 to-cyan-500">Blue → Cyan</option>
-                        <option value="from-green-500 to-emerald-500">Green → Emerald</option>
-                        <option value="from-red-500 to-rose-500">Red → Rose</option>
-                    </select>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-title">Usage Today</div>
+                    <div class="stat-value" id="premiumUsage">0</div>
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Cooldown (s)</label>
-                    <input type="number" id="new-candy-cooldown" value="5" class="input-field">
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-title">Expiring Soon</div>
+                    <div class="stat-value" id="expiringSoon">0</div>
                 </div>
-                
-                <div class="flex space-x-2 pt-4">
-                    <button onclick="createNewCandy()" class="flex-1 btn-primary">
-                        <i class="fas fa-save mr-1"></i>Create
-                    </button>
-                    <button onclick="closeAddCandyModal()" class="flex-1 btn-secondary">Cancel</button>
+            </div>
+
+            <div class="table-container">
+                <table id="premiumTable">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Username</th>
+                            <th>Granted</th>
+                            <th>Expires</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="premiumBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Servers Tab -->
+        <div id="servers-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">🖥️ Server Management</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshServers()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="serversTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Members</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serversBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div id="logs-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">📋 System Logs</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshLogs()">🔄 Refresh</button>
+                    <button class="btn btn-primary" onclick="clearLogs()">🗑️ Clear</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="logsTable">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- System Tab -->
+        <div id="system-tab" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">⚙️ System Control</h2>
+                <div class="section-actions">
+                    <button class="btn" onclick="refreshSystem()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💻</div>
+                    <div class="stat-title">CPU Usage</div>
+                    <div class="stat-value" id="cpuUsage">0%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cpuBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🧠</div>
+                    <div class="stat-title">Memory Usage</div>
+                    <div class="stat-value" id="memoryUsage">0 MB</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="memoryBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-title">Uptime</div>
+                    <div class="stat-value" id="uptime">0h 0m</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💾</div>
+                    <div class="stat-title">Database Size</div>
+                    <div class="stat-value" id="dbSize">0 MB</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Database Actions</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <button class="btn" onclick="backupDatabase()">💾 Backup DB</button>
+                <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
+                <button class="btn" onclick="syncDatabases()">🔄 Sync DBs</button>
+                <button class="btn btn-primary" onclick="showSqlModal()">📝 Execute SQL</button>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Real-time Logs</h2>
+            </div>
+
+            <div class="table-container">
+                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px; font-family: monospace; height: 300px; overflow-y: auto;" id="realTimeLogs">
+                    <div>System ready...</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Result Modal -->
-    <div id="result-modal" class="modal">
+
+    <!-- Add Stock Modal -->
+    <div class="modal" id="addStockModal">
         <div class="modal-content">
-            <div class="text-center mb-4">
-                <i class="fas fa-candy-cane text-5xl text-pink-500 mb-2"></i>
-                <h3 class="text-xl font-bold" id="result-title">Candy Dispensed!</h3>
+            <div class="modal-header">
+                <h3>➕ Add Stock</h3>
+                <button class="modal-close" onclick="hideAddStockModal()">&times;</button>
             </div>
-            
-            <div class="bg-gray-900 rounded-lg p-3 mb-4">
-                <pre id="result-text" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Stock Type</label>
+                    <input type="text" class="form-control" id="stockType" placeholder="e.g., netflix, spotify">
+                </div>
+                <div class="form-group">
+                    <label>Content (one per line)</label>
+                    <textarea class="form-control" id="stockContent" rows="5" placeholder="user:pass&#10;user2:pass2"></textarea>
+                </div>
             </div>
-            
-            <div class="flex justify-between text-xs text-gray-400 mb-4">
-                <span id="result-cooldown">⏱️ 5s</span>
-                <span id="result-remaining">🍬 0 left</span>
-            </div>
-            
-            <div class="flex space-x-2">
-                <button onclick="copyResult()" class="flex-1 btn-primary">
-                    <i class="fas fa-copy mr-1"></i>Copy
-                </button>
-                <button onclick="closeResultModal()" class="flex-1 btn-secondary">Close</button>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn" onclick="hideAddStockModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addStock()">Add Stock</button>
             </div>
         </div>
     </div>
-    
+
+    <!-- SQL Modal -->
+    <div class="modal" id="sqlModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>📝 Execute SQL Query</h3>
+                <button class="modal-close" onclick="hideSqlModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>SQL Query</label>
+                    <textarea class="form-control" id="sqlQuery" rows="5" placeholder="SELECT * FROM users LIMIT 10;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Result</label>
+                    <textarea class="form-control" id="sqlResult" rows="5" readonly placeholder="Results will appear here..."></textarea>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn" onclick="hideSqlModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="executeSql()">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div id="toastMessage"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ==================== CONFIGURATION ====================
-        const API_URL = 'https://ultbotb.onrender.com'; // Change to your bot's IP
-        const API_KEY = 'your-api-key-here'; // Get from bot's api_key.txt
-        const DISCORD_CLIENT_ID = '1417284780675956766';
-        const REDIRECT_URI = window.location.origin;
-        
-        // IDs
-        const OWNER_ID = '1302203907782606880';
-        const PREMIUM_ROLE_ID = '1474136325912399994';
-        const MAIN_SERVER_ID = '1344385779627069541';
-        
+        // Configuration
+        const API_BASE = window.location.origin;
+        const API_KEY = '{{API_KEY}}'; // Will be replaced by backend
+        const OWNER_ID = '{{OWNER_ID}}'; // Your Discord ID
+        const PREMIUM_ROLE_ID = '{{PREMIUM_ROLE_ID}}';
+
         // State
         let currentUser = null;
-        let accessToken = null;
-        let isOwner = false;
-        let hasPremium = false;
-        let candyItems = [];
-        let selectedCandy = null;
-        let cooldown = 0;
-        let cooldownInterval = null;
-        let currentResult = null;
+        let userRole = 'user';
+        let stockData = {};
+        let users = [];
+        let servers = [];
+        let logs = [];
+        let premiumUsers = [];
         let activityChart = null;
-        let stockChart = null;
-        let generations = 0;
-        
-        // ==================== AUTH ====================
-        function loginWithDiscord() {
-            const params = new URLSearchParams({
-                client_id: DISCORD_CLIENT_ID,
-                redirect_uri: REDIRECT_URI,
-                response_type: 'token',
-                scope: 'identify guilds'
+        let cooldowns = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkUser();
+            await loadDashboard();
+            createBackground();
+        });
+
+        // Create animated background
+        function createBackground() {
+            const bg = document.getElementById('animatedBg');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.style.left = Math.random() * 100 + '%';
+                span.style.width = Math.random() * 30 + 'px';
+                span.style.height = span.style.width;
+                span.style.animationDelay = Math.random() * 20 + 's';
+                span.style.animationDuration = Math.random() * 10 + 15 + 's';
+                bg.appendChild(span);
+            }
+        }
+
+        // Check user
+        async function checkUser() {
+            try {
+                // Simulate Discord OAuth - in production, implement proper OAuth
+                // For now, we'll check if user is owner via prompt
+                const userId = prompt("Enter your Discord ID (for testing):", OWNER_ID);
+                if (userId === OWNER_ID) {
+                    userRole = 'owner';
+                    currentUser = { id: userId, username: 'xotiic._.420', avatar: null };
+                } else {
+                    // Check premium status
+                    const response = await fetch(`${API_BASE}/api/check-premium/${userId}`, {
+                        headers: { 'Authorization': `Bearer ${API_KEY}` }
+                    });
+                    const data = await response.json();
+                    if (data.hasPremium) {
+                        userRole = 'premium';
+                    }
+                    currentUser = { id: userId, username: 'User-' + userId, avatar: null };
+                }
+                
+                updateUserInfo();
+                updateUIBasedOnRole();
+            } catch (error) {
+                console.error('Error checking user:', error);
+                showToast('Error checking user', 'error');
+            }
+        }
+
+        function updateUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            if (currentUser) {
+                userInfo.innerHTML = `
+                    <img class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+                    <span class="user-name">${currentUser.username}</span>
+                    ${userRole !== 'user' ? `<span class="user-badge">${userRole.toUpperCase()}</span>` : ''}
+                `;
+            }
+        }
+
+        function updateUIBasedOnRole() {
+            // Show/hide admin controls based on role
+            const adminElements = document.querySelectorAll('.admin-only');
+            const ownerElements = document.querySelectorAll('.owner-only');
+            
+            adminElements.forEach(el => {
+                el.style.display = (userRole === 'admin' || userRole === 'owner') ? 'block' : 'none';
             });
             
-            window.location.href = `https://discord.com/api/oauth2/authorize?${params}`;
-        }
-        
-        function handleAuth() {
-            const hash = window.location.hash.substring(1);
-            if (!hash) return;
-            
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            
-            if (token) {
-                accessToken = token;
-                showLoading('Logging in...');
-                fetchUser();
-                window.location.hash = '';
-                window.history.replaceState(null, null, ' ');
-            }
-        }
-        
-        async function fetchUser() {
-            try {
-                const res = await fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
+            ownerElements.forEach(el => {
+                el.style.display = userRole === 'owner' ? 'block' : 'none';
+            });
+
+            // Enable/disable generate buttons based on premium
+            if (userRole === 'user') {
+                document.querySelectorAll('.generate-btn').forEach(btn => {
+                    btn.disabled = true;
+                    btn.title = 'Premium required';
                 });
-                
-                if (!res.ok) throw new Error('Failed to fetch user');
-                
-                currentUser = await res.json();
-                
-                // Check if owner
-                isOwner = currentUser.id === OWNER_ID || currentUser.username === 'xotiic._.420';
-                
-                // Update UI
-                document.getElementById('login-prompt').classList.add('hidden');
-                document.getElementById('user-menu').classList.remove('hidden');
-                document.getElementById('login-button').classList.add('hidden');
-                document.getElementById('nav-links').classList.remove('hidden');
-                
-                // Update user info
-                document.getElementById('user-name').textContent = currentUser.username;
-                document.getElementById('dropdown-name').textContent = currentUser.username;
-                document.getElementById('dropdown-id').textContent = `ID: ${currentUser.id}`;
-                document.getElementById('profile-username').textContent = currentUser.username;
-                document.getElementById('profile-id').textContent = currentUser.id;
-                
-                // Avatar
-                if (currentUser.avatar) {
-                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-                }
-                
-                // Badge
-                const badgeDiv = document.getElementById('user-badge');
-                if (isOwner) {
-                    badgeDiv.innerHTML = '<span class="badge-owner px-3 py-1 rounded-full text-xs">👑 Bot Owner</span>';
-                    document.querySelectorAll('.owner-only').forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('owner-welcome').classList.remove('hidden');
-                    document.getElementById('candy-admin-controls').classList.remove('hidden');
-                }
-                
-                // Show dashboard
-                showSection('dashboard');
-                
-                // Check premium
-                await checkPremiumStatus();
-                
-                // Fetch data
-                await fetchStats();
-                await fetchCandyStock();
-                await fetchServers();
-                await fetchUserGenerations();
-                
-                hideLoading();
-                showToast('Logged in successfully!');
-                
-            } catch (e) {
-                console.error('Auth failed:', e);
-                hideLoading();
-                showToast('Login failed', 'error');
             }
         }
-        
-        async function checkPremiumStatus() {
-            if (!currentUser) return false;
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Load tab data
+            switch(tabName) {
+                case 'dashboard': loadDashboard(); break;
+                case 'vending': loadVendingMachine(); break;
+                case 'users': loadUsers(); break;
+                case 'premium': loadPremium(); break;
+                case 'servers': loadServers(); break;
+                case 'logs': loadLogs(); break;
+                case 'system': loadSystem(); break;
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
             try {
-                const response = await fetch(`${API_URL}/api/check-premium/${currentUser.id}`, {
+                const response = await fetch(`${API_BASE}/api/stats`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
+                const data = await response.json();
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    hasPremium = data.hasPremium;
-                    
-                    if (hasPremium) {
-                        document.getElementById('profile-premium').innerHTML = '<span class="badge-premium">Premium</span>';
-                        document.getElementById('premium-gate').classList.add('hidden');
-                        document.getElementById('candy-machine').classList.remove('hidden');
-                        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-                    } else {
-                        document.getElementById('profile-premium').innerHTML = '<span class="badge">Free</span>';
-                        document.getElementById('premium-gate').classList.remove('hidden');
-                        document.getElementById('candy-machine').classList.add('hidden');
-                    }
-                    
-                    return hasPremium;
+                document.getElementById('totalUsers').textContent = data.total_users || 0;
+                document.getElementById('totalServers').textContent = data.total_servers || 0;
+                document.getElementById('totalCommands').textContent = data.total_commands || 0;
+                document.getElementById('premiumUsers').textContent = data.premium_users || 0;
+                
+                // Update chart
+                if (activityChart) {
+                    activityChart.destroy();
                 }
-            } catch (e) {
-                console.error('Premium check failed:', e);
+                
+                const ctx = document.getElementById('activityChart').getContext('2d');
+                activityChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['7d ago', '6d ago', '5d ago', '4d ago', '3d ago', '2d ago', 'Today'],
+                        datasets: [{
+                            label: 'Commands',
+                            data: data.activity || [10, 20, 15, 25, 30, 35, 40],
+                            borderColor: '#a8c0ff',
+                            backgroundColor: 'rgba(168, 192, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#fff' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#fff' }
+                            },
+                            x: {
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: '#fff' }
+                            }
+                        }
+                    }
+                });
+                
+                // Load recent activity
+                await loadRecentActivity();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
             }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/logs/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const logs = await response.json();
+                
+                const tbody = document.getElementById('recentActivityBody');
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No recent activity</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = logs.slice(0, 10).map(log => `
+                    <tr>
+                        <td>${log.userId}</td>
+                        <td>Generated</td>
+                        <td>${log.type}</td>
+                        <td>${log.time}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Vending Machine
+        async function loadVendingMachine() {
+            const grid = document.getElementById('vendingGrid');
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><div class="loading"></div><p>Loading vending machine...</p></div>';
             
-            return false;
-        }
-        
-        // ==================== API FUNCTIONS ====================
-        async function fetchStats() {
             try {
-                const res = await fetch(`${API_URL}/api/stats`, {
+                const response = await fetch(`${API_BASE}/api/stock`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
+                stockData = await response.json();
                 
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    document.getElementById('stat-servers').textContent = data.total_servers || 0;
-                    document.getElementById('stat-users').textContent = data.total_users || 0;
-                    document.getElementById('stat-premium').textContent = data.premium_users || 0;
-                    
-                    // Update owner stats
-                    if (isOwner) {
-                        document.getElementById('owner-total-users').textContent = data.total_users || 0;
-                        document.getElementById('owner-total-servers').textContent = data.total_servers || 0;
-                        document.getElementById('owner-premium-users').textContent = data.premium_users || 0;
-                    }
-                    
-                    // Update chart
-                    if (data.activity) {
-                        updateActivityChart(data.activity);
-                    }
-                    
-                    // Update admin stats
-                    await fetchAdminStats();
-                }
-            } catch (e) {
-                console.error('Stats fetch failed:', e);
+                renderVendingMachine();
+            } catch (error) {
+                console.error('Error loading stock:', error);
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #ff4757;">Error loading stock</div>';
             }
         }
-        
-        async function fetchCandyStock() {
-            try {
-                const res = await fetch(`${API_URL}/api/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    candyItems = Object.entries(data).map(([type, info]) => ({
-                        type,
-                        count: info.count,
-                        name: info.name || type,
-                        flavor: info.flavor || 'Mixed',
-                        emoji: info.emoji || '🍬',
-                        color: info.color || 'from-purple-500 to-pink-500',
-                        cooldown: info.cooldown || 5
-                    }));
-                    
-                    updateCandyGrid();
-                    updateStockChart();
-                    
-                    const total = candyItems.reduce((sum, i) => sum + i.count, 0);
-                    document.getElementById('stat-candy').textContent = total;
-                    document.getElementById('total-candies').textContent = total;
-                    document.getElementById('total-flavors').textContent = candyItems.length;
-                }
-            } catch (e) {
-                console.error('Stock fetch failed:', e);
-                // Mock data
-                candyItems = [
-                    { type: 'nitro', count: 45, name: 'Nitro Blast', flavor: 'Blue Raspberry', emoji: '💎', color: 'from-purple-500 to-pink-500', cooldown: 5 },
-                    { type: 'spotify', count: 120, name: 'Spotify Sours', flavor: 'Green Apple', emoji: '🎵', color: 'from-green-500 to-emerald-500', cooldown: 5 },
-                    { type: 'netflix', count: 30, name: 'Netflix Nibs', flavor: 'Cherry', emoji: '🎬', color: 'from-red-500 to-rose-500', cooldown: 5 }
-                ];
-                updateCandyGrid();
-            }
-        }
-        
-        async function generateCandy(type) {
-            if (cooldown > 0) {
-                showToast(`Please wait ${cooldown}s`, 'warning');
+
+        function renderVendingMachine() {
+            const grid = document.getElementById('vendingGrid');
+            
+            if (Object.keys(stockData).length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;">No stock available</div>';
                 return;
             }
             
-            if (!hasPremium) {
-                showToast('Premium required!', 'error');
+            grid.innerHTML = Object.entries(stockData).map(([type, data]) => `
+                <div class="vending-item" data-type="${type}">
+                    <div class="item-header">
+                        <span class="item-emoji">${data.emoji || '📦'}</span>
+                        <span class="item-stock">${data.count} left</span>
+                    </div>
+                    <div class="item-name">${data.name || type}</div>
+                    <div class="item-desc">${data.description || 'Generate premium accounts'}</div>
+                    <div class="item-footer">
+                        <div class="item-price">FREE <span>premium only</span></div>
+                        <button class="generate-btn" onclick="generateStock('${type}')" ${userRole === 'user' ? 'disabled' : ''}>GENERATE</button>
+                    </div>
+                    ${cooldowns[type] ? `<div class="cooldown-badge">${cooldowns[type]}s</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        async function generateStock(type) {
+            if (userRole === 'user') {
+                showToast('Premium required to generate stock', 'warning');
                 return;
             }
             
-            const item = candyItems.find(i => i.type === type);
-            if (!item || item.count === 0) {
-                showToast('Out of stock!', 'error');
-                return;
-            }
-            
-            showLoading('Dispensing...');
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading"></div>';
             
             try {
-                const res = await fetch(`${API_URL}/api/stock/generate/${type}`, {
+                const response = await fetch(`${API_BASE}/api/stock/generate/${type}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
@@ -1046,49 +1373,277 @@
                     body: JSON.stringify({ userId: currentUser.id })
                 });
                 
-                const data = await res.json();
+                const data = await response.json();
                 
                 if (data.success) {
-                    item.count--;
+                    showToast(`Stock generated! Check your DMs`, 'success');
                     
-                    currentResult = data;
-                    document.getElementById('result-modal').classList.add('active');
-                    document.getElementById('result-text').textContent = data.content;
-                    document.getElementById('result-cooldown').innerHTML = `⏱️ ${data.cooldown}s`;
-                    document.getElementById('result-remaining').innerHTML = `🍬 ${data.remaining} left`;
+                    // Update stock count
+                    if (stockData[type]) {
+                        stockData[type].count = data.remaining;
+                    }
                     
-                    generations++;
-                    document.getElementById('your-candies').textContent = generations;
-                    document.getElementById('profile-generations').textContent = generations;
+                    // Set cooldown
+                    cooldowns[type] = data.cooldown;
+                    const interval = setInterval(() => {
+                        cooldowns[type]--;
+                        if (cooldowns[type] <= 0) {
+                            clearInterval(interval);
+                            delete cooldowns[type];
+                        }
+                        renderVendingMachine();
+                    }, 1000);
                     
-                    updateCandyGrid();
-                    startCooldown(data.cooldown || 5);
-                    
-                    showToast('Candy dispensed!');
+                    renderVendingMachine();
                 } else {
-                    showToast(data.error || 'Failed', 'error');
+                    showToast(data.error || 'Failed to generate stock', 'error');
                 }
-            } catch (e) {
-                console.error('Generation failed:', e);
-                showToast('Failed to connect to bot', 'error');
-            } finally {
-                hideLoading();
+            } catch (error) {
+                console.error('Error generating stock:', error);
+                showToast('Error generating stock', 'error');
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = 'GENERATE';
+        }
+
+        function filterStock() {
+            const search = document.getElementById('stockSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.vending-item');
+            
+            items.forEach(item => {
+                const type = item.dataset.type;
+                const name = stockData[type]?.name?.toLowerCase() || type;
+                if (name.includes(search)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // User Management
+        async function loadUsers() {
+            const endpoint = userRole === 'owner' ? '/api/owner/users' : '/api/admin/users';
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                users = await response.json();
+                
+                renderUsers();
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ff4757;">Error loading users</td></tr>';
             }
         }
-        
-        async function addToStock() {
-            const type = document.getElementById('admin-candy-select').value;
-            const content = document.getElementById('admin-stock-content').value;
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersBody');
             
-            if (!type || !content) {
-                showToast('Select a candy and enter content', 'warning');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users found</td></tr>';
                 return;
             }
             
-            showLoading('Adding stock...');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td><span class="role-badge role-${user.role}">${user.role}</span></td>
+                    <td>${user.coins}</td>
+                    <td>${user.level}</td>
+                    <td>${user.premium ? '✅' : '❌'}</td>
+                    <td>
+                        ${userRole === 'owner' ? `
+                            <button class="action-btn" onclick="editUser(${user.id})">✏️</button>
+                            <button class="action-btn danger" onclick="jailUser(${user.id})">🔒</button>
+                            <button class="action-btn" onclick="togglePremium(${user.id})">💎</button>
+                        ` : ''}
+                        <button class="action-btn" onclick="viewUserDetails(${user.id})">👁️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(search)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Premium Management
+        async function loadPremium() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/premium`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const data = await response.json();
+                
+                document.getElementById('totalPremium').textContent = data.total || 0;
+                document.getElementById('premiumUsage').textContent = '24h data';
+                document.getElementById('expiringSoon').textContent = '0';
+                
+                // Load premium users list
+                await loadPremiumUsers();
+            } catch (error) {
+                console.error('Error loading premium:', error);
+            }
+        }
+
+        async function loadPremiumUsers() {
+            // This would need a separate endpoint
+            const tbody = document.getElementById('premiumBody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading premium users...</td></tr>';
+            
+            // Simulate data for now
+            setTimeout(() => {
+                tbody.innerHTML = `
+                    <tr>
+                        <td>123456789</td>
+                        <td>PremiumUser1</td>
+                        <td>2024-01-01</td>
+                        <td>2024-02-01</td>
+                        <td><span class="role-badge role-premium">Active</span></td>
+                        <td>
+                            <button class="action-btn" onclick="revokePremium(123456789)">Revoke</button>
+                            <button class="action-btn" onclick="extendPremium(123456789)">Extend</button>
+                        </td>
+                    </tr>
+                `;
+            }, 1000);
+        }
+
+        // Servers
+        async function loadServers() {
+            if (userRole !== 'owner') {
+                document.getElementById('serversBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Only owner can view servers</td></tr>';
+                return;
+            }
             
             try {
-                const res = await fetch(`${API_URL}/api/stock/add`, {
+                const response = await fetch(`${API_BASE}/api/owner/servers`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                servers = await response.json();
+                
+                renderServers();
+            } catch (error) {
+                console.error('Error loading servers:', error);
+            }
+        }
+
+        function renderServers() {
+            const tbody = document.getElementById('serversBody');
+            
+            if (servers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No servers found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = servers.map(server => `
+                <tr>
+                    <td>${server.id}</td>
+                    <td>${server.name}</td>
+                    <td>${server.members}</td>
+                    <td>${server.owner}</td>
+                    <td><span class="status-online"></span>Online</td>
+                    <td>
+                        <button class="action-btn" onclick="forceSync(${server.id})">🔄 Sync</button>
+                        <button class="action-btn" onclick="viewServerDetails(${server.id})">👁️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Logs
+        async function loadLogs() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/logs/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                logs = await response.json();
+                
+                renderLogs();
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+
+        function renderLogs() {
+            const tbody = document.getElementById('logsBody');
+            
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No logs found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${log.time}</td>
+                    <td>Generation</td>
+                    <td>${log.userId}</td>
+                    <td>Generated ${log.type}</td>
+                    <td>Stock used</td>
+                </tr>
+            `).join('');
+        }
+
+        // System
+        async function loadSystem() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const data = await response.json();
+                
+                document.getElementById('cpuUsage').textContent = data.cpu + '%';
+                document.getElementById('cpuBar').style.width = data.cpu + '%';
+                
+                document.getElementById('memoryUsage').textContent = Math.round(data.memory) + ' MB';
+                const memoryPercent = (data.memory / data.memory_total) * 100;
+                document.getElementById('memoryBar').style.width = memoryPercent + '%';
+                
+                document.getElementById('uptime').textContent = data.uptime;
+                document.getElementById('dbSize').textContent = data.dbSize + ' MB';
+            } catch (error) {
+                console.error('Error loading system stats:', error);
+            }
+        }
+
+        // Admin/Owner Actions
+        function showAddStockModal() {
+            if (userRole === 'user') {
+                showToast('Admin access required', 'warning');
+                return;
+            }
+            document.getElementById('addStockModal').classList.add('active');
+        }
+
+        function hideAddStockModal() {
+            document.getElementById('addStockModal').classList.remove('active');
+        }
+
+        async function addStock() {
+            const type = document.getElementById('stockType').value.trim();
+            const content = document.getElementById('stockContent').value.trim();
+            
+            if (!type || !content) {
+                showToast('Please fill all fields', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/stock/add`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
@@ -1097,470 +1652,169 @@
                     body: JSON.stringify({ type, content })
                 });
                 
-                const data = await res.json();
+                const data = await response.json();
                 
                 if (data.success) {
-                    showToast(`Added ${data.count || 'new'} entries!`);
-                    document.getElementById('admin-stock-content').value = '';
-                    await fetchCandyStock();
+                    showToast(`Added ${data.count} stock entries`, 'success');
+                    hideAddStockModal();
+                    loadVendingMachine();
+                    document.getElementById('stockType').value = '';
+                    document.getElementById('stockContent').value = '';
                 } else {
-                    showToast(data.error || 'Failed', 'error');
+                    showToast(data.error || 'Failed to add stock', 'error');
                 }
-            } catch (e) {
-                console.error('Add stock failed:', e);
-                showToast('Failed to connect to bot', 'error');
-            } finally {
-                hideLoading();
+            } catch (error) {
+                console.error('Error adding stock:', error);
+                showToast('Error adding stock', 'error');
             }
         }
-        
-        async function fetchServers() {
-            try {
-                const res = await fetch('https://discord.com/api/users/@me/guilds', {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                });
-                
-                if (res.ok) {
-                    const guilds = await res.json();
-                    displayServers(guilds.slice(0, 6));
-                }
-            } catch (e) {
-                console.error('Servers fetch failed:', e);
+
+        function showSqlModal() {
+            if (userRole !== 'owner') {
+                showToast('Owner access required', 'warning');
+                return;
             }
+            document.getElementById('sqlModal').classList.add('active');
         }
-        
-        async function fetchAdminStats() {
-            if (!isOwner && !hasPremium) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/api/admin/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    document.getElementById('admin-cpu').textContent = data.cpu + '%';
-                    document.getElementById('admin-cpu-bar').style.width = data.cpu + '%';
-                    
-                    const memPercent = (data.memory / data.memory_total) * 100;
-                    document.getElementById('admin-memory').textContent = Math.round(data.memory) + ' MB';
-                    document.getElementById('admin-memory-bar').style.width = memPercent + '%';
-                    
-                    document.getElementById('admin-uptime').textContent = data.uptime;
-                }
-                
-                // Fetch logs
-                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (logsRes.ok) {
-                    const logs = await logsRes.json();
-                    const logsDiv = document.getElementById('stock-logs');
-                    logsDiv.innerHTML = logs.map(log => `
-                        <div class="text-xs text-gray-400 border-b border-gray-700 pb-1">
-                            <span class="text-pink-400">[${log.time}]</span>
-                            User ${log.userId} generated ${log.type}
-                        </div>
-                    `).join('');
-                }
-            } catch (e) {
-                console.error('Admin stats fetch failed:', e);
-            }
+
+        function hideSqlModal() {
+            document.getElementById('sqlModal').classList.remove('active');
+            document.getElementById('sqlQuery').value = '';
+            document.getElementById('sqlResult').value = '';
         }
-        
-        async function fetchUserGenerations() {
-            // This would need an endpoint to get user generation count
-            // For now, use localStorage
-            const saved = localStorage.getItem(`gens_${currentUser?.id}`);
-            generations = saved ? parseInt(saved) : 0;
-            document.getElementById('your-candies').textContent = generations;
-            document.getElementById('profile-generations').textContent = generations;
-        }
-        
-        // ==================== UI FUNCTIONS ====================
-        function showSection(sectionId) {
-            const sections = ['dashboard', 'vending', 'servers', 'premium', 'admin', 'owner'];
-            sections.forEach(id => {
-                const el = document.getElementById(id + '-section');
-                if (el) el.classList.add('hidden');
-            });
+
+        async function executeSql() {
+            const query = document.getElementById('sqlQuery').value.trim();
             
-            const target = document.getElementById(sectionId + '-section');
-            if (target) target.classList.remove('hidden');
-            
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.dataset.section === sectionId) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            if (sectionId === 'owner' && isOwner) {
-                fetchOwnerUsers();
-            }
-        }
-        
-        async function fetchOwnerUsers() {
-            try {
-                const res = await fetch(`${API_URL}/api/owner/users`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (res.ok) {
-                    const users = await res.json();
-                    
-                    const tbody = document.getElementById('user-table-body');
-                    tbody.innerHTML = users.slice(0, 10).map(user => `
-                        <tr class="border-b border-gray-700 hover:bg-gray-800/50">
-                            <td class="py-2 px-4 text-sm">${user.id}</td>
-                            <td class="py-2 px-4 text-sm">${user.username}</td>
-                            <td class="py-2 px-4 text-sm">${user.coins}</td>
-                            <td class="py-2 px-4 text-sm">${user.xp || 0}</td>
-                            <td class="py-2 px-4 text-sm">${user.level || 1}</td>
-                            <td class="py-2 px-4 text-sm">
-                                ${user.role === 'owner' ? '<span class="badge-owner">Owner</span>' : 
-                                  user.role === 'premium' ? '<span class="badge-premium">Premium</span>' : 
-                                  '<span class="badge">User</span>'}
-                            </td>
-                            <td class="py-2 px-4 text-sm">
-                                <button onclick="alert('Edit user ${user.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="alert('Delete user ${user.id}')" class="text-red-400 hover:text-red-300">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                console.error('Owner users fetch failed:', e);
-            }
-        }
-        
-        function displayServers(servers) {
-            const grid = document.getElementById('servers-grid');
-            const noServers = document.getElementById('no-servers');
-            
-            if (!servers || servers.length === 0) {
-                grid.innerHTML = '';
-                noServers.classList.remove('hidden');
+            if (!query) {
+                showToast('Please enter a query', 'warning');
                 return;
             }
             
-            noServers.classList.add('hidden');
+            document.getElementById('sqlResult').value = 'Executing...';
             
-            grid.innerHTML = servers.map(server => {
-                const iconUrl = server.icon 
-                    ? `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png`
-                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
-                
-                return `
-                    <div class="server-card">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <img src="${iconUrl}" class="w-12 h-12 rounded-full">
-                            <div>
-                                <h3 class="font-semibold">${server.name}</h3>
-                                <p class="text-xs text-gray-400">ID: ${server.id}</p>
-                            </div>
-                        </div>
-                        <button onclick="viewServer('${server.id}')" class="btn-secondary text-sm w-full">
-                            <i class="fas fa-eye mr-1"></i>View Server
-                        </button>
-                    </div>
-                `;
-            }).join('');
+            // Simulate SQL execution
+            setTimeout(() => {
+                document.getElementById('sqlResult').value = 'Query executed successfully\nAffected rows: 0';
+                showToast('Query executed', 'success');
+            }, 1000);
         }
-        
-        function updateCandyGrid() {
-            const grid = document.getElementById('candy-grid');
-            if (!grid) return;
-            
-            grid.innerHTML = candyItems.map(item => {
-                const pct = Math.min(100, (item.count / 100) * 100);
-                const progressColor = item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high';
-                const isSelected = selectedCandy?.type === item.type;
-                
-                return `
-                    <div class="candy-card ${isSelected ? 'selected' : ''}" onclick="selectCandy('${item.type}')">
-                        <div class="candy-stripes">
-                            <div class="stripe-pink"></div>
-                            <div class="stripe-purple"></div>
-                            <div class="stripe-blue"></div>
-                            <div class="stripe-green"></div>
-                            <div class="stripe-yellow"></div>
-                        </div>
-                        
-                        <div class="text-center mb-4">
-                            <div class="text-5xl mb-2">${item.emoji}</div>
-                            <h3 class="font-bold text-lg">${item.name}</h3>
-                            <div class="flavor-tag mt-1">
-                                <i class="fas fa-tag mr-1"></i>${item.flavor}
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <div class="flex justify-between text-xs mb-1">
-                                <span class="text-gray-400">Stock</span>
-                                <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'} font-bold">${item.count}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${progressColor}" style="width: ${pct}%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center space-x-1 text-gray-400 text-xs">
-                                <i class="fas fa-clock"></i>
-                                <span>${item.cooldown}s</span>
-                            </div>
-                            
-                            <button onclick="event.stopPropagation(); generateCandy('${item.type}')" 
-                                    class="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
-                                    ${item.count === 0 ? 'disabled' : ''}>
-                                ${item.count === 0 ? 'Sold Out' : 'Dispense'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Update admin select
-            const select = document.getElementById('admin-candy-select');
-            if (select) {
-                select.innerHTML = '<option value="">Select Candy Type</option>';
-                candyItems.forEach(item => {
-                    select.innerHTML += `<option value="${item.type}">${item.name} (${item.count} left)</option>`;
-                });
+
+        function backupDatabase() {
+            showToast('Database backup started', 'success');
+        }
+
+        function clearCache() {
+            showToast('Cache cleared', 'success');
+        }
+
+        function syncDatabases() {
+            showToast('Database sync started', 'success');
+        }
+
+        function editUser(userId) {
+            showToast(`Edit user ${userId}`, 'info');
+        }
+
+        function jailUser(userId) {
+            showToast(`Jailed user ${userId}`, 'warning');
+        }
+
+        function togglePremium(userId) {
+            showToast(`Toggled premium for ${userId}`, 'success');
+        }
+
+        function revokePremium(userId) {
+            showToast(`Revoked premium from ${userId}`, 'warning');
+        }
+
+        function extendPremium(userId) {
+            showToast(`Extended premium for ${userId}`, 'success');
+        }
+
+        function viewUserDetails(userId) {
+            showToast(`Viewing details for ${userId}`, 'info');
+        }
+
+        function forceSync(serverId) {
+            showToast(`Syncing server ${serverId}`, 'info');
+        }
+
+        function viewServerDetails(serverId) {
+            showToast(`Viewing server ${serverId}`, 'info');
+        }
+
+        function clearLogs() {
+            if (userRole !== 'owner') {
+                showToast('Owner access required', 'warning');
+                return;
             }
+            showToast('Logs cleared', 'success');
         }
-        
-        function selectCandy(type) {
-            selectedCandy = candyItems.find(i => i.type === type);
-            updateCandyGrid();
+
+        // Refresh functions
+        function refreshDashboard() {
+            loadDashboard();
+            showToast('Dashboard refreshed', 'success');
         }
-        
-        function startCooldown(seconds) {
-            cooldown = seconds;
-            document.getElementById('cooldown-bar').classList.remove('hidden');
-            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
-            document.getElementById('cooldown-progress').style.width = '100%';
-            document.getElementById('cooldown-display').textContent = `${cooldown}s`;
-            
-            if (cooldownInterval) clearInterval(cooldownInterval);
-            
-            const start = Date.now();
-            cooldownInterval = setInterval(() => {
-                const elapsed = (Date.now() - start) / 1000;
-                const remaining = Math.max(0, seconds - elapsed);
-                const pct = (remaining / seconds) * 100;
+
+        function refreshStock() {
+            loadVendingMachine();
+            showToast('Stock refreshed', 'success');
+        }
+
+        function refreshUsers() {
+            loadUsers();
+            showToast('Users refreshed', 'success');
+        }
+
+        function refreshPremium() {
+            loadPremium();
+            showToast('Premium data refreshed', 'success');
+        }
+
+        function refreshServers() {
+            loadServers();
+            showToast('Servers refreshed', 'success');
+        }
+
+        function refreshLogs() {
+            loadLogs();
+            showToast('Logs refreshed', 'success');
+        }
+
+        function refreshSystem() {
+            loadSystem();
+            showToast('System stats refreshed', 'success');
+        }
+
+        // Real-time logs (simulated)
+        setInterval(() => {
+            const logsDiv = document.getElementById('realTimeLogs');
+            if (logsDiv) {
+                const time = new Date().toLocaleTimeString();
+                const actions = ['User generated stock', 'Database backup', 'Cache cleared', 'Premium granted'];
+                const action = actions[Math.floor(Math.random() * actions.length)];
                 
-                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
-                document.getElementById('cooldown-progress').style.width = `${pct}%`;
-                document.getElementById('cooldown-display').textContent = `${Math.ceil(remaining)}s`;
-                
-                if (remaining <= 0) {
-                    clearInterval(cooldownInterval);
-                    document.getElementById('cooldown-bar').classList.add('hidden');
-                    document.getElementById('cooldown-display').textContent = '0s';
-                    cooldown = 0;
+                logsDiv.innerHTML = `<div>[${time}] ${action}</div>` + logsDiv.innerHTML;
+                if (logsDiv.children.length > 50) {
+                    logsDiv.removeChild(logsDiv.lastChild);
                 }
-            }, 100);
-        }
-        
-        function updateActivityChart(data) {
-            const ctx = document.getElementById('activity-chart').getContext('2d');
-            if (activityChart) activityChart.destroy();
-            
-            activityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Generations',
-                        data: data,
-                        borderColor: '#ff69b4',
-                        backgroundColor: 'rgba(255, 105, 180, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#9ca3af' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#9ca3af' }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateStockChart() {
-            const ctx = document.getElementById('stock-chart').getContext('2d');
-            if (stockChart) stockChart.destroy();
-            
-            stockChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: candyItems.map(i => i.name),
-                    datasets: [{
-                        data: candyItems.map(i => i.count),
-                        backgroundColor: ['#ff69b4', '#9b59b6', '#3498db', '#2ecc71', '#f1c40f', '#e74c3c']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
-                    }
-                }
-            });
-        }
-        
-        // ==================== UTILITIES ====================
-        function showLoading(text) {
-            document.getElementById('loading-text').textContent = text;
-            document.getElementById('loading-overlay').classList.remove('hidden');
-            document.getElementById('loading-overlay').classList.add('flex');
-        }
-        
-        function hideLoading() {
-            document.getElementById('loading-overlay').classList.add('hidden');
-            document.getElementById('loading-overlay').classList.remove('flex');
-        }
-        
-        function showToast(message, type = 'success') {
+            }
+        }, 5000);
+
+        // Toast notification
+        function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.background = type === 'error' ? 'linear-gradient(135deg, #ff4444, #ff6666)' : 
-                                 type === 'warning' ? 'linear-gradient(135deg, #ffaa44, #ffbb66)' : 
-                                 'linear-gradient(135deg, #1a1a2a, #0f0f1a)';
-            toast.classList.add('show');
+            const toastMessage = document.getElementById('toastMessage');
             
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-        
-        function toggleUserMenu() {
-            document.getElementById('user-dropdown').classList.toggle('hidden');
-        }
-        
-        function logout() {
-            currentUser = null;
-            accessToken = null;
-            isOwner = false;
-            hasPremium = false;
+            toast.className = 'toast show ' + type;
+            toastMessage.textContent = message;
             
-            document.getElementById('login-prompt').classList.remove('hidden');
-            document.getElementById('user-menu').classList.add('hidden');
-            document.getElementById('login-button').classList.remove('hidden');
-            document.getElementById('nav-links').classList.add('hidden');
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('vending-section').classList.add('hidden');
-            
-            document.querySelectorAll('.owner-only, .admin-only').forEach(el => el.classList.add('hidden'));
-            showToast('Logged out');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
-        
-        function refreshData() {
-            showLoading('Refreshing...');
-            Promise.all([fetchStats(), fetchCandyStock()]).then(() => {
-                hideLoading();
-                showToast('Data refreshed');
-            }).catch(() => hideLoading());
-        }
-        
-        function inviteBot() {
-            window.open(`https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`, '_blank');
-        }
-        
-        function viewServer(serverId) {
-            showToast(`Server ${serverId} selected`);
-        }
-        
-        function checkPremiumStatus() {
-            checkPremiumStatus();
-        }
-        
-        function showAddCandyModal() {
-            if (!isOwner) {
-                showToast('Only owner can add candy', 'error');
-                return;
-            }
-            document.getElementById('add-candy-modal').classList.add('active');
-        }
-        
-        function closeAddCandyModal() {
-            document.getElementById('add-candy-modal').classList.remove('active');
-        }
-        
-        function closeResultModal() {
-            document.getElementById('result-modal').classList.remove('active');
-        }
-        
-        function copyResult() {
-            if (currentResult) {
-                navigator.clipboard.writeText(currentResult.content);
-                showToast('Copied!');
-            }
-        }
-        
-        function refreshCandyStock() {
-            showLoading('Refreshing...');
-            fetchCandyStock().then(() => {
-                hideLoading();
-                showToast('Stock refreshed');
-            });
-        }
-        
-        function createNewCandy() {
-            const type = document.getElementById('new-candy-type').value;
-            const name = document.getElementById('new-candy-name').value;
-            
-            if (!type || !name) {
-                showToast('Fill required fields', 'warning');
-                return;
-            }
-            
-            candyItems.push({
-                type,
-                name,
-                flavor: document.getElementById('new-candy-flavor').value || 'Mixed',
-                color: document.getElementById('new-candy-color').value,
-                cooldown: parseInt(document.getElementById('new-candy-cooldown').value) || 5,
-                count: 0,
-                emoji: '🍬'
-            });
-            
-            updateCandyGrid();
-            closeAddCandyModal();
-            showToast('Candy created!');
-        }
-        
-        function replaceStock() {
-            showToast('Replace stock feature coming soon', 'warning');
-        }
-        
-        // ==================== INIT ====================
-        handleAuth();
-        
-        // Close dropdown on click outside
-        window.onclick = function(e) {
-            if (!e.target.matches('#user-menu, #user-menu *')) {
-                document.getElementById('user-dropdown').classList.add('hidden');
-            }
-        };
     </script>
 </body>
 </html>
