@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT - Ultimate Discord Bot</title>
+    <title>XULT - Ultimate Discord Bot Admin Dashboard</title>
     
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,8 +14,12 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- DataTables for sorting/filtering -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+    
     <style>
-        /* Your existing styles */
         * {
             margin: 0;
             padding: 0;
@@ -32,6 +36,11 @@
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-dark {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
         }
         
         .candy-card {
@@ -151,6 +160,176 @@
             color: #ff69b4;
             border: 1px solid #ff69b4;
         }
+        
+        .badge-owner {
+            background: rgba(255, 215, 0, 0.2);
+            color: gold;
+            border: 1px solid gold;
+        }
+        
+        .badge-admin {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        
+        .candy-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 0.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            transition: transform 0.2s;
+        }
+        
+        .candy-card:hover .candy-image {
+            transform: scale(1.1);
+        }
+        
+        .image-upload-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            border: 2px solid #ff69b4;
+        }
+        
+        .owner-tab {
+            background: linear-gradient(135deg, gold, #ff69b4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 2px solid #ff69b4;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border-left: 4px solid #ff69b4;
+        }
+        
+        .dataTables_wrapper {
+            color: white !important;
+        }
+        
+        .dataTables_length select,
+        .dataTables_filter input {
+            background: #1a1a2a !important;
+            color: white !important;
+            border: 1px solid #2a2a3a !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem !important;
+        }
+        
+        table.dataTable {
+            color: white !important;
+        }
+        
+        table.dataTable tbody tr {
+            background: #1a1a2a !important;
+        }
+        
+        table.dataTable tbody tr:hover {
+            background: #2a2a3a !important;
+        }
+        
+        .owner-badge {
+            background: gold;
+            color: black;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        
+        .admin-badge {
+            background: #ff4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        
+        .premium-role-badge {
+            background: #ff69b4;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+        
+        .system-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .log-entry {
+            font-family: monospace;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-bottom: 1px solid #2a2a3a;
+        }
+        
+        .log-entry:hover {
+            background: #1a1a2a;
+        }
+        
+        .log-time {
+            color: #ff69b4;
+            margin-right: 1rem;
+        }
+        
+        .log-level {
+            margin-right: 1rem;
+        }
+        
+        .log-level.INFO { color: #44ff44; }
+        .log-level.WARN { color: #ffaa44; }
+        .log-level.ERROR { color: #ff4444; }
+        .log-level.DEBUG { color: #9b59b6; }
     </style>
 </head>
 <body class="bg-[#0a0a0f] text-white">
@@ -166,7 +345,7 @@
                     </span>
                 </div>
                 
-                <!-- Navigation -->
+                <!-- Navigation - Shows Admin/Owner tabs based on role -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="#dashboard" class="text-gray-300 hover:text-white transition">Dashboard</a>
                     <a href="#economy" class="text-gray-300 hover:text-white transition">Economy</a>
@@ -175,9 +354,17 @@
                     <a href="#stock" class="text-gray-300 hover:text-white transition">Stock</a>
                     <a href="#fourtwenty" class="text-gray-300 hover:text-white transition">4:20</a>
                     <a href="#vending" class="text-gray-300 hover:text-white transition">Candy</a>
+                    <div id="admin-nav-links" class="hidden">
+                        <a href="#admin" class="text-gray-300 hover:text-white transition admin-tab px-3 py-1 rounded-lg">
+                            <i class="fas fa-shield-alt mr-1"></i>Admin
+                        </a>
+                        <a href="#owner" class="text-gray-300 hover:text-white transition owner-tab px-3 py-1 rounded-lg">
+                            <i class="fas fa-crown mr-1"></i>Owner
+                        </a>
+                    </div>
                 </div>
                 
-                <!-- Auth Buttons -->
+                <!-- Auth Buttons / User Menu -->
                 <div id="auth-buttons">
                     <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
                         <i class="fab fa-discord"></i>
@@ -189,14 +376,19 @@
                 <div id="user-menu" class="hidden relative">
                     <button onclick="toggleMenu()" class="flex items-center space-x-3">
                         <img id="user-avatar" src="" class="w-8 h-8 rounded-full border-2 border-purple-500">
-                        <span id="user-name" class="text-sm font-medium"></span>
+                        <div class="flex items-center space-x-2">
+                            <span id="user-name" class="text-sm font-medium"></span>
+                            <span id="user-badge" class="hidden"></span>
+                        </div>
                         <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                     </button>
                     
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 glass-dark rounded-lg py-1 border border-gray-700">
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-1 border border-gray-700">
                         <div class="px-4 py-2 border-b border-gray-700">
                             <p class="text-xs text-gray-400">Logged in as</p>
                             <p id="dropdown-name" class="text-sm font-medium"></p>
+                            <p id="dropdown-id" class="text-xs text-gray-400"></p>
+                            <div id="dropdown-badge" class="mt-1"></div>
                         </div>
                         <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
                             <i class="fas fa-sign-out-alt mr-2"></i>
@@ -214,12 +406,25 @@
         <section id="dashboard" class="container mx-auto px-4 py-8">
             <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
             
+            <!-- Welcome Banner for Owner -->
+            <div id="owner-welcome" class="hidden glass rounded-xl p-6 mb-8 border-2 border-gold bg-gradient-to-r from-yellow-500/10 to-pink-500/10">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-crown text-5xl text-yellow-500"></i>
+                    <div>
+                        <h2 class="text-2xl font-bold">Welcome back, Owner! 👑</h2>
+                        <p class="text-gray-300">You have full system access. Use the Owner panel for advanced controls.</p>
+                    </div>
+                    <button onclick="showSection('owner')" class="ml-auto bg-gradient-to-r from-yellow-500 to-pink-500 hover:from-yellow-600 hover:to-pink-600 px-6 py-2 rounded-lg">
+                        Go to Owner Panel
+                    </button>
+                </div>
+            </div>
+            
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="glass rounded-xl p-6">
                     <div class="flex items-center justify-between mb-2">
                         <i class="fas fa-server text-2xl text-blue-500"></i>
-                        <span class="text-xs text-green-500">+2 this week</span>
                     </div>
                     <div class="text-2xl font-bold" id="stat-servers">0</div>
                     <div class="text-sm text-gray-400">Total Servers</div>
@@ -721,11 +926,12 @@
         <section id="vending" class="container mx-auto px-4 py-8 hidden">
             <h1 class="text-3xl font-bold mb-8">🍬 Candy Vending Machine</h1>
             
-            <!-- Premium Gate -->
+            <!-- Premium Gate - Checks for role 1474136325912399994 -->
             <div id="premium-gate" class="glass rounded-xl p-8 max-w-md mx-auto text-center border border-purple-500/30 hidden">
                 <i class="fas fa-crown text-5xl text-yellow-500 mb-4"></i>
                 <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
-                <p class="text-gray-400 text-sm mb-6">You need the premium role to access the candy vending machine.</p>
+                <p class="text-gray-400 text-sm mb-2">You need the premium role to access the candy vending machine.</p>
+                <p class="text-xs text-gray-500 mb-6">Role ID: <code class="bg-gray-800 px-2 py-1 rounded">1474136325912399994</code></p>
                 <button onclick="checkPremium()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg text-sm w-full">
                     <i class="fas fa-sync-alt mr-2"></i>
                     Check Again
@@ -768,6 +974,327 @@
                 </div>
             </div>
         </section>
+
+        <!-- Admin Section - For users with premium role -->
+        <section id="admin" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8 flex items-center">
+                <i class="fas fa-shield-alt text-red-500 mr-3"></i>
+                Admin Panel
+                <span class="text-sm font-normal ml-3 bg-red-500/20 text-red-400 px-3 py-1 rounded-full">Premium Access</span>
+            </h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- User Management -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-users text-blue-500 mr-2"></i>
+                            User Management
+                        </h2>
+                        
+                        <div class="mb-4 flex space-x-2">
+                            <input type="text" id="user-search" placeholder="Search users by ID or name..." class="input-field text-sm flex-1">
+                            <button onclick="searchUsers()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="users-table" class="overflow-x-auto">
+                            <table id="users-datatable" class="min-w-full">
+                                <thead>
+                                    <tr class="text-left text-xs text-gray-400">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Username</th>
+                                        <th class="pb-2">Coins</th>
+                                        <th class="pb-2">Level</th>
+                                        <th class="pb-2">Premium</th>
+                                        <th class="pb-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <!-- Filled by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-boxes text-green-500 mr-2"></i>
+                            Stock Management
+                        </h2>
+                        
+                        <div id="admin-stock-list" class="space-y-2 max-h-96 overflow-y-auto">
+                            <!-- Filled by JS -->
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h3 class="text-sm font-semibold mb-2">Add Stock (Admin)</h3>
+                            <select id="admin-stock-select" class="input-field text-sm mb-2">
+                                <option value="">Select Candy Type</option>
+                            </select>
+                            <textarea id="admin-stock-content" rows="3" class="input-field text-sm mb-2" placeholder="Paste stock content..."></textarea>
+                            <button onclick="adminAddStock()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-plus mr-1"></i>
+                                Add to Stock
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Stats & Controls -->
+                <div class="space-y-6">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
+                            System Stats
+                        </h2>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">CPU Usage</span>
+                                <span id="admin-cpu" class="font-mono">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="admin-cpu-bar" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            
+                            <div class="flex justify-between mt-3">
+                                <span class="text-gray-400">Memory Usage</span>
+                                <span id="admin-memory" class="font-mono">0 MB</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="admin-memory-bar" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            
+                            <div class="flex justify-between mt-3">
+                                <span class="text-gray-400">Uptime</span>
+                                <span id="admin-uptime" class="font-mono">0h</span>
+                            </div>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Database Size</span>
+                                <span id="admin-db-size" class="font-mono">0 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                            Premium Management
+                        </h2>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Total Premium Users</span>
+                                <span id="premium-total" class="font-bold text-yellow-500">0</span>
+                            </div>
+                            
+                            <button onclick="exportPremiumList()" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-download mr-1"></i>
+                                Export Premium List
+                            </button>
+                            
+                            <button onclick="syncPremium()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-sync mr-1"></i>
+                                Sync Premium Roles
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-database text-orange-500 mr-2"></i>
+                            Database Controls
+                        </h2>
+                        
+                        <div class="space-y-2">
+                            <button onclick="backupDatabase()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-save mr-1"></i>
+                                Create Backup
+                            </button>
+                            
+                            <button onclick="optimizeDatabase()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-tachometer-alt mr-1"></i>
+                                Optimize Database
+                            </button>
+                            
+                            <button onclick="clearCache()" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eraser mr-1"></i>
+                                Clear Cache
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stock Usage Logs -->
+            <div class="glass rounded-xl p-6 mt-6">
+                <h2 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-history text-blue-500 mr-2"></i>
+                    Stock Usage Logs
+                </h2>
+                <div id="stock-logs" class="space-y-1 max-h-60 overflow-y-auto text-sm">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Owner Section - Full control (only for xotiic._.420 / ID: 1302203907782606880) -->
+        <section id="owner" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8 flex items-center">
+                <i class="fas fa-crown text-yellow-500 mr-3"></i>
+                Owner Panel
+                <span class="text-sm font-normal ml-3 bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">Full Access</span>
+            </h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- System Overview -->
+                <div class="lg:col-span-3">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">System Overview</h2>
+                        <div class="system-stats">
+                            <div class="stat-card">
+                                <div class="text-sm text-gray-400">Total Users</div>
+                                <div class="stat-value" id="owner-total-users">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-sm text-gray-400">Total Servers</div>
+                                <div class="stat-value" id="owner-total-servers">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-sm text-gray-400">Commands Today</div>
+                                <div class="stat-value" id="owner-commands-today">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="text-sm text-gray-400">Premium Users</div>
+                                <div class="stat-value" id="owner-premium-users">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Management (Full) -->
+                <div class="lg:col-span-2">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-users-cog text-red-500 mr-2"></i>
+                            Advanced User Management
+                        </h2>
+                        
+                        <div class="mb-4 flex space-x-2">
+                            <input type="text" id="owner-user-search" placeholder="Search users..." class="input-field text-sm flex-1">
+                            <select id="owner-user-filter" class="input-field text-sm w-32">
+                                <option value="all">All</option>
+                                <option value="premium">Premium</option>
+                                <option value="admin">Admin</option>
+                                <option value="banned">Banned</option>
+                            </select>
+                        </div>
+                        
+                        <div id="owner-users-table" class="overflow-x-auto">
+                            <table id="owner-users-datatable" class="min-w-full">
+                                <thead>
+                                    <tr class="text-left text-xs text-gray-400">
+                                        <th class="pb-2">ID</th>
+                                        <th class="pb-2">Username</th>
+                                        <th class="pb-2">Coins</th>
+                                        <th class="pb-2">Level</th>
+                                        <th class="pb-2">XP</th>
+                                        <th class="pb-2">Role</th>
+                                        <th class="pb-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="owner-users-table-body">
+                                    <!-- Filled by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <button onclick="grantPremiumToAll()" class="bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
+                                Grant Premium to All
+                            </button>
+                            <button onclick="syncAllData()" class="bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                                Sync All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Server Management -->
+                <div class="lg:col-span-1">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-server text-green-500 mr-2"></i>
+                            Server Management
+                        </h2>
+                        
+                        <div id="owner-servers-list" class="space-y-2 max-h-96 overflow-y-auto">
+                            <!-- Filled by JS -->
+                        </div>
+                        
+                        <button onclick="forceSyncServers()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
+                            Force Sync All Servers
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Database & System Controls -->
+                <div class="lg:col-span-3">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Database & System Controls</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <button onclick="executeSQL()" class="bg-red-600 hover:bg-red-700 py-3 rounded-lg text-sm">
+                                <i class="fas fa-terminal mr-2"></i>
+                                Execute SQL
+                            </button>
+                            <button onclick="backupFullDatabase()" class="bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-sm">
+                                <i class="fas fa-database mr-2"></i>
+                                Full Backup
+                            </button>
+                            <button onclick="restoreBackup()" class="bg-green-600 hover:bg-green-700 py-3 rounded-lg text-sm">
+                                <i class="fas fa-undo mr-2"></i>
+                                Restore Backup
+                            </button>
+                            <button onclick="clearAllCache()" class="bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg text-sm">
+                                <i class="fas fa-broom mr-2"></i>
+                                Clear All Cache
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <textarea id="sql-query" rows="3" class="input-field text-sm font-mono" placeholder="SELECT * FROM users LIMIT 10"></textarea>
+                            <button onclick="runSQL()" class="mt-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
+                                Run Query
+                            </button>
+                            <div id="sql-result" class="mt-4 text-xs font-mono bg-gray-900 p-3 rounded-lg max-h-60 overflow-y-auto">
+                                <!-- SQL results appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Real-time Logs -->
+                <div class="lg:col-span-3">
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fas fa-terminal text-orange-500 mr-2"></i>
+                            Real-time System Logs
+                            <button onclick="clearLogs()" class="ml-auto text-xs text-gray-400 hover:text-white">
+                                <i class="fas fa-eraser mr-1"></i>
+                                Clear
+                            </button>
+                        </h2>
+                        
+                        <div id="system-logs" class="bg-gray-900 rounded-lg p-3 h-96 overflow-y-auto font-mono text-xs">
+                            <!-- Logs appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
     
     <!-- Result Modal -->
@@ -803,21 +1330,27 @@
     <footer class="border-t border-gray-800 mt-12 py-6">
         <div class="container mx-auto px-4 text-center text-sm text-gray-400">
             <p>© 2024 XULT - Ultimate Discord Bot. All rights reserved.</p>
+            <p class="text-xs mt-1">Owner: xotiic._.420 | Premium Role ID: 1474136325912399994</p>
         </div>
     </footer>
     
     <script>
         // ==================== CONFIG ====================
-        // CHANGE THESE TO YOUR ACTUAL URLs
-        const API_URL = 'https://ultbotb.onrender.com';  // Your Render bot URL
-        const API_KEY = 'your-api-key-here';               // Will be shown in bot console
-        const DISCORD_CLIENT_ID = '1417284780675956766';        // From Discord Developer Portal
+        const API_URL = 'https://ultbotb.onrender.com';
+        const API_KEY = 'your-api-key-here';
+        const DISCORD_CLIENT_ID = '1417284780675956766';
         const REDIRECT_URI = window.location.origin;
+        
+        // Owner and Role IDs
+        const OWNER_ID = '1302203907782606880';
+        const PREMIUM_ROLE_ID = '1474136325912399994';
+        const MAIN_SERVER_ID = 'YOUR_MAIN_SERVER_ID'; // Add your main server ID here
         
         // State
         let currentUser = null;
         let accessToken = null;
-        let isPremium = false;
+        let isOwner = false;
+        let hasPremiumRole = false;
         let candyItems = [];
         let selectedCandy = null;
         let cooldown = 0;
@@ -825,6 +1358,8 @@
         let currentResult = null;
         let userGuilds = [];
         let activityChart = null;
+        let usersTable = null;
+        let ownerUsersTable = null;
         
         // ==================== AUTH ====================
         function loginWithDiscord() {
@@ -860,19 +1395,65 @@
                 const user = await res.json();
                 currentUser = user;
                 
+                // Check if user is owner
+                isOwner = user.id === OWNER_ID;
+                
+                // Update UI
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-menu').classList.remove('hidden');
                 document.getElementById('user-name').textContent = user.username;
                 document.getElementById('dropdown-name').textContent = user.username;
+                document.getElementById('dropdown-id').textContent = `ID: ${user.id}`;
                 document.getElementById('user-avatar').src = user.avatar 
                     ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
                     : 'https://cdn.discordapp.com/embed/avatars/0.png';
                 
-                checkPremium();
+                // Add role badges
+                const badgeSpan = document.getElementById('user-badge');
+                const dropdownBadge = document.getElementById('dropdown-badge');
+                
+                if (isOwner) {
+                    badgeSpan.classList.remove('hidden');
+                    badgeSpan.innerHTML = '<span class="owner-badge ml-2">OWNER</span>';
+                    dropdownBadge.innerHTML = '<span class="owner-badge">👑 Bot Owner</span>';
+                    document.getElementById('admin-nav-links').classList.remove('hidden');
+                    document.getElementById('owner-welcome').classList.remove('hidden');
+                }
+                
+                // Check for premium role (you'll need to implement this API endpoint)
+                checkPremiumRole();
+                
+                // Fetch data
                 fetchStats();
                 fetchUserEconomy();
+                fetchCandyStock();
+                
+                // If owner, load owner data
+                if (isOwner) {
+                    loadOwnerData();
+                    startLogStream();
+                }
             } catch (e) {
                 console.error('Auth failed:', e);
+            }
+        }
+        
+        async function checkPremiumRole() {
+            // This would check if the user has the premium role in your main server
+            // You'll need to implement this API endpoint
+            try {
+                const res = await fetch(`${API_URL}/api/user/roles/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                const data = await res.json();
+                hasPremiumRole = data.roles && data.roles.includes(PREMIUM_ROLE_ID);
+                
+                if (hasPremiumRole) {
+                    document.getElementById('admin-nav-links').classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error('Failed to check premium role:', e);
             }
         }
         
@@ -916,21 +1497,24 @@
             }
             
             noServers.classList.add('hidden');
-            list.innerHTML = userGuilds.map(guild => `
-                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center space-x-3">
-                        <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
-                             class="w-8 h-8 rounded-full">
-                        <div>
-                            <p class="font-medium">${guild.name}</p>
-                            <p class="text-xs text-gray-400">ID: ${guild.id}</p>
+            list.innerHTML = userGuilds.map(guild => {
+                const isMainServer = guild.id === MAIN_SERVER_ID;
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition">
+                        <div class="flex items-center space-x-3">
+                            <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
+                                 class="w-8 h-8 rounded-full">
+                            <div>
+                                <p class="font-medium">${guild.name} ${isMainServer ? '<span class="premium-role-badge ml-2">Premium Server</span>' : ''}</p>
+                                <p class="text-xs text-gray-400">ID: ${guild.id}</p>
+                            </div>
                         </div>
+                        <span class="badge ${guild.owner ? 'badge-success' : 'badge-warning'}">
+                            ${guild.owner ? 'Owner' : 'Member'}
+                        </span>
                     </div>
-                    <span class="badge ${guild.owner ? 'badge-success' : 'badge-warning'}">
-                        ${guild.owner ? 'Owner' : 'Member'}
-                    </span>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function toggleMenu() {
@@ -951,22 +1535,26 @@
         
         // ==================== NAVIGATION ====================
         function showSection(sectionId) {
-            const sections = ['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending'];
+            const sections = ['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending', 'admin', 'owner'];
             sections.forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(sectionId).classList.remove('hidden');
-            
-            // Update URL hash
             window.location.hash = sectionId;
+            
+            // Load section-specific data
+            if (sectionId === 'admin' && hasPremiumRole) {
+                loadAdminData();
+            }
+            if (sectionId === 'owner' && isOwner) {
+                loadOwnerData();
+            }
         }
         
         // Check hash on load
         if (window.location.hash) {
             const section = window.location.hash.substring(1);
-            if (['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending'].includes(section)) {
-                setTimeout(() => showSection(section), 100);
-            }
+            setTimeout(() => showSection(section), 100);
         }
         
         // ==================== API CALLS ====================
@@ -985,11 +1573,6 @@
                 updateChart(data.activity || [5, 10, 15, 20, 25, 30, 35]);
             } catch (e) {
                 console.error('Stats fetch failed:', e);
-                // Show placeholder data
-                document.getElementById('stat-servers').textContent = '0';
-                document.getElementById('stat-users').textContent = '0';
-                document.getElementById('stat-commands').textContent = '0';
-                document.getElementById('stat-premium').textContent = '0';
             }
         }
         
@@ -1032,30 +1615,6 @@
                     }
                 }
             });
-        }
-        
-        async function checkPremium() {
-            if (!currentUser) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/api/check-premium/${currentUser.id}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                const data = await res.json();
-                isPremium = data.hasPremium;
-                
-                if (isPremium) {
-                    document.getElementById('premium-gate').classList.add('hidden');
-                    document.getElementById('candy-machine').classList.remove('hidden');
-                    fetchCandyStock();
-                } else {
-                    document.getElementById('premium-gate').classList.remove('hidden');
-                    document.getElementById('candy-machine').classList.add('hidden');
-                }
-            } catch (e) {
-                console.error('Premium check failed:', e);
-            }
         }
         
         async function fetchUserEconomy() {
@@ -1103,7 +1662,7 @@
             }
         }
         
-        // ==================== STOCK FUNCTIONS ====================
+        // ==================== CANDY/STOCK FUNCTIONS ====================
         async function fetchCandyStock() {
             try {
                 const res = await fetch(`${API_URL}/api/stock`, {
@@ -1118,6 +1677,7 @@
                 
                 updateCandyGrid();
                 updateStockStats();
+                updateAdminStockSelect();
             } catch (e) {
                 console.error('Stock fetch failed:', e);
             }
@@ -1128,7 +1688,6 @@
             document.getElementById('total-pieces').textContent = total;
             document.getElementById('total-flavors').textContent = candyItems.length;
             
-            // Update stock grid in stock section
             const stockGrid = document.getElementById('stock-grid');
             if (stockGrid) {
                 stockGrid.innerHTML = candyItems.map(item => `
@@ -1139,6 +1698,7 @@
                                 ${item.count} left
                             </span>
                         </div>
+                        <div class="text-4xl text-center mb-2">${item.emoji || '🍬'}</div>
                         <p class="text-xs text-gray-400 mb-2">${item.flavor || 'Mixed'}</p>
                         <div class="progress-bar mb-2">
                             <div class="progress-fill ${item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high'}" 
@@ -1163,8 +1723,7 @@
                 const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
                 
                 return `
-                    <div class="candy-card ${selectedCandy?.type === item.type ? 'selected' : ''}" 
-                         onclick="selectCandy('${item.type}')">
+                    <div class="candy-card" onclick="selectCandy('${item.type}')">
                         <div class="candy-stripes">
                             <div class="stripe-pink"></div>
                             <div class="stripe-purple"></div>
@@ -1203,7 +1762,6 @@
         
         function selectCandy(type) {
             selectedCandy = candyItems.find(i => i.type === type);
-            updateCandyGrid();
         }
         
         async function generateCandy(type) {
@@ -1238,7 +1796,7 @@
                     alert(result.error || 'Failed to generate');
                 }
             } catch (e) {
-                alert('Failed to connect to bot. Make sure the bot is running on Render.');
+                alert('Failed to connect to bot.');
                 console.error(e);
             }
         }
@@ -1268,10 +1826,398 @@
             }, 100);
         }
         
+        // ==================== ADMIN FUNCTIONS ====================
+        async function loadAdminData() {
+            if (!hasPremiumRole && !isOwner) return;
+            
+            try {
+                // Load users
+                const usersRes = await fetch(`${API_URL}/api/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const users = await usersRes.json();
+                
+                // Initialize DataTable if not already
+                if (!usersTable) {
+                    usersTable = $('#users-datatable').DataTable({
+                        data: users,
+                        columns: [
+                            { data: 'id' },
+                            { data: 'username' },
+                            { data: 'coins' },
+                            { data: 'level' },
+                            { 
+                                data: 'premium',
+                                render: function(data) {
+                                    return data ? '<span class="badge-premium text-xs">✓</span>' : '<span class="text-gray-600">✗</span>';
+                                }
+                            },
+                            {
+                                data: null,
+                                render: function(data) {
+                                    return `
+                                        <button onclick="editUser('${data.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="jailUser('${data.id}')" class="text-red-400 hover:text-red-300">
+                                            <i class="fas fa-gavel"></i>
+                                        </button>
+                                    `;
+                                }
+                            }
+                        ],
+                        pageLength: 10,
+                        order: [[2, 'desc']]
+                    });
+                } else {
+                    usersTable.clear().rows.add(users).draw();
+                }
+                
+                // Load system stats
+                const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const stats = await statsRes.json();
+                
+                document.getElementById('admin-cpu').textContent = `${stats.cpu || 0}%`;
+                document.getElementById('admin-cpu-bar').style.width = `${stats.cpu || 0}%`;
+                document.getElementById('admin-memory').textContent = `${stats.memory || 0} MB`;
+                document.getElementById('admin-memory-bar').style.width = `${(stats.memory / 1024) * 100 || 0}%`;
+                document.getElementById('admin-uptime').textContent = stats.uptime || '0h';
+                document.getElementById('admin-db-size').textContent = `${stats.dbSize || 0} MB`;
+                
+                // Load premium stats
+                const premiumRes = await fetch(`${API_URL}/api/admin/premium`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const premium = await premiumRes.json();
+                document.getElementById('premium-total').textContent = premium.total || 0;
+                
+                // Load stock logs
+                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const logs = await logsRes.json();
+                
+                const logsDiv = document.getElementById('stock-logs');
+                logsDiv.innerHTML = logs.map(log => `
+                    <div class="log-entry">
+                        <span class="log-time">${log.time}</span>
+                        <span class="log-level INFO">[${log.type}]</span>
+                        <span>User ${log.userId} generated ${log.item}</span>
+                    </div>
+                `).join('');
+                
+            } catch (e) {
+                console.error('Failed to load admin data:', e);
+            }
+        }
+        
+        function updateAdminStockSelect() {
+            const select = document.getElementById('admin-stock-select');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Select Candy Type</option>';
+            candyItems.forEach(item => {
+                select.innerHTML += `<option value="${item.type}">${item.name || item.type}</option>`;
+            });
+        }
+        
+        async function adminAddStock() {
+            const type = document.getElementById('admin-stock-select').value;
+            const content = document.getElementById('admin-stock-content').value;
+            
+            if (!type || !content) {
+                alert('Select a candy and enter stock content');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, content })
+                });
+                
+                alert('Stock added successfully');
+                document.getElementById('admin-stock-content').value = '';
+                fetchCandyStock();
+            } catch (e) {
+                alert('Failed to add stock');
+            }
+        }
+        
+        function searchUsers() {
+            if (usersTable) {
+                usersTable.search(document.getElementById('user-search').value).draw();
+            }
+        }
+        
+        async function exportPremiumList() {
+            try {
+                const res = await fetch(`${API_URL}/api/admin/premium/export`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'premium-users.json';
+                a.click();
+            } catch (e) {
+                alert('Failed to export');
+            }
+        }
+        
+        async function syncPremium() {
+            alert('Syncing premium roles...');
+            try {
+                await fetch(`${API_URL}/api/admin/premium/sync`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                alert('Premium roles synced!');
+            } catch (e) {
+                alert('Sync failed');
+            }
+        }
+        
+        async function backupDatabase() {
+            alert('Creating backup...');
+            try {
+                const res = await fetch(`${API_URL}/api/admin/backup`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                alert('Backup created!');
+            } catch (e) {
+                alert('Backup failed');
+            }
+        }
+        
+        async function optimizeDatabase() {
+            alert('Optimizing database...');
+            try {
+                await fetch(`${API_URL}/api/admin/optimize`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                alert('Database optimized!');
+            } catch (e) {
+                alert('Optimization failed');
+            }
+        }
+        
+        async function clearCache() {
+            alert('Clearing cache...');
+            try {
+                await fetch(`${API_URL}/api/admin/cache/clear`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                alert('Cache cleared!');
+            } catch (e) {
+                alert('Failed to clear cache');
+            }
+        }
+        
+        // ==================== OWNER FUNCTIONS ====================
+        async function loadOwnerData() {
+            if (!isOwner) return;
+            
+            try {
+                // Load all users
+                const usersRes = await fetch(`${API_URL}/api/owner/users`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const users = await usersRes.json();
+                
+                document.getElementById('owner-total-users').textContent = users.length;
+                
+                // Initialize owner users table
+                if (!ownerUsersTable) {
+                    ownerUsersTable = $('#owner-users-datatable').DataTable({
+                        data: users,
+                        columns: [
+                            { data: 'id' },
+                            { data: 'username' },
+                            { data: 'coins' },
+                            { data: 'level' },
+                            { data: 'xp' },
+                            { 
+                                data: 'role',
+                                render: function(data) {
+                                    if (data === 'owner') return '<span class="owner-badge">OWNER</span>';
+                                    if (data === 'admin') return '<span class="admin-badge">ADMIN</span>';
+                                    if (data === 'premium') return '<span class="premium-role-badge">PREMIUM</span>';
+                                    return '<span class="text-gray-500">USER</span>';
+                                }
+                            },
+                            {
+                                data: null,
+                                render: function(data) {
+                                    return `
+                                        <button onclick="ownerEditUser('${data.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="ownerGrantPremium('${data.id}')" class="text-yellow-400 hover:text-yellow-300 mr-2">
+                                            <i class="fas fa-crown"></i>
+                                        </button>
+                                        <button onclick="ownerBanUser('${data.id}')" class="text-red-400 hover:text-red-300">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    `;
+                                }
+                            }
+                        ],
+                        pageLength: 25,
+                        order: [[2, 'desc']]
+                    });
+                } else {
+                    ownerUsersTable.clear().rows.add(users).draw();
+                }
+                
+                // Load servers
+                const serversRes = await fetch(`${API_URL}/api/owner/servers`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const servers = await serversRes.json();
+                
+                document.getElementById('owner-total-servers').textContent = servers.length;
+                
+                const serversList = document.getElementById('owner-servers-list');
+                serversList.innerHTML = servers.map(server => `
+                    <div class="bg-gray-800/50 rounded-lg p-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span>${server.name}</span>
+                            <span class="text-xs text-gray-400">${server.members} members</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">ID: ${server.id}</div>
+                    </div>
+                `).join('');
+                
+                // Load command stats
+                const statsRes = await fetch(`${API_URL}/api/owner/stats`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                const stats = await statsRes.json();
+                
+                document.getElementById('owner-commands-today').textContent = stats.commandsToday || 0;
+                document.getElementById('owner-premium-users').textContent = stats.premiumUsers || 0;
+                
+            } catch (e) {
+                console.error('Failed to load owner data:', e);
+            }
+        }
+        
+        function grantPremiumToAll() {
+            if (!isOwner) return;
+            if (confirm('Grant premium role to ALL users? This might take a while.')) {
+                alert('Granting premium to all users...');
+                // Implement API call
+            }
+        }
+        
+        function syncAllData() {
+            if (!isOwner) return;
+            alert('Syncing all data...');
+            // Implement API call
+        }
+        
+        function forceSyncServers() {
+            if (!isOwner) return;
+            alert('Force syncing all servers...');
+            // Implement API call
+        }
+        
+        function executeSQL() {
+            document.getElementById('sql-query').classList.toggle('hidden');
+        }
+        
+        async function runSQL() {
+            if (!isOwner) return;
+            
+            const query = document.getElementById('sql-query').value;
+            if (!query) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/api/owner/sql`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query })
+                });
+                
+                const result = await res.json();
+                document.getElementById('sql-result').innerHTML = 
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (e) {
+                document.getElementById('sql-result').innerHTML = 'Error: ' + e.message;
+            }
+        }
+        
+        function backupFullDatabase() {
+            if (!isOwner) return;
+            alert('Creating full database backup...');
+            // Implement API call
+        }
+        
+        function restoreBackup() {
+            if (!isOwner) return;
+            alert('Restoring from backup...');
+            // Implement API call
+        }
+        
+        function clearAllCache() {
+            if (!isOwner) return;
+            alert('Clearing all cache...');
+            // Implement API call
+        }
+        
+        function clearLogs() {
+            document.getElementById('system-logs').innerHTML = '';
+        }
+        
+        // Simulate real-time logs for owner
+        function startLogStream() {
+            if (!isOwner) return;
+            
+            setInterval(() => {
+                const logs = document.getElementById('system-logs');
+                const timestamp = new Date().toLocaleTimeString();
+                const levels = ['INFO', 'WARN', 'ERROR', 'DEBUG'];
+                const level = levels[Math.floor(Math.random() * levels.length)];
+                const messages = [
+                    'User generated nitro',
+                    'Database query executed',
+                    'Premium role synced',
+                    'Stock updated',
+                    'New user registered',
+                    'Command: /balance used',
+                    'Server joined: New Server'
+                ];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                
+                logs.innerHTML += `
+                    <div class="log-entry">
+                        <span class="log-time">[${timestamp}]</span>
+                        <span class="log-level ${level}">[${level}]</span>
+                        <span>${message}</span>
+                    </div>
+                `;
+                logs.scrollTop = logs.scrollHeight;
+            }, 3000);
+        }
+        
         // ==================== MODERATION FUNCTIONS ====================
-        async function jailUser() {
+        async function jailUser(userId) {
             const serverId = document.getElementById('server-select-mod').value;
-            const userId = document.getElementById('user-id').value;
+            userId = userId || document.getElementById('user-id').value;
             
             if (!serverId || !userId) {
                 alert('Select a server and enter user ID');
@@ -1613,7 +2559,7 @@
         fetchLeaderboard();
         
         // Periodic refresh
-        setInterval(fetchStats, 30000); // Refresh stats every 30 seconds
+        setInterval(fetchStats, 30000);
     </script>
 </body>
 </html>
