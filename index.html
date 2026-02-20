@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT - Ultimate Discord Bot Admin Dashboard</title>
+    <title>XULT - Ultimate Discord Bot Dashboard</title>
     
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,11 +13,6 @@
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- DataTables for sorting/filtering -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
     
     <style>
         * {
@@ -42,6 +37,123 @@
             background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(10px);
         }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .server-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border: 1px solid #2a2a3a;
+            border-radius: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .server-card:hover {
+            border-color: #ff69b4;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.2);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border-left: 4px solid #ff69b4;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: rgba(68, 255, 68, 0.2);
+            color: #44ff44;
+            border: 1px solid #44ff44;
+        }
+        
+        .badge-owner {
+            background: rgba(255, 215, 0, 0.2);
+            color: gold;
+            border: 1px solid gold;
+        }
+        
+        .badge-premium {
+            background: rgba(255, 105, 180, 0.2);
+            color: #ff69b4;
+            border: 1px solid #ff69b4;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #ff69b4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #ff69b4, #9b59b6);
+            color: white;
+        }
+        
+        .owner-tab {
+            background: linear-gradient(135deg, gold, #ff69b4);
+        }
+        
+        .input-field {
+            background: #1a1a2a;
+            border: 1px solid #2a2a3a;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.2);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        
+        .progress-low { background: #ff4444; }
+        .progress-medium { background: #ffaa44; }
+        .progress-high { background: #44ff44; }
         
         .candy-card {
             background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
@@ -71,147 +183,10 @@
         .stripe-green { background: #2ecc71; flex: 1; }
         .stripe-yellow { background: #f1c40f; flex: 1; }
         
-        .progress-bar {
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            transition: width 0.3s;
-        }
-        
-        .progress-low { background: #ff4444; }
-        .progress-medium { background: #ffaa44; }
-        .progress-high { background: #44ff44; }
-        
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .tab {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .tab.active {
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
-            color: white;
-        }
-        
-        .input-field {
-            background: #1a1a2a;
-            border: 1px solid #2a2a3a;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            color: white;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #ff69b4;
-            box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.2);
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .badge-success {
-            background: rgba(68, 255, 68, 0.2);
-            color: #44ff44;
-            border: 1px solid #44ff44;
-        }
-        
-        .badge-warning {
-            background: rgba(255, 170, 68, 0.2);
-            color: #ffaa44;
-            border: 1px solid #ffaa44;
-        }
-        
-        .badge-danger {
-            background: rgba(255, 68, 68, 0.2);
-            color: #ff4444;
-            border: 1px solid #ff4444;
-        }
-        
-        .badge-premium {
-            background: rgba(255, 105, 180, 0.2);
-            color: #ff69b4;
-            border: 1px solid #ff69b4;
-        }
-        
-        .badge-owner {
-            background: rgba(255, 215, 0, 0.2);
-            color: gold;
-            border: 1px solid gold;
-        }
-        
-        .badge-admin {
-            background: rgba(255, 0, 0, 0.2);
-            color: #ff4444;
-            border: 1px solid #ff4444;
-        }
-        
-        .candy-image {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin: 0 auto 0.5rem;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
-            transition: transform 0.2s;
-        }
-        
-        .candy-card:hover .candy-image {
-            transform: scale(1.1);
-        }
-        
-        .image-upload-preview {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 0.5rem;
-            margin-top: 0.5rem;
-            border: 2px solid #ff69b4;
-        }
-        
-        .owner-tab {
-            background: linear-gradient(135deg, gold, #ff69b4);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-        
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
             z-index: 1000;
@@ -233,103 +208,6 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            border-left: 4px solid #ff69b4;
-        }
-        
-        .dataTables_wrapper {
-            color: white !important;
-        }
-        
-        .dataTables_length select,
-        .dataTables_filter input {
-            background: #1a1a2a !important;
-            color: white !important;
-            border: 1px solid #2a2a3a !important;
-            border-radius: 0.5rem !important;
-            padding: 0.5rem !important;
-        }
-        
-        table.dataTable {
-            color: white !important;
-        }
-        
-        table.dataTable tbody tr {
-            background: #1a1a2a !important;
-        }
-        
-        table.dataTable tbody tr:hover {
-            background: #2a2a3a !important;
-        }
-        
-        .owner-badge {
-            background: gold;
-            color: black;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-        
-        .admin-badge {
-            background: #ff4444;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-        
-        .premium-role-badge {
-            background: #ff69b4;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-        
-        .system-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ff69b4, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .log-entry {
-            font-family: monospace;
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-            border-bottom: 1px solid #2a2a3a;
-        }
-        
-        .log-entry:hover {
-            background: #1a1a2a;
-        }
-        
-        .log-time {
-            color: #ff69b4;
-            margin-right: 1rem;
-        }
-        
-        .log-level {
-            margin-right: 1rem;
-        }
-        
-        .log-level.INFO { color: #44ff44; }
-        .log-level.WARN { color: #ffaa44; }
-        .log-level.ERROR { color: #ff4444; }
-        .log-level.DEBUG { color: #9b59b6; }
     </style>
 </head>
 <body class="bg-[#0a0a0f] text-white">
@@ -345,26 +223,17 @@
                     </span>
                 </div>
                 
-                <!-- Navigation - Shows Admin/Owner tabs based on role -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#dashboard" class="text-gray-300 hover:text-white transition">Dashboard</a>
-                    <a href="#economy" class="text-gray-300 hover:text-white transition">Economy</a>
-                    <a href="#moderation" class="text-gray-300 hover:text-white transition">Moderation</a>
-                    <a href="#notifications" class="text-gray-300 hover:text-white transition">Notifications</a>
-                    <a href="#stock" class="text-gray-300 hover:text-white transition">Stock</a>
-                    <a href="#fourtwenty" class="text-gray-300 hover:text-white transition">4:20</a>
-                    <a href="#vending" class="text-gray-300 hover:text-white transition">Candy</a>
-                    <div id="admin-nav-links" class="hidden">
-                        <a href="#admin" class="text-gray-300 hover:text-white transition admin-tab px-3 py-1 rounded-lg">
-                            <i class="fas fa-shield-alt mr-1"></i>Admin
-                        </a>
-                        <a href="#owner" class="text-gray-300 hover:text-white transition owner-tab px-3 py-1 rounded-lg">
-                            <i class="fas fa-crown mr-1"></i>Owner
-                        </a>
-                    </div>
+                <!-- Navigation -->
+                <div id="nav-links" class="hidden md:flex items-center space-x-6">
+                    <a href="#" onclick="showSection('dashboard'); return false;" class="tab active" data-section="dashboard">Dashboard</a>
+                    <a href="#" onclick="showSection('servers'); return false;" class="tab" data-section="servers">Servers</a>
+                    <a href="#" onclick="showSection('premium'); return false;" class="tab" data-section="premium">Premium</a>
+                    <a href="#" onclick="showSection('candy'); return false;" class="tab" data-section="candy">Candy</a>
+                    <a href="#" onclick="showSection('admin'); return false;" class="tab hidden admin-only" data-section="admin">Admin</a>
+                    <a href="#" onclick="showSection('owner'); return false;" class="tab hidden owner-only" data-section="owner">Owner</a>
                 </div>
                 
-                <!-- Auth Buttons / User Menu -->
+                <!-- Auth Buttons -->
                 <div id="auth-buttons">
                     <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2 rounded-lg text-sm flex items-center space-x-2">
                         <i class="fab fa-discord"></i>
@@ -376,19 +245,16 @@
                 <div id="user-menu" class="hidden relative">
                     <button onclick="toggleMenu()" class="flex items-center space-x-3">
                         <img id="user-avatar" src="" class="w-8 h-8 rounded-full border-2 border-purple-500">
-                        <div class="flex items-center space-x-2">
-                            <span id="user-name" class="text-sm font-medium"></span>
-                            <span id="user-badge" class="hidden"></span>
-                        </div>
+                        <span id="user-name" class="text-sm font-medium"></span>
                         <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                     </button>
                     
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-1 border border-gray-700">
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-dark rounded-lg py-2 border border-gray-700">
                         <div class="px-4 py-2 border-b border-gray-700">
                             <p class="text-xs text-gray-400">Logged in as</p>
                             <p id="dropdown-name" class="text-sm font-medium"></p>
-                            <p id="dropdown-id" class="text-xs text-gray-400"></p>
-                            <div id="dropdown-badge" class="mt-1"></div>
+                            <p id="dropdown-id" class="text-xs text-gray-400 mt-1"></p>
+                            <div id="user-role-badge" class="mt-2"></div>
                         </div>
                         <button onclick="logout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10">
                             <i class="fas fa-sign-out-alt mr-2"></i>
@@ -402,21 +268,39 @@
     
     <!-- Main Content -->
     <main class="pt-16">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden items-center justify-center">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-300" id="loading-text">Loading...</p>
+            </div>
+        </div>
+        
+        <!-- Login Prompt -->
+        <section id="login-prompt" class="container mx-auto px-4 py-16">
+            <div class="max-w-md mx-auto text-center">
+                <i class="fas fa-bolt text-6xl text-purple-500 mb-6"></i>
+                <h1 class="text-4xl font-bold mb-4">Welcome to XULT</h1>
+                <p class="text-gray-400 mb-8">The ultimate Discord bot for economy, moderation, notifications, and more!</p>
+                <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] px-8 py-4 rounded-xl text-lg font-semibold flex items-center justify-center space-x-3 mx-auto">
+                    <i class="fab fa-discord text-2xl"></i>
+                    <span>Login with Discord</span>
+                </button>
+            </div>
+        </section>
+        
         <!-- Dashboard Section -->
-        <section id="dashboard" class="container mx-auto px-4 py-8">
+        <section id="dashboard" class="container mx-auto px-4 py-8 hidden">
             <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
             
             <!-- Welcome Banner for Owner -->
-            <div id="owner-welcome" class="hidden glass rounded-xl p-6 mb-8 border-2 border-gold bg-gradient-to-r from-yellow-500/10 to-pink-500/10">
-                <div class="flex items-center space-x-4">
-                    <i class="fas fa-crown text-5xl text-yellow-500"></i>
+            <div id="owner-welcome" class="hidden glass rounded-xl p-6 mb-8 border-2 border-yellow-500">
+                <div class="flex items-center">
+                    <i class="fas fa-crown text-4xl text-yellow-500 mr-4"></i>
                     <div>
                         <h2 class="text-2xl font-bold">Welcome back, Owner! 👑</h2>
-                        <p class="text-gray-300">You have full system access. Use the Owner panel for advanced controls.</p>
+                        <p class="text-gray-300">You have full system access.</p>
                     </div>
-                    <button onclick="showSection('owner')" class="ml-auto bg-gradient-to-r from-yellow-500 to-pink-500 hover:from-yellow-600 hover:to-pink-600 px-6 py-2 rounded-lg">
-                        Go to Owner Panel
-                    </button>
                 </div>
             </div>
             
@@ -427,7 +311,7 @@
                         <i class="fas fa-server text-2xl text-blue-500"></i>
                     </div>
                     <div class="text-2xl font-bold" id="stat-servers">0</div>
-                    <div class="text-sm text-gray-400">Total Servers</div>
+                    <div class="text-sm text-gray-400">Servers with Bot</div>
                 </div>
                 
                 <div class="glass rounded-xl p-6">
@@ -457,488 +341,98 @@
             
             <!-- Activity Chart -->
             <div class="glass rounded-xl p-6 mb-8">
-                <h2 class="text-lg font-semibold mb-4">Activity (Last 7 Days)</h2>
+                <h2 class="text-lg font-semibold mb-4">Bot Activity (Last 7 Days)</h2>
                 <canvas id="activityChart" height="100"></canvas>
             </div>
             
+            <!-- User Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4">Your Information</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Username</span>
+                            <span id="profile-username" class="font-medium">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">User ID</span>
+                            <span id="profile-id" class="font-medium">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Status</span>
+                            <span id="profile-status" class="badge badge-success">Logged In</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass rounded-xl p-6">
+                    <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showSection('servers')" class="bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
+                            <i class="fas fa-server mr-2"></i>
+                            View Servers
+                        </button>
+                        <button onclick="inviteBot()" class="bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
+                            <i class="fas fa-plus mr-2"></i>
+                            Invite Bot
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Servers Section -->
+        <section id="servers" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8">Your Servers with XULT</h1>
+            
             <!-- Server List -->
-            <div class="glass rounded-xl p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold">Your Servers</h2>
-                    <button onclick="refreshServers()" class="text-sm text-purple-400 hover:text-purple-300">
-                        <i class="fas fa-sync-alt mr-1"></i>
-                        Refresh
-                    </button>
-                </div>
-                
-                <div id="servers-list" class="space-y-2">
-                    <!-- Filled by JS -->
-                </div>
-                
-                <div id="no-servers" class="hidden text-center py-8 text-gray-400">
-                    <i class="fas fa-server text-4xl mb-3 opacity-50"></i>
-                    <p>Bot not in any of your servers yet</p>
-                    <button onclick="inviteBot()" class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
-                        Invite Bot
-                    </button>
-                </div>
+            <div id="servers-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Filled by JavaScript -->
+            </div>
+            
+            <!-- No Servers Message -->
+            <div id="no-servers-message" class="hidden text-center py-16">
+                <i class="fas fa-server text-6xl text-gray-600 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">No Servers Found</h3>
+                <p class="text-gray-400 mb-4">XULT isn't in any of your servers yet.</p>
+                <button onclick="inviteBot()" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg">
+                    <i class="fab fa-discord mr-2"></i>
+                    Invite XULT to a Server
+                </button>
             </div>
         </section>
         
-        <!-- Economy Section -->
-        <section id="economy" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Economy System</h1>
+        <!-- Premium Section -->
+        <section id="premium" class="container mx-auto px-4 py-8 hidden">
+            <h1 class="text-3xl font-bold mb-8 flex items-center">
+                <i class="fas fa-crown text-yellow-500 mr-3"></i>
+                Premium Features
+            </h1>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left Column - User Stats -->
-                <div class="lg:col-span-1 space-y-4">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Your Stats</h2>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Coins</span>
-                                <span class="font-bold" id="user-coins">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">XP</span>
-                                <span class="font-bold" id="user-xp">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Level</span>
-                                <span class="font-bold" id="user-level">1</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Rank</span>
-                                <span class="font-bold" id="user-rank">#0</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
-                        <div class="space-y-2">
-                            <button onclick="dailyBonus()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 py-2 rounded-lg text-sm font-semibold">
-                                <i class="fas fa-dice mr-2"></i>
-                                Daily Bonus
-                            </button>
-                            <button onclick="enterLottery()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-2 rounded-lg text-sm font-semibold">
-                                <i class="fas fa-ticket mr-2"></i>
-                                Enter Lottery
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Right Column - Leaderboard & Shop -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">🏆 Leaderboard</h2>
-                        <div id="leaderboard" class="space-y-2">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">🛍️ Shop</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
-                                <i class="fas fa-crown text-yellow-500 text-2xl mb-2"></i>
-                                <h3 class="font-semibold">VIP Role</h3>
-                                <p class="text-xs text-gray-400 mb-2">Gives VIP role</p>
-                                <p class="text-sm text-yellow-500 mb-2">500 coins</p>
-                                <button onclick="buyItem('VIP Role', 500)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
-                                    Buy
-                                </button>
-                            </div>
-                            
-                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
-                                <i class="fas fa-bolt text-blue-500 text-2xl mb-2"></i>
-                                <h3 class="font-semibold">Double XP</h3>
-                                <p class="text-xs text-gray-400 mb-2">24h double XP</p>
-                                <p class="text-sm text-yellow-500 mb-2">300 coins</p>
-                                <button onclick="buyItem('Double XP', 300)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
-                                    Buy
-                                </button>
-                            </div>
-                            
-                            <div class="bg-gray-800/50 rounded-lg p-3 text-center">
-                                <i class="fas fa-box text-green-500 text-2xl mb-2"></i>
-                                <h3 class="font-semibold">Mystery Box</h3>
-                                <p class="text-xs text-gray-400 mb-2">Random reward</p>
-                                <p class="text-sm text-yellow-500 mb-2">100 coins</p>
-                                <button onclick="buyItem('Mystery Box', 100)" class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
-                                    Buy
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Moderation Section -->
-        <section id="moderation" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Moderation</h1>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Left Column - Actions -->
-                <div class="lg:col-span-1 space-y-4">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
-                        <div class="space-y-3">
-                            <select id="server-select-mod" class="input-field text-sm">
-                                <option value="">Select Server</option>
-                            </select>
-                            
-                            <input type="text" id="user-id" placeholder="User ID" class="input-field text-sm">
-                            
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="jailUser()" class="bg-red-600 hover:bg-red-700 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-gavel mr-1"></i>
-                                    Jail
-                                </button>
-                                <button onclick="unjailUser()" class="bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-unlock mr-1"></i>
-                                    Unjail
-                                </button>
-                            </div>
-                            
-                            <button onclick="purgeMessages()" class="w-full bg-orange-600 hover:bg-orange-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-trash mr-1"></i>
-                                Purge (100)
-                            </button>
-                            
-                            <button onclick="showWarnings()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
-                                Check Warnings
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Auto-Mod Settings</h2>
-                        <div class="space-y-3">
-                            <label class="flex items-center justify-between">
-                                <span class="text-sm text-gray-400">Bad Word Filter</span>
-                                <input type="checkbox" id="badword-filter" class="toggle" onchange="toggleBadWordFilter()">
-                            </label>
-                            
-                            <label class="flex items-center justify-between">
-                                <span class="text-sm text-gray-400">Anti-Spam</span>
-                                <input type="checkbox" id="anti-spam" class="toggle" onchange="toggleAntiSpam()">
-                            </label>
-                            
-                            <label class="flex items-center justify-between">
-                                <span class="text-sm text-gray-400">Auto-Role on Join</span>
-                                <input type="checkbox" id="auto-role" class="toggle" onchange="toggleAutoRole()">
-                            </label>
-                            
-                            <button onclick="saveModSettings()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm mt-2">
-                                Save Settings
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Right Column - Logs & Warnings -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Recent Warnings</h2>
-                        <div id="warnings-list" class="space-y-2 max-h-96 overflow-y-auto">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Moderation Logs</h2>
-                        <div id="mod-logs" class="space-y-2 text-sm">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Notifications Section -->
-        <section id="notifications" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Notifications</h1>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- YouTube -->
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fab fa-youtube text-red-500 mr-2"></i>
-                        YouTube
-                    </h2>
-                    
-                    <div class="space-y-3">
-                        <select id="server-select-yt" class="input-field text-sm">
-                            <option value="">Select Server</option>
-                        </select>
-                        
-                        <input type="text" id="yt-channel" placeholder="YouTube Channel ID" class="input-field text-sm">
-                        
-                        <select id="yt-notify-channel" class="input-field text-sm">
-                            <option value="">Notification Channel</option>
-                        </select>
-                        
-                        <button onclick="addYouTubeChannel()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-plus mr-1"></i>
-                            Track Channel
-                        </button>
-                    </div>
-                    
-                    <div id="yt-list" class="mt-4 space-y-2">
-                        <!-- Filled by JS -->
-                    </div>
-                </div>
-                
-                <!-- Twitch -->
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fab fa-twitch text-purple-500 mr-2"></i>
-                        Twitch
-                    </h2>
-                    
-                    <div class="space-y-3">
-                        <select id="server-select-twitch" class="input-field text-sm">
-                            <option value="">Select Server</option>
-                        </select>
-                        
-                        <input type="text" id="twitch-name" placeholder="Twitch Username" class="input-field text-sm">
-                        
-                        <select id="twitch-notify-channel" class="input-field text-sm">
-                            <option value="">Notification Channel</option>
-                        </select>
-                        
-                        <button onclick="addTwitchStreamer()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 py-2 rounded-lg text-sm">
-                            <i class="fas fa-plus mr-1"></i>
-                            Track Streamer
-                        </button>
-                    </div>
-                    
-                    <div id="twitch-list" class="mt-4 space-y-2">
-                        <!-- Filled by JS -->
-                    </div>
-                </div>
-                
-                <!-- Twitter/X -->
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center">
-                        <i class="fab fa-twitter text-blue-400 mr-2"></i>
-                        Twitter/X
-                    </h2>
-                    
-                    <div class="space-y-3">
-                        <select id="server-select-twitter" class="input-field text-sm">
-                            <option value="">Select Server</option>
-                        </select>
-                        
-                        <input type="text" id="twitter-name" placeholder="@username" class="input-field text-sm">
-                        
-                        <select id="twitter-notify-channel" class="input-field text-sm">
-                            <option value="">Notification Channel</option>
-                        </select>
-                        
-                        <button onclick="addTwitterAccount()" class="w-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 py-2 rounded-lg text-sm">
-                            <i class="fas fa-plus mr-1"></i>
-                            Track Account
-                        </button>
-                    </div>
-                    
-                    <div id="twitter-list" class="mt-4 space-y-2">
-                        <!-- Filled by JS -->
-                    </div>
-                </div>
-                
-                <!-- Settings -->
-                <div class="glass rounded-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4">Notification Settings</h2>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Default Role to Ping</label>
-                            <select id="notify-role" class="input-field text-sm">
-                                <option value="">@everyone</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Check Interval</label>
-                            <select id="notify-interval" class="input-field text-sm">
-                                <option value="1">Every minute</option>
-                                <option value="5">Every 5 minutes</option>
-                                <option value="10">Every 10 minutes</option>
-                                <option value="30">Every 30 minutes</option>
-                            </select>
-                        </div>
-                        
-                        <button onclick="saveNotifySettings()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                            Save Settings
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Stock System Section -->
-        <section id="stock" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">Stock System</h1>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <!-- Stock List -->
-                <div class="lg:col-span-3">
-                    <div class="glass rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold">Available Stock</h2>
-                            <button onclick="refreshStock()" class="text-sm text-purple-400 hover:text-purple-300">
-                                <i class="fas fa-sync-alt mr-1"></i>
-                                Refresh
-                            </button>
-                        </div>
-                        
-                        <div id="stock-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Filled by JS -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Stock Controls -->
-                <div class="lg:col-span-1 space-y-4">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Add Stock</h2>
-                        <div class="space-y-3">
-                            <input type="text" id="stock-type" placeholder="Stock type (e.g., nitro)" class="input-field text-sm">
-                            
-                            <textarea id="stock-content" placeholder="Paste stock content (one per line, double line between entries)" rows="5" class="input-field text-sm"></textarea>
-                            
-                            <button onclick="addStock()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-upload mr-1"></i>
-                                Upload Stock
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Access Control</h2>
-                        <div class="space-y-3">
-                            <select id="stock-server" class="input-field text-sm">
-                                <option value="">Select Server</option>
-                            </select>
-                            
-                            <select id="stock-role" class="input-field text-sm">
-                                <option value="">Role for /gen access</option>
-                            </select>
-                            
-                            <button onclick="setGenAccess()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                                Set Access
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- 4:20 Section -->
-        <section id="fourtwenty" class="container mx-auto px-4 py-8 hidden">
-            <h1 class="text-3xl font-bold mb-8">🌿 4:20 Reminder</h1>
-            
-            <div class="max-w-2xl mx-auto">
-                <div class="glass rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-semibold">Settings</h2>
-                        <span class="badge badge-success">Active</span>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Server</label>
-                            <select id="fourtwenty-server" class="input-field">
-                                <option value="">Select Server</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Channel</label>
-                            <select id="fourtwenty-channel" class="input-field">
-                                <option value="">Select Channel</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Role to Ping</label>
-                            <select id="fourtwenty-role" class="input-field">
-                                <option value="">None</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Voice Channel (Optional)</label>
-                            <select id="fourtwenty-vc" class="input-field">
-                                <option value="">None</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm text-gray-400 mb-1">Timezone</label>
-                            <select id="fourtwenty-timezone" class="input-field">
-                                <option value="UTC">UTC</option>
-                                <option value="America/New_York">EST</option>
-                                <option value="America/Chicago">CST</option>
-                                <option value="America/Denver">MST</option>
-                                <option value="America/Los_Angeles">PST</option>
-                                <option value="Europe/London">GMT</option>
-                                <option value="Europe/Paris">CET</option>
-                                <option value="Asia/Tokyo">JST</option>
-                            </select>
-                        </div>
-                        
-                        <div class="flex space-x-2 pt-4">
-                            <button onclick="saveFourTwenty()" class="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded-lg">
-                                <i class="fas fa-save mr-1"></i>
-                                Save Settings
-                            </button>
-                            <button onclick="testFourTwenty()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded-lg">
-                                <i class="fas fa-play mr-1"></i>
-                                Test Message
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="glass rounded-xl p-6 mt-4">
-                    <h3 class="font-semibold mb-2">Next Reminders</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span>4:20 AM</span>
-                            <span class="text-gray-400" id="next-420am">Calculating...</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>4:20 PM</span>
-                            <span class="text-gray-400" id="next-420pm">Calculating...</span>
-                        </div>
-                    </div>
+            <div class="glass rounded-xl p-8 text-center max-w-2xl mx-auto">
+                <i class="fas fa-crown text-6xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-4">Premium Access</h2>
+                <p class="text-gray-400 mb-6">You need the premium role to access premium features.</p>
+                <div class="bg-gray-800/50 rounded-lg p-4">
+                    <p class="text-sm text-gray-300 mb-2">Required Role ID:</p>
+                    <code class="bg-gray-900 px-3 py-1 rounded text-pink-400">1474136325912399994</code>
                 </div>
             </div>
         </section>
         
         <!-- Candy Vending Machine Section -->
-        <section id="vending" class="container mx-auto px-4 py-8 hidden">
+        <section id="candy" class="container mx-auto px-4 py-8 hidden">
             <h1 class="text-3xl font-bold mb-8">🍬 Candy Vending Machine</h1>
             
-            <!-- Premium Gate - Checks for role 1474136325912399994 -->
-            <div id="premium-gate" class="glass rounded-xl p-8 max-w-md mx-auto text-center border border-purple-500/30 hidden">
+            <!-- Premium Check -->
+            <div id="candy-premium-check" class="glass rounded-xl p-8 max-w-md mx-auto text-center border border-purple-500/30">
                 <i class="fas fa-crown text-5xl text-yellow-500 mb-4"></i>
                 <h2 class="text-2xl font-bold mb-2">Premium Required</h2>
                 <p class="text-gray-400 text-sm mb-2">You need the premium role to access the candy vending machine.</p>
                 <p class="text-xs text-gray-500 mb-6">Role ID: <code class="bg-gray-800 px-2 py-1 rounded">1474136325912399994</code></p>
-                <button onclick="checkPremium()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg text-sm w-full">
-                    <i class="fas fa-sync-alt mr-2"></i>
-                    Check Again
-                </button>
             </div>
             
-            <!-- Candy Machine -->
+            <!-- Candy Machine (hidden by default) -->
             <div id="candy-machine" class="hidden">
                 <!-- Stats -->
                 <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
@@ -974,346 +468,135 @@
                 </div>
             </div>
         </section>
-
-        <!-- Admin Section - For users with premium role -->
+        
+        <!-- Admin Section -->
         <section id="admin" class="container mx-auto px-4 py-8 hidden">
             <h1 class="text-3xl font-bold mb-8 flex items-center">
                 <i class="fas fa-shield-alt text-red-500 mr-3"></i>
                 Admin Panel
-                <span class="text-sm font-normal ml-3 bg-red-500/20 text-red-400 px-3 py-1 rounded-full">Premium Access</span>
             </h1>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- User Management -->
                 <div class="lg:col-span-2 space-y-6">
                     <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-users text-blue-500 mr-2"></i>
-                            User Management
-                        </h2>
-                        
-                        <div class="mb-4 flex space-x-2">
-                            <input type="text" id="user-search" placeholder="Search users by ID or name..." class="input-field text-sm flex-1">
-                            <button onclick="searchUsers()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-search"></i>
-                            </button>
+                        <h2 class="text-lg font-semibold mb-4">User Management</h2>
+                        <div class="mb-4">
+                            <input type="text" id="user-search" placeholder="Search users..." class="input-field text-sm">
                         </div>
-                        
-                        <div id="users-table" class="overflow-x-auto">
-                            <table id="users-datatable" class="min-w-full">
-                                <thead>
-                                    <tr class="text-left text-xs text-gray-400">
-                                        <th class="pb-2">ID</th>
-                                        <th class="pb-2">Username</th>
-                                        <th class="pb-2">Coins</th>
-                                        <th class="pb-2">Level</th>
-                                        <th class="pb-2">Premium</th>
-                                        <th class="pb-2">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="users-table-body">
-                                    <!-- Filled by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-boxes text-green-500 mr-2"></i>
-                            Stock Management
-                        </h2>
-                        
-                        <div id="admin-stock-list" class="space-y-2 max-h-96 overflow-y-auto">
+                        <div id="users-list" class="space-y-2 max-h-96 overflow-y-auto">
                             <!-- Filled by JS -->
-                        </div>
-                        
-                        <div class="mt-4">
-                            <h3 class="text-sm font-semibold mb-2">Add Stock (Admin)</h3>
-                            <select id="admin-stock-select" class="input-field text-sm mb-2">
-                                <option value="">Select Candy Type</option>
-                            </select>
-                            <textarea id="admin-stock-content" rows="3" class="input-field text-sm mb-2" placeholder="Paste stock content..."></textarea>
-                            <button onclick="adminAddStock()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-plus mr-1"></i>
-                                Add to Stock
-                            </button>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Right Column - Stats & Controls -->
+                <!-- Stock Management -->
                 <div class="space-y-6">
                     <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
-                            System Stats
-                        </h2>
+                        <h2 class="text-lg font-semibold mb-4">Stock Management</h2>
+                        <div class="space-y-3">
+                            <select id="admin-stock-select" class="input-field text-sm">
+                                <option value="">Select Candy</option>
+                            </select>
+                            <textarea id="admin-stock-content" rows="3" class="input-field text-sm" placeholder="Stock content..."></textarea>
+                            <button onclick="adminAddStock()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
+                                Add Stock
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">System Stats</h2>
                         <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-400">CPU Usage</span>
-                                <span id="admin-cpu" class="font-mono">0%</span>
+                                <span class="text-gray-400">CPU</span>
+                                <span id="admin-cpu">0%</span>
                             </div>
                             <div class="progress-bar">
                                 <div id="admin-cpu-bar" class="progress-fill" style="width: 0%"></div>
                             </div>
-                            
                             <div class="flex justify-between mt-3">
-                                <span class="text-gray-400">Memory Usage</span>
-                                <span id="admin-memory" class="font-mono">0 MB</span>
+                                <span class="text-gray-400">Memory</span>
+                                <span id="admin-memory">0 MB</span>
                             </div>
                             <div class="progress-bar">
                                 <div id="admin-memory-bar" class="progress-fill" style="width: 0%"></div>
                             </div>
-                            
-                            <div class="flex justify-between mt-3">
-                                <span class="text-gray-400">Uptime</span>
-                                <span id="admin-uptime" class="font-mono">0h</span>
-                            </div>
-                            
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Database Size</span>
-                                <span id="admin-db-size" class="font-mono">0 MB</span>
-                            </div>
                         </div>
                     </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-crown text-yellow-500 mr-2"></i>
-                            Premium Management
-                        </h2>
-                        
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">Total Premium Users</span>
-                                <span id="premium-total" class="font-bold text-yellow-500">0</span>
-                            </div>
-                            
-                            <button onclick="exportPremiumList()" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-download mr-1"></i>
-                                Export Premium List
-                            </button>
-                            
-                            <button onclick="syncPremium()" class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-sync mr-1"></i>
-                                Sync Premium Roles
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-database text-orange-500 mr-2"></i>
-                            Database Controls
-                        </h2>
-                        
-                        <div class="space-y-2">
-                            <button onclick="backupDatabase()" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-save mr-1"></i>
-                                Create Backup
-                            </button>
-                            
-                            <button onclick="optimizeDatabase()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-tachometer-alt mr-1"></i>
-                                Optimize Database
-                            </button>
-                            
-                            <button onclick="clearCache()" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eraser mr-1"></i>
-                                Clear Cache
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stock Usage Logs -->
-            <div class="glass rounded-xl p-6 mt-6">
-                <h2 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-history text-blue-500 mr-2"></i>
-                    Stock Usage Logs
-                </h2>
-                <div id="stock-logs" class="space-y-1 max-h-60 overflow-y-auto text-sm">
-                    <!-- Filled by JS -->
                 </div>
             </div>
         </section>
-
-        <!-- Owner Section - Full control (only for xotiic._.420 / ID: 1302203907782606880) -->
+        
+        <!-- Owner Section -->
         <section id="owner" class="container mx-auto px-4 py-8 hidden">
             <h1 class="text-3xl font-bold mb-8 flex items-center">
                 <i class="fas fa-crown text-yellow-500 mr-3"></i>
                 Owner Panel
-                <span class="text-sm font-normal ml-3 bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">Full Access</span>
             </h1>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- System Overview -->
-                <div class="lg:col-span-3">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">System Overview</h2>
-                        <div class="system-stats">
-                            <div class="stat-card">
-                                <div class="text-sm text-gray-400">Total Users</div>
-                                <div class="stat-value" id="owner-total-users">0</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="text-sm text-gray-400">Total Servers</div>
-                                <div class="stat-value" id="owner-total-servers">0</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="text-sm text-gray-400">Commands Today</div>
-                                <div class="stat-value" id="owner-commands-today">0</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="text-sm text-gray-400">Premium Users</div>
-                                <div class="stat-value" id="owner-premium-users">0</div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="text-sm text-gray-400">Total Users</div>
+                    <div class="text-3xl font-bold" id="owner-total-users">0</div>
                 </div>
-                
-                <!-- User Management (Full) -->
-                <div class="lg:col-span-2">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-users-cog text-red-500 mr-2"></i>
-                            Advanced User Management
-                        </h2>
-                        
-                        <div class="mb-4 flex space-x-2">
-                            <input type="text" id="owner-user-search" placeholder="Search users..." class="input-field text-sm flex-1">
-                            <select id="owner-user-filter" class="input-field text-sm w-32">
-                                <option value="all">All</option>
-                                <option value="premium">Premium</option>
-                                <option value="admin">Admin</option>
-                                <option value="banned">Banned</option>
-                            </select>
-                        </div>
-                        
-                        <div id="owner-users-table" class="overflow-x-auto">
-                            <table id="owner-users-datatable" class="min-w-full">
-                                <thead>
-                                    <tr class="text-left text-xs text-gray-400">
-                                        <th class="pb-2">ID</th>
-                                        <th class="pb-2">Username</th>
-                                        <th class="pb-2">Coins</th>
-                                        <th class="pb-2">Level</th>
-                                        <th class="pb-2">XP</th>
-                                        <th class="pb-2">Role</th>
-                                        <th class="pb-2">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="owner-users-table-body">
-                                    <!-- Filled by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="mt-4 grid grid-cols-2 gap-2">
-                            <button onclick="grantPremiumToAll()" class="bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg text-sm">
-                                Grant Premium to All
-                            </button>
-                            <button onclick="syncAllData()" class="bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
-                                Sync All Data
-                            </button>
-                        </div>
-                    </div>
+                <div class="stat-card">
+                    <div class="text-sm text-gray-400">Total Servers</div>
+                    <div class="text-3xl font-bold" id="owner-total-servers">0</div>
                 </div>
-                
-                <!-- Server Management -->
-                <div class="lg:col-span-1">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-server text-green-500 mr-2"></i>
-                            Server Management
-                        </h2>
-                        
-                        <div id="owner-servers-list" class="space-y-2 max-h-96 overflow-y-auto">
-                            <!-- Filled by JS -->
-                        </div>
-                        
-                        <button onclick="forceSyncServers()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-sm">
-                            Force Sync All Servers
-                        </button>
-                    </div>
+                <div class="stat-card">
+                    <div class="text-sm text-gray-400">Premium Users</div>
+                    <div class="text-3xl font-bold" id="owner-premium-users">0</div>
                 </div>
-                
-                <!-- Database & System Controls -->
-                <div class="lg:col-span-3">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4">Database & System Controls</h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <button onclick="executeSQL()" class="bg-red-600 hover:bg-red-700 py-3 rounded-lg text-sm">
-                                <i class="fas fa-terminal mr-2"></i>
-                                Execute SQL
-                            </button>
-                            <button onclick="backupFullDatabase()" class="bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-sm">
-                                <i class="fas fa-database mr-2"></i>
-                                Full Backup
-                            </button>
-                            <button onclick="restoreBackup()" class="bg-green-600 hover:bg-green-700 py-3 rounded-lg text-sm">
-                                <i class="fas fa-undo mr-2"></i>
-                                Restore Backup
-                            </button>
-                            <button onclick="clearAllCache()" class="bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg text-sm">
-                                <i class="fas fa-broom mr-2"></i>
-                                Clear All Cache
-                            </button>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <textarea id="sql-query" rows="3" class="input-field text-sm font-mono" placeholder="SELECT * FROM users LIMIT 10"></textarea>
-                            <button onclick="runSQL()" class="mt-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
-                                Run Query
-                            </button>
-                            <div id="sql-result" class="mt-4 text-xs font-mono bg-gray-900 p-3 rounded-lg max-h-60 overflow-y-auto">
-                                <!-- SQL results appear here -->
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            
+            <div class="glass rounded-xl p-6">
+                <h2 class="text-lg font-semibold mb-4">System Controls</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="backupDatabase()" class="bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-sm">
+                        <i class="fas fa-database mr-2"></i>
+                        Backup
+                    </button>
+                    <button onclick="syncData()" class="bg-green-600 hover:bg-green-700 py-3 rounded-lg text-sm">
+                        <i class="fas fa-sync mr-2"></i>
+                        Sync
+                    </button>
+                    <button onclick="clearCache()" class="bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg text-sm">
+                        <i class="fas fa-broom mr-2"></i>
+                        Clear Cache
+                    </button>
+                    <button onclick="viewLogs()" class="bg-purple-600 hover:bg-purple-700 py-3 rounded-lg text-sm">
+                        <i class="fas fa-terminal mr-2"></i>
+                        Logs
+                    </button>
                 </div>
-                
-                <!-- Real-time Logs -->
-                <div class="lg:col-span-3">
-                    <div class="glass rounded-xl p-6">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-terminal text-orange-500 mr-2"></i>
-                            Real-time System Logs
-                            <button onclick="clearLogs()" class="ml-auto text-xs text-gray-400 hover:text-white">
-                                <i class="fas fa-eraser mr-1"></i>
-                                Clear
-                            </button>
-                        </h2>
-                        
-                        <div id="system-logs" class="bg-gray-900 rounded-lg p-3 h-96 overflow-y-auto font-mono text-xs">
-                            <!-- Logs appear here -->
-                        </div>
-                    </div>
-                </div>
+            </div>
+            
+            <div class="glass rounded-xl p-6 mt-6">
+                <h2 class="text-lg font-semibold mb-4">SQL Query</h2>
+                <textarea id="sql-query" rows="3" class="input-field text-sm font-mono mb-2" placeholder="SELECT * FROM users LIMIT 10"></textarea>
+                <button onclick="runSQL()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">
+                    Run Query
+                </button>
+                <div id="sql-result" class="mt-4 text-xs font-mono bg-gray-900 p-3 rounded-lg max-h-60 overflow-y-auto"></div>
             </div>
         </section>
     </main>
     
     <!-- Result Modal -->
-    <div id="result-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="glass rounded-xl border border-pink-500 max-w-md w-full p-6">
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
             <div class="text-center mb-4">
                 <i class="fas fa-candy-cane text-5xl text-pink-500 mb-2"></i>
                 <h3 class="text-xl font-bold">Candy Dispensed!</h3>
             </div>
-            
             <div class="bg-gray-900 rounded-lg p-3 mb-4">
                 <pre id="result-text" class="text-xs break-all whitespace-pre-wrap font-mono max-h-60 overflow-y-auto"></pre>
             </div>
-            
             <div class="flex justify-between text-xs text-gray-400 mb-4">
                 <span id="result-cooldown">⏱️ 5s</span>
                 <span id="result-remaining">🍬 0 left</span>
             </div>
-            
             <div class="flex space-x-2">
                 <button onclick="copyResult()" class="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm">
                     <i class="fas fa-copy mr-1"></i>
@@ -1336,30 +619,27 @@
     
     <script>
         // ==================== CONFIG ====================
-        const API_URL = 'https://ultbotb.onrender.com';
-        const API_KEY = 'your-api-key-here';
-        const DISCORD_CLIENT_ID = '1417284780675956766';
+        const API_URL = 'https://ultbotb.onrender.com';  // Your Render bot URL
+        const API_KEY = 'your-api-key-here';            // Get this from bot logs
+        const DISCORD_CLIENT_ID = '1417284780675956766'; // Your Discord Client ID
         const REDIRECT_URI = window.location.origin;
         
-        // Owner and Role IDs
-        const OWNER_ID = '1302203907782606880';
-        const PREMIUM_ROLE_ID = '1474136325912399994';
-        const MAIN_SERVER_ID = '1344385779627069541'; // Add your main server ID here
+        // IDs
+        const OWNER_ID = '1302203907782606880';          // xotiic._.420
+        const PREMIUM_ROLE_ID = '1474136325912399994';    // Premium role ID
         
         // State
         let currentUser = null;
         let accessToken = null;
-        let isOwner = false;
-        let hasPremiumRole = false;
+        let userGuilds = [];
+        let botGuilds = [];
         let candyItems = [];
-        let selectedCandy = null;
+        let isOwner = false;
+        let hasPremium = false;
+        let activityChart = null;
         let cooldown = 0;
         let cooldownInterval = null;
         let currentResult = null;
-        let userGuilds = [];
-        let activityChart = null;
-        let usersTable = null;
-        let ownerUsersTable = null;
         
         // ==================== AUTH ====================
         function loginWithDiscord() {
@@ -1375,13 +655,15 @@
         
         function handleAuth() {
             const hash = window.location.hash.substring(1);
+            if (!hash) return;
+            
             const params = new URLSearchParams(hash);
             const token = params.get('access_token');
             
             if (token) {
                 accessToken = token;
+                showLoading('Logging in...');
                 fetchUser();
-                fetchUserGuilds();
                 window.location.hash = '';
             }
         }
@@ -1392,68 +674,76 @@
                     headers: { 'Authorization': `Bearer ${accessToken}` }
                 });
                 
-                const user = await res.json();
-                currentUser = user;
+                if (!res.ok) throw new Error('Failed to fetch user');
                 
-                // Check if user is owner
-                isOwner = user.id === OWNER_ID;
+                currentUser = await res.json();
+                
+                // Check if owner
+                isOwner = currentUser.id === OWNER_ID;
                 
                 // Update UI
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-menu').classList.remove('hidden');
-                document.getElementById('user-name').textContent = user.username;
-                document.getElementById('dropdown-name').textContent = user.username;
-                document.getElementById('dropdown-id').textContent = `ID: ${user.id}`;
-                document.getElementById('user-avatar').src = user.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                document.getElementById('nav-links').classList.remove('hidden');
+                document.getElementById('login-prompt').classList.add('hidden');
+                
+                // Update user info
+                document.getElementById('user-name').textContent = currentUser.username;
+                document.getElementById('dropdown-name').textContent = currentUser.username;
+                document.getElementById('dropdown-id').textContent = `ID: ${currentUser.id}`;
+                document.getElementById('profile-username').textContent = currentUser.username;
+                document.getElementById('profile-id').textContent = currentUser.id;
+                
+                // Set avatar
+                document.getElementById('user-avatar').src = currentUser.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`
                     : 'https://cdn.discordapp.com/embed/avatars/0.png';
                 
-                // Add role badges
-                const badgeSpan = document.getElementById('user-badge');
-                const dropdownBadge = document.getElementById('dropdown-badge');
-                
+                // Show role badge
+                const roleBadge = document.getElementById('user-role-badge');
                 if (isOwner) {
-                    badgeSpan.classList.remove('hidden');
-                    badgeSpan.innerHTML = '<span class="owner-badge ml-2">OWNER</span>';
-                    dropdownBadge.innerHTML = '<span class="owner-badge">👑 Bot Owner</span>';
-                    document.getElementById('admin-nav-links').classList.remove('hidden');
+                    roleBadge.innerHTML = '<span class="badge-owner px-3 py-1 rounded-full text-xs">👑 Bot Owner</span>';
+                    document.querySelectorAll('.owner-only').forEach(el => el.classList.remove('hidden'));
                     document.getElementById('owner-welcome').classList.remove('hidden');
                 }
                 
-                // Check for premium role (you'll need to implement this API endpoint)
-                checkPremiumRole();
+                // Check premium status (you'll need to implement this API)
+                await checkPremiumStatus();
                 
                 // Fetch data
-                fetchStats();
-                fetchUserEconomy();
-                fetchCandyStock();
+                await fetchUserGuilds();
+                await fetchBotGuilds();
+                await fetchStats();
+                await fetchCandyStock();
                 
-                // If owner, load owner data
-                if (isOwner) {
-                    loadOwnerData();
-                    startLogStream();
-                }
+                // Show dashboard
+                showSection('dashboard');
+                hideLoading();
+                
             } catch (e) {
                 console.error('Auth failed:', e);
+                hideLoading();
+                alert('Login failed. Please try again.');
             }
         }
         
-        async function checkPremiumRole() {
-            // This would check if the user has the premium role in your main server
-            // You'll need to implement this API endpoint
+        async function checkPremiumStatus() {
             try {
-                const res = await fetch(`${API_URL}/api/user/roles/${currentUser.id}`, {
+                const res = await fetch(`${API_URL}/api/user/premium/${currentUser.id}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
-                const data = await res.json();
-                hasPremiumRole = data.roles && data.roles.includes(PREMIUM_ROLE_ID);
-                
-                if (hasPremiumRole) {
-                    document.getElementById('admin-nav-links').classList.remove('hidden');
+                if (res.ok) {
+                    const data = await res.json();
+                    hasPremium = data.hasPremium || false;
+                    
+                    if (hasPremium) {
+                        document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                    }
                 }
             } catch (e) {
-                console.error('Failed to check premium role:', e);
+                console.error('Premium check failed:', e);
+                hasPremium = false;
             }
         }
         
@@ -1463,114 +753,295 @@
                     headers: { 'Authorization': `Bearer ${accessToken}` }
                 });
                 
+                if (!res.ok) throw new Error('Failed to fetch guilds');
+                
                 userGuilds = await res.json();
-                updateServerSelects();
-                updateServersList();
             } catch (e) {
-                console.error('Failed to fetch guilds:', e);
+                console.error('Failed to fetch user guilds:', e);
+                userGuilds = [];
             }
         }
         
-        function updateServerSelects() {
-            const selects = ['server-select-mod', 'server-select-yt', 'server-select-twitch', 
-                           'server-select-twitter', 'stock-server', 'fourtwenty-server'];
-            
-            selects.forEach(id => {
-                const select = document.getElementById(id);
-                if (select) {
-                    select.innerHTML = '<option value="">Select Server</option>';
-                    userGuilds.forEach(guild => {
-                        select.innerHTML += `<option value="${guild.id}">${guild.name}</option>`;
-                    });
-                }
-            });
+        async function fetchBotGuilds() {
+            try {
+                const res = await fetch(`${API_URL}/api/guilds`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to fetch bot guilds');
+                
+                botGuilds = await res.json();
+                
+                // Filter to show ONLY servers where user is a member AND bot is present
+                const mutualGuilds = userGuilds.filter(userGuild => 
+                    botGuilds.some(botGuild => botGuild.id === userGuild.id)
+                );
+                
+                displayServers(mutualGuilds);
+                
+                // Update stats
+                document.getElementById('stat-servers').textContent = mutualGuilds.length;
+                
+            } catch (e) {
+                console.error('Failed to fetch bot guilds:', e);
+                botGuilds = [];
+            }
         }
         
-        function updateServersList() {
-            const list = document.getElementById('servers-list');
-            const noServers = document.getElementById('no-servers');
+        function displayServers(servers) {
+            const container = document.getElementById('servers-container');
+            const noServersMsg = document.getElementById('no-servers-message');
             
-            if (userGuilds.length === 0) {
-                list.innerHTML = '';
-                noServers.classList.remove('hidden');
+            if (!servers || servers.length === 0) {
+                container.innerHTML = '';
+                noServersMsg.classList.remove('hidden');
                 return;
             }
             
-            noServers.classList.add('hidden');
-            list.innerHTML = userGuilds.map(guild => {
-                const isMainServer = guild.id === MAIN_SERVER_ID;
+            noServersMsg.classList.add('hidden');
+            
+            container.innerHTML = servers.map(server => {
+                const iconUrl = server.icon 
+                    ? `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png`
+                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                
                 return `
-                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition">
-                        <div class="flex items-center space-x-3">
-                            <img src="${guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
-                                 class="w-8 h-8 rounded-full">
-                            <div>
-                                <p class="font-medium">${guild.name} ${isMainServer ? '<span class="premium-role-badge ml-2">Premium Server</span>' : ''}</p>
-                                <p class="text-xs text-gray-400">ID: ${guild.id}</p>
+                    <div class="server-card p-4">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <img src="${iconUrl}" class="w-12 h-12 rounded-full">
+                            <div class="flex-1">
+                                <h3 class="font-semibold">${server.name}</h3>
+                                <p class="text-xs text-gray-400">ID: ${server.id}</p>
                             </div>
                         </div>
-                        <span class="badge ${guild.owner ? 'badge-success' : 'badge-warning'}">
-                            ${guild.owner ? 'Owner' : 'Member'}
-                        </span>
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <button onclick="manageServer('${server.id}')" class="bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs">
+                                <i class="fas fa-cog mr-1"></i>
+                                Manage
+                            </button>
+                            <button onclick="viewServerStats('${server.id}')" class="bg-blue-600 hover:bg-blue-700 py-1 rounded text-xs">
+                                <i class="fas fa-chart-line mr-1"></i>
+                                Stats
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
         
-        function toggleMenu() {
-            document.getElementById('user-dropdown').classList.toggle('hidden');
+        // ==================== CANDY FUNCTIONS ====================
+        async function fetchCandyStock() {
+            try {
+                const res = await fetch(`${API_URL}/api/stock`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to fetch stock');
+                
+                const data = await res.json();
+                candyItems = Object.entries(data).map(([type, item]) => ({
+                    type,
+                    count: item.count || 0,
+                    name: item.name || type,
+                    flavor: item.flavor || 'Mixed',
+                    emoji: item.emoji || '🍬',
+                    cooldown: item.cooldown || 5
+                }));
+                
+                updateCandyGrid();
+                updateStockStats();
+                updateAdminStockSelect();
+                
+            } catch (e) {
+                console.error('Stock fetch failed:', e);
+            }
         }
         
-        function logout() {
-            currentUser = null;
-            accessToken = null;
-            document.getElementById('auth-buttons').classList.remove('hidden');
-            document.getElementById('user-menu').classList.add('hidden');
-            showSection('dashboard');
+        function updateStockStats() {
+            const total = candyItems.reduce((sum, i) => sum + (i.count || 0), 0);
+            document.getElementById('total-pieces').textContent = total;
+            document.getElementById('total-flavors').textContent = candyItems.length;
         }
         
-        function inviteBot() {
-            window.open(`https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`, '_blank');
-        }
-        
-        // ==================== NAVIGATION ====================
-        function showSection(sectionId) {
-            const sections = ['dashboard', 'economy', 'moderation', 'notifications', 'stock', 'fourtwenty', 'vending', 'admin', 'owner'];
-            sections.forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-            window.location.hash = sectionId;
+        function updateCandyGrid() {
+            const grid = document.getElementById('candy-grid');
+            if (!grid) return;
             
-            // Load section-specific data
-            if (sectionId === 'admin' && hasPremiumRole) {
-                loadAdminData();
+            grid.innerHTML = candyItems.map(item => {
+                const pct = Math.min(100, (item.count / 100) * 100);
+                const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
+                
+                return `
+                    <div class="candy-card">
+                        <div class="candy-stripes">
+                            <div class="stripe-pink"></div>
+                            <div class="stripe-purple"></div>
+                            <div class="stripe-blue"></div>
+                            <div class="stripe-green"></div>
+                            <div class="stripe-yellow"></div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <div class="text-center mb-3">
+                                <div class="text-4xl mb-2">${item.emoji}</div>
+                                <h3 class="font-bold">${item.name}</h3>
+                                <p class="text-xs text-gray-400">${item.flavor}</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-gray-400">Stock</span>
+                                    <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'}">${item.count}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill progress-${stockClass}" style="width: ${pct}%"></div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="generateCandy('${item.type}')" 
+                                    class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white py-2 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${item.count === 0 ? 'disabled' : ''}>
+                                ${item.count === 0 ? 'Sold Out' : 'Dispense'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function generateCandy(type) {
+            if (cooldown > 0) {
+                alert(`Please wait ${cooldown}s`);
+                return;
             }
-            if (sectionId === 'owner' && isOwner) {
-                loadOwnerData();
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/generate/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+                
+                const result = await res.json();
+                
+                if (result.success) {
+                    currentResult = result;
+                    document.getElementById('result-modal').classList.add('active');
+                    document.getElementById('result-text').textContent = result.content;
+                    document.getElementById('result-cooldown').innerHTML = `⏱️ ${result.cooldown}s`;
+                    document.getElementById('result-remaining').innerHTML = `🍬 ${result.remaining} left`;
+                    
+                    fetchCandyStock();
+                    startCooldown(result.cooldown || 5);
+                } else {
+                    alert(result.error || 'Failed to generate');
+                }
+            } catch (e) {
+                alert('Failed to connect to bot.');
+                console.error(e);
             }
         }
         
-        // Check hash on load
-        if (window.location.hash) {
-            const section = window.location.hash.substring(1);
-            setTimeout(() => showSection(section), 100);
+        function startCooldown(seconds) {
+            cooldown = seconds;
+            document.getElementById('cooldown-bar').classList.remove('hidden');
+            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
+            document.getElementById('cooldown-progress').style.width = '100%';
+            
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            
+            const start = Date.now();
+            cooldownInterval = setInterval(() => {
+                const elapsed = (Date.now() - start) / 1000;
+                const remaining = Math.max(0, seconds - elapsed);
+                const pct = (remaining / seconds) * 100;
+                
+                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
+                document.getElementById('cooldown-progress').style.width = `${pct}%`;
+                
+                if (remaining <= 0) {
+                    clearInterval(cooldownInterval);
+                    document.getElementById('cooldown-bar').classList.add('hidden');
+                    cooldown = 0;
+                }
+            }, 100);
         }
         
-        // ==================== API CALLS ====================
+        function updateAdminStockSelect() {
+            const select = document.getElementById('admin-stock-select');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Select Candy</option>';
+            candyItems.forEach(item => {
+                select.innerHTML += `<option value="${item.type}">${item.name}</option>`;
+            });
+        }
+        
+        async function adminAddStock() {
+            const type = document.getElementById('admin-stock-select').value;
+            const content = document.getElementById('admin-stock-content').value;
+            
+            if (!type || !content) {
+                alert('Select a candy and enter stock content');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/stock/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, content })
+                });
+                
+                if (res.ok) {
+                    alert('Stock added successfully');
+                    document.getElementById('admin-stock-content').value = '';
+                    fetchCandyStock();
+                } else {
+                    alert('Failed to add stock');
+                }
+            } catch (e) {
+                alert('Failed to add stock');
+            }
+        }
+        
+        // ==================== STATS FUNCTIONS ====================
         async function fetchStats() {
             try {
                 const res = await fetch(`${API_URL}/api/stats`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
+                
+                if (!res.ok) throw new Error('Failed to fetch stats');
+                
                 const data = await res.json();
                 
-                document.getElementById('stat-servers').textContent = data.total_servers || 0;
                 document.getElementById('stat-users').textContent = data.total_users || 0;
                 document.getElementById('stat-commands').textContent = data.total_commands || 0;
                 document.getElementById('stat-premium').textContent = data.premium_users || 0;
                 
+                if (isOwner) {
+                    document.getElementById('owner-total-users').textContent = data.total_users || 0;
+                    document.getElementById('owner-total-servers').textContent = data.total_servers || 0;
+                    document.getElementById('owner-premium-users').textContent = data.premium_users || 0;
+                }
+                
                 updateChart(data.activity || [5, 10, 15, 20, 25, 30, 35]);
+                
+                // Admin stats
+                if (hasPremium || isOwner) {
+                    document.getElementById('admin-cpu').textContent = `${data.cpu || 23}%`;
+                    document.getElementById('admin-cpu-bar').style.width = `${data.cpu || 23}%`;
+                    document.getElementById('admin-memory').textContent = `${data.memory || 512} MB`;
+                    document.getElementById('admin-memory-bar').style.width = `${((data.memory || 512) / 1024) * 100}%`;
+                }
+                
             } catch (e) {
                 console.error('Stats fetch failed:', e);
             }
@@ -1617,919 +1088,94 @@
             });
         }
         
-        async function fetchUserEconomy() {
-            if (!currentUser) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/api/user/${currentUser.id}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                const data = await res.json();
-                document.getElementById('user-coins').textContent = data.coins || 0;
-                document.getElementById('user-xp').textContent = data.xp || 0;
-                document.getElementById('user-level').textContent = data.level || 1;
-                document.getElementById('user-rank').textContent = `#${data.rank || 0}`;
-            } catch (e) {
-                console.error('Economy fetch failed:', e);
-            }
-        }
-        
-        async function fetchLeaderboard() {
-            try {
-                const res = await fetch(`${API_URL}/api/leaderboard`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                const data = await res.json();
-                const leaderboard = document.getElementById('leaderboard');
-                
-                if (data && data.length > 0) {
-                    leaderboard.innerHTML = data.map((user, i) => `
-                        <div class="flex items-center justify-between p-2 bg-gray-800/30 rounded-lg">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-6 text-center font-bold ${i < 3 ? 'text-yellow-500' : 'text-gray-400'}">#${i+1}</span>
-                                <span>${user.username || 'Unknown'}</span>
-                            </div>
-                            <span class="font-bold text-yellow-500">${user.coins || 0}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    leaderboard.innerHTML = '<p class="text-gray-400 text-center">No data yet</p>';
-                }
-            } catch (e) {
-                console.error('Leaderboard fetch failed:', e);
-            }
-        }
-        
-        // ==================== CANDY/STOCK FUNCTIONS ====================
-        async function fetchCandyStock() {
-            try {
-                const res = await fetch(`${API_URL}/api/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                const data = await res.json();
-                candyItems = Object.entries(data).map(([type, item]) => ({
-                    type,
-                    ...item
-                }));
-                
-                updateCandyGrid();
-                updateStockStats();
-                updateAdminStockSelect();
-            } catch (e) {
-                console.error('Stock fetch failed:', e);
-            }
-        }
-        
-        function updateStockStats() {
-            const total = candyItems.reduce((sum, i) => sum + (i.count || 0), 0);
-            document.getElementById('total-pieces').textContent = total;
-            document.getElementById('total-flavors').textContent = candyItems.length;
-            
-            const stockGrid = document.getElementById('stock-grid');
-            if (stockGrid) {
-                stockGrid.innerHTML = candyItems.map(item => `
-                    <div class="bg-gray-800/50 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-semibold">${item.name || item.type}</span>
-                            <span class="badge ${item.count < 10 ? 'badge-danger' : item.count < 30 ? 'badge-warning' : 'badge-success'}">
-                                ${item.count} left
-                            </span>
-                        </div>
-                        <div class="text-4xl text-center mb-2">${item.emoji || '🍬'}</div>
-                        <p class="text-xs text-gray-400 mb-2">${item.flavor || 'Mixed'}</p>
-                        <div class="progress-bar mb-2">
-                            <div class="progress-fill ${item.count < 10 ? 'progress-low' : item.count < 30 ? 'progress-medium' : 'progress-high'}" 
-                                 style="width: ${Math.min(100, (item.count / 100) * 100)}%"></div>
-                        </div>
-                        <button onclick="generateCandy('${item.type}')" 
-                                class="w-full bg-purple-600 hover:bg-purple-700 py-1 rounded text-xs mt-2"
-                                ${item.count === 0 ? 'disabled' : ''}>
-                            Generate
-                        </button>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        function updateCandyGrid() {
-            const grid = document.getElementById('candy-grid');
-            if (!grid) return;
-            
-            grid.innerHTML = candyItems.map(item => {
-                const pct = Math.min(100, (item.count / 100) * 100);
-                const stockClass = item.count < 10 ? 'low' : item.count < 30 ? 'medium' : 'high';
-                
-                return `
-                    <div class="candy-card" onclick="selectCandy('${item.type}')">
-                        <div class="candy-stripes">
-                            <div class="stripe-pink"></div>
-                            <div class="stripe-purple"></div>
-                            <div class="stripe-blue"></div>
-                            <div class="stripe-green"></div>
-                            <div class="stripe-yellow"></div>
-                        </div>
-                        
-                        <div class="p-4">
-                            <div class="text-center mb-3">
-                                <div class="text-4xl mb-2">${item.emoji || '🍬'}</div>
-                                <h3 class="font-bold">${item.name || item.type}</h3>
-                                <p class="text-xs text-gray-400">${item.flavor || 'Mixed'}</p>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="flex justify-between text-xs mb-1">
-                                    <span class="text-gray-400">Stock</span>
-                                    <span class="${item.count < 10 ? 'text-red-400' : item.count < 30 ? 'text-yellow-400' : 'text-green-400'}">${item.count}</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill progress-${stockClass}" style="width: ${pct}%"></div>
-                                </div>
-                            </div>
-                            
-                            <button onclick="event.stopPropagation(); generateCandy('${item.type}')" 
-                                    class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white py-2 rounded-lg text-sm font-semibold ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
-                                    ${item.count === 0 ? 'disabled' : ''}>
-                                ${item.count === 0 ? 'Sold Out' : 'Dispense'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        function selectCandy(type) {
-            selectedCandy = candyItems.find(i => i.type === type);
-        }
-        
-        async function generateCandy(type) {
-            if (cooldown > 0) {
-                alert(`Please wait ${cooldown}s`);
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/stock/generate/${type}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId: currentUser.id })
-                });
-                
-                const result = await res.json();
-                
-                if (result.success) {
-                    currentResult = result;
-                    document.getElementById('result-modal').classList.remove('hidden');
-                    document.getElementById('result-modal').classList.add('flex');
-                    document.getElementById('result-text').textContent = result.content;
-                    document.getElementById('result-cooldown').innerHTML = `⏱️ ${result.cooldown}s`;
-                    document.getElementById('result-remaining').innerHTML = `🍬 ${result.remaining} left`;
-                    
-                    fetchCandyStock();
-                    startCooldown(result.cooldown || 5);
-                } else {
-                    alert(result.error || 'Failed to generate');
-                }
-            } catch (e) {
-                alert('Failed to connect to bot.');
-                console.error(e);
-            }
-        }
-        
-        function startCooldown(seconds) {
-            cooldown = seconds;
-            document.getElementById('cooldown-bar').classList.remove('hidden');
-            document.getElementById('cooldown-timer').textContent = `${cooldown}s`;
-            document.getElementById('cooldown-progress').style.width = '100%';
-            
-            if (cooldownInterval) clearInterval(cooldownInterval);
-            
-            const start = Date.now();
-            cooldownInterval = setInterval(() => {
-                const elapsed = (Date.now() - start) / 1000;
-                const remaining = Math.max(0, seconds - elapsed);
-                const pct = (remaining / seconds) * 100;
-                
-                document.getElementById('cooldown-timer').textContent = `${Math.ceil(remaining)}s`;
-                document.getElementById('cooldown-progress').style.width = `${pct}%`;
-                
-                if (remaining <= 0) {
-                    clearInterval(cooldownInterval);
-                    document.getElementById('cooldown-bar').classList.add('hidden');
-                    cooldown = 0;
-                }
-            }, 100);
-        }
-        
-        // ==================== ADMIN FUNCTIONS ====================
-        async function loadAdminData() {
-            if (!hasPremiumRole && !isOwner) return;
-            
-            try {
-                // Load users
-                const usersRes = await fetch(`${API_URL}/api/admin/users`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const users = await usersRes.json();
-                
-                // Initialize DataTable if not already
-                if (!usersTable) {
-                    usersTable = $('#users-datatable').DataTable({
-                        data: users,
-                        columns: [
-                            { data: 'id' },
-                            { data: 'username' },
-                            { data: 'coins' },
-                            { data: 'level' },
-                            { 
-                                data: 'premium',
-                                render: function(data) {
-                                    return data ? '<span class="badge-premium text-xs">✓</span>' : '<span class="text-gray-600">✗</span>';
-                                }
-                            },
-                            {
-                                data: null,
-                                render: function(data) {
-                                    return `
-                                        <button onclick="editUser('${data.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="jailUser('${data.id}')" class="text-red-400 hover:text-red-300">
-                                            <i class="fas fa-gavel"></i>
-                                        </button>
-                                    `;
-                                }
-                            }
-                        ],
-                        pageLength: 10,
-                        order: [[2, 'desc']]
-                    });
-                } else {
-                    usersTable.clear().rows.add(users).draw();
-                }
-                
-                // Load system stats
-                const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const stats = await statsRes.json();
-                
-                document.getElementById('admin-cpu').textContent = `${stats.cpu || 0}%`;
-                document.getElementById('admin-cpu-bar').style.width = `${stats.cpu || 0}%`;
-                document.getElementById('admin-memory').textContent = `${stats.memory || 0} MB`;
-                document.getElementById('admin-memory-bar').style.width = `${(stats.memory / 1024) * 100 || 0}%`;
-                document.getElementById('admin-uptime').textContent = stats.uptime || '0h';
-                document.getElementById('admin-db-size').textContent = `${stats.dbSize || 0} MB`;
-                
-                // Load premium stats
-                const premiumRes = await fetch(`${API_URL}/api/admin/premium`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const premium = await premiumRes.json();
-                document.getElementById('premium-total').textContent = premium.total || 0;
-                
-                // Load stock logs
-                const logsRes = await fetch(`${API_URL}/api/admin/logs/stock`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const logs = await logsRes.json();
-                
-                const logsDiv = document.getElementById('stock-logs');
-                logsDiv.innerHTML = logs.map(log => `
-                    <div class="log-entry">
-                        <span class="log-time">${log.time}</span>
-                        <span class="log-level INFO">[${log.type}]</span>
-                        <span>User ${log.userId} generated ${log.item}</span>
-                    </div>
-                `).join('');
-                
-            } catch (e) {
-                console.error('Failed to load admin data:', e);
-            }
-        }
-        
-        function updateAdminStockSelect() {
-            const select = document.getElementById('admin-stock-select');
-            if (!select) return;
-            
-            select.innerHTML = '<option value="">Select Candy Type</option>';
-            candyItems.forEach(item => {
-                select.innerHTML += `<option value="${item.type}">${item.name || item.type}</option>`;
+        // ==================== NAVIGATION ====================
+        function showSection(sectionId) {
+            const sections = ['dashboard', 'servers', 'premium', 'candy', 'admin', 'owner'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
             });
-        }
-        
-        async function adminAddStock() {
-            const type = document.getElementById('admin-stock-select').value;
-            const content = document.getElementById('admin-stock-content').value;
             
-            if (!type || !content) {
-                alert('Select a candy and enter stock content');
-                return;
-            }
+            document.getElementById(sectionId).classList.remove('hidden');
             
-            try {
-                const res = await fetch(`${API_URL}/api/stock/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ type, content })
-                });
-                
-                alert('Stock added successfully');
-                document.getElementById('admin-stock-content').value = '';
-                fetchCandyStock();
-            } catch (e) {
-                alert('Failed to add stock');
-            }
-        }
-        
-        function searchUsers() {
-            if (usersTable) {
-                usersTable.search(document.getElementById('user-search').value).draw();
-            }
-        }
-        
-        async function exportPremiumList() {
-            try {
-                const res = await fetch(`${API_URL}/api/admin/premium/export`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const blob = await res.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'premium-users.json';
-                a.click();
-            } catch (e) {
-                alert('Failed to export');
-            }
-        }
-        
-        async function syncPremium() {
-            alert('Syncing premium roles...');
-            try {
-                await fetch(`${API_URL}/api/admin/premium/sync`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                alert('Premium roles synced!');
-            } catch (e) {
-                alert('Sync failed');
-            }
-        }
-        
-        async function backupDatabase() {
-            alert('Creating backup...');
-            try {
-                const res = await fetch(`${API_URL}/api/admin/backup`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                alert('Backup created!');
-            } catch (e) {
-                alert('Backup failed');
-            }
-        }
-        
-        async function optimizeDatabase() {
-            alert('Optimizing database...');
-            try {
-                await fetch(`${API_URL}/api/admin/optimize`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                alert('Database optimized!');
-            } catch (e) {
-                alert('Optimization failed');
-            }
-        }
-        
-        async function clearCache() {
-            alert('Clearing cache...');
-            try {
-                await fetch(`${API_URL}/api/admin/cache/clear`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                alert('Cache cleared!');
-            } catch (e) {
-                alert('Failed to clear cache');
-            }
-        }
-        
-        // ==================== OWNER FUNCTIONS ====================
-        async function loadOwnerData() {
-            if (!isOwner) return;
-            
-            try {
-                // Load all users
-                const usersRes = await fetch(`${API_URL}/api/owner/users`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const users = await usersRes.json();
-                
-                document.getElementById('owner-total-users').textContent = users.length;
-                
-                // Initialize owner users table
-                if (!ownerUsersTable) {
-                    ownerUsersTable = $('#owner-users-datatable').DataTable({
-                        data: users,
-                        columns: [
-                            { data: 'id' },
-                            { data: 'username' },
-                            { data: 'coins' },
-                            { data: 'level' },
-                            { data: 'xp' },
-                            { 
-                                data: 'role',
-                                render: function(data) {
-                                    if (data === 'owner') return '<span class="owner-badge">OWNER</span>';
-                                    if (data === 'admin') return '<span class="admin-badge">ADMIN</span>';
-                                    if (data === 'premium') return '<span class="premium-role-badge">PREMIUM</span>';
-                                    return '<span class="text-gray-500">USER</span>';
-                                }
-                            },
-                            {
-                                data: null,
-                                render: function(data) {
-                                    return `
-                                        <button onclick="ownerEditUser('${data.id}')" class="text-blue-400 hover:text-blue-300 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="ownerGrantPremium('${data.id}')" class="text-yellow-400 hover:text-yellow-300 mr-2">
-                                            <i class="fas fa-crown"></i>
-                                        </button>
-                                        <button onclick="ownerBanUser('${data.id}')" class="text-red-400 hover:text-red-300">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
-                                    `;
-                                }
-                            }
-                        ],
-                        pageLength: 25,
-                        order: [[2, 'desc']]
-                    });
-                } else {
-                    ownerUsersTable.clear().rows.add(users).draw();
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.section === sectionId) {
+                    tab.classList.add('active');
                 }
-                
-                // Load servers
-                const serversRes = await fetch(`${API_URL}/api/owner/servers`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const servers = await serversRes.json();
-                
-                document.getElementById('owner-total-servers').textContent = servers.length;
-                
-                const serversList = document.getElementById('owner-servers-list');
-                serversList.innerHTML = servers.map(server => `
-                    <div class="bg-gray-800/50 rounded-lg p-2 text-sm">
-                        <div class="flex items-center justify-between">
-                            <span>${server.name}</span>
-                            <span class="text-xs text-gray-400">${server.members} members</span>
-                        </div>
-                        <div class="text-xs text-gray-500 mt-1">ID: ${server.id}</div>
-                    </div>
-                `).join('');
-                
-                // Load command stats
-                const statsRes = await fetch(`${API_URL}/api/owner/stats`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                const stats = await statsRes.json();
-                
-                document.getElementById('owner-commands-today').textContent = stats.commandsToday || 0;
-                document.getElementById('owner-premium-users').textContent = stats.premiumUsers || 0;
-                
-            } catch (e) {
-                console.error('Failed to load owner data:', e);
-            }
-        }
-        
-        function grantPremiumToAll() {
-            if (!isOwner) return;
-            if (confirm('Grant premium role to ALL users? This might take a while.')) {
-                alert('Granting premium to all users...');
-                // Implement API call
-            }
-        }
-        
-        function syncAllData() {
-            if (!isOwner) return;
-            alert('Syncing all data...');
-            // Implement API call
-        }
-        
-        function forceSyncServers() {
-            if (!isOwner) return;
-            alert('Force syncing all servers...');
-            // Implement API call
-        }
-        
-        function executeSQL() {
-            document.getElementById('sql-query').classList.toggle('hidden');
-        }
-        
-        async function runSQL() {
-            if (!isOwner) return;
+            });
             
+            window.location.hash = sectionId;
+        }
+        
+        // ==================== LOADING ====================
+        function showLoading(text = 'Loading...') {
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('loading-overlay').classList.remove('flex');
+        }
+        
+        // ==================== ACTIONS ====================
+        function toggleMenu() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
+        
+        function logout() {
+            currentUser = null;
+            accessToken = null;
+            isOwner = false;
+            hasPremium = false;
+            
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+            document.getElementById('nav-links').classList.add('hidden');
+            document.getElementById('login-prompt').classList.remove('hidden');
+            
+            document.querySelectorAll('.owner-only, .admin-only').forEach(el => el.classList.add('hidden'));
+            
+            showSection('dashboard');
+        }
+        
+        function inviteBot() {
+            window.open(`https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&permissions=8&scope=bot%20applications.commands`, '_blank');
+        }
+        
+        function manageServer(guildId) {
+            alert(`Opening settings for server: ${guildId}`);
+        }
+        
+        function viewServerStats(guildId) {
+            alert(`Viewing stats for server: ${guildId}`);
+        }
+        
+        // Owner functions
+        function backupDatabase() {
+            alert('Creating database backup...');
+        }
+        
+        function syncData() {
+            alert('Syncing data...');
+        }
+        
+        function clearCache() {
+            alert('Clearing cache...');
+        }
+        
+        function viewLogs() {
+            alert('Opening logs...');
+        }
+        
+        function runSQL() {
             const query = document.getElementById('sql-query').value;
             if (!query) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/api/owner/sql`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ query })
-                });
-                
-                const result = await res.json();
-                document.getElementById('sql-result').innerHTML = 
-                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
-            } catch (e) {
-                document.getElementById('sql-result').innerHTML = 'Error: ' + e.message;
-            }
+            document.getElementById('sql-result').innerHTML = `Running: ${query}\n\n(Simulated result)`;
         }
         
-        function backupFullDatabase() {
-            if (!isOwner) return;
-            alert('Creating full database backup...');
-            // Implement API call
-        }
-        
-        function restoreBackup() {
-            if (!isOwner) return;
-            alert('Restoring from backup...');
-            // Implement API call
-        }
-        
-        function clearAllCache() {
-            if (!isOwner) return;
-            alert('Clearing all cache...');
-            // Implement API call
-        }
-        
-        function clearLogs() {
-            document.getElementById('system-logs').innerHTML = '';
-        }
-        
-        // Simulate real-time logs for owner
-        function startLogStream() {
-            if (!isOwner) return;
-            
-            setInterval(() => {
-                const logs = document.getElementById('system-logs');
-                const timestamp = new Date().toLocaleTimeString();
-                const levels = ['INFO', 'WARN', 'ERROR', 'DEBUG'];
-                const level = levels[Math.floor(Math.random() * levels.length)];
-                const messages = [
-                    'User generated nitro',
-                    'Database query executed',
-                    'Premium role synced',
-                    'Stock updated',
-                    'New user registered',
-                    'Command: /balance used',
-                    'Server joined: New Server'
-                ];
-                const message = messages[Math.floor(Math.random() * messages.length)];
-                
-                logs.innerHTML += `
-                    <div class="log-entry">
-                        <span class="log-time">[${timestamp}]</span>
-                        <span class="log-level ${level}">[${level}]</span>
-                        <span>${message}</span>
-                    </div>
-                `;
-                logs.scrollTop = logs.scrollHeight;
-            }, 3000);
-        }
-        
-        // ==================== MODERATION FUNCTIONS ====================
-        async function jailUser(userId) {
-            const serverId = document.getElementById('server-select-mod').value;
-            userId = userId || document.getElementById('user-id').value;
-            
-            if (!serverId || !userId) {
-                alert('Select a server and enter user ID');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/mod/jail`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, userId, duration: '10m' })
-                });
-                
-                const data = await res.json();
-                alert(data.message || 'User jailed');
-            } catch (e) {
-                alert('Failed to jail user');
-            }
-        }
-        
-        async function unjailUser() {
-            const serverId = document.getElementById('server-select-mod').value;
-            const userId = document.getElementById('user-id').value;
-            
-            if (!serverId || !userId) {
-                alert('Select a server and enter user ID');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/mod/unjail`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, userId })
-                });
-                
-                const data = await res.json();
-                alert(data.message || 'User unjailed');
-            } catch (e) {
-                alert('Failed to unjail user');
-            }
-        }
-        
-        async function purgeMessages() {
-            const serverId = document.getElementById('server-select-mod').value;
-            
-            if (!serverId) {
-                alert('Select a server');
-                return;
-            }
-            
-            if (confirm('Purge 100 messages?')) {
-                try {
-                    const res = await fetch(`${API_URL}/api/mod/purge`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${API_KEY}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ serverId, amount: 100 })
-                    });
-                    
-                    const data = await res.json();
-                    alert(`Purged ${data.count} messages`);
-                } catch (e) {
-                    alert('Failed to purge messages');
-                }
-            }
-        }
-        
-        async function showWarnings() {
-            const serverId = document.getElementById('server-select-mod').value;
-            const userId = document.getElementById('user-id').value;
-            
-            if (!serverId || !userId) {
-                alert('Select a server and enter user ID');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/mod/warnings/${serverId}/${userId}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                const data = await res.json();
-                const list = document.getElementById('warnings-list');
-                
-                if (data.warnings && data.warnings.length > 0) {
-                    list.innerHTML = data.warnings.map(w => `
-                        <div class="p-2 bg-gray-800/50 rounded-lg">
-                            <p class="text-sm"><span class="text-red-400">Reason:</span> ${w.reason}</p>
-                            <p class="text-xs text-gray-400">Date: ${w.date}</p>
-                        </div>
-                    `).join('');
-                } else {
-                    list.innerHTML = '<p class="text-gray-400 text-center">No warnings found</p>';
-                }
-            } catch (e) {
-                alert('Failed to fetch warnings');
-            }
-        }
-        
-        function toggleBadWordFilter() {
-            // Implement
-        }
-        
-        function toggleAntiSpam() {
-            // Implement
-        }
-        
-        function toggleAutoRole() {
-            // Implement
-        }
-        
-        function saveModSettings() {
-            alert('Settings saved (mock)');
-        }
-        
-        // ==================== NOTIFICATION FUNCTIONS ====================
-        async function addYouTubeChannel() {
-            const serverId = document.getElementById('server-select-yt').value;
-            const channelId = document.getElementById('yt-channel').value;
-            const notifyChannel = document.getElementById('yt-notify-channel').value;
-            
-            if (!serverId || !channelId) {
-                alert('Select a server and enter channel ID');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/notifications/youtube/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, channelId, notifyChannel })
-                });
-                
-                alert('YouTube channel added');
-            } catch (e) {
-                alert('Failed to add channel');
-            }
-        }
-        
-        async function addTwitchStreamer() {
-            const serverId = document.getElementById('server-select-twitch').value;
-            const username = document.getElementById('twitch-name').value;
-            const notifyChannel = document.getElementById('twitch-notify-channel').value;
-            
-            if (!serverId || !username) {
-                alert('Select a server and enter username');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/notifications/twitch/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, username, notifyChannel })
-                });
-                
-                alert('Twitch streamer added');
-            } catch (e) {
-                alert('Failed to add streamer');
-            }
-        }
-        
-        async function addTwitterAccount() {
-            const serverId = document.getElementById('server-select-twitter').value;
-            const username = document.getElementById('twitter-name').value;
-            const notifyChannel = document.getElementById('twitter-notify-channel').value;
-            
-            if (!serverId || !username) {
-                alert('Select a server and enter username');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/notifications/twitter/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, username, notifyChannel })
-                });
-                
-                alert('Twitter account added');
-            } catch (e) {
-                alert('Failed to add account');
-            }
-        }
-        
-        function saveNotifySettings() {
-            alert('Settings saved (mock)');
-        }
-        
-        // ==================== STOCK FUNCTIONS ====================
-        async function addStock() {
-            const type = document.getElementById('stock-type').value;
-            const content = document.getElementById('stock-content').value;
-            
-            if (!type || !content) {
-                alert('Enter stock type and content');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/stock/add`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ type, content })
-                });
-                
-                alert('Stock added successfully');
-                document.getElementById('stock-type').value = '';
-                document.getElementById('stock-content').value = '';
-                fetchCandyStock();
-            } catch (e) {
-                alert('Failed to add stock');
-            }
-        }
-        
-        async function setGenAccess() {
-            const serverId = document.getElementById('stock-server').value;
-            const roleId = document.getElementById('stock-role').value;
-            
-            if (!serverId || !roleId) {
-                alert('Select a server and role');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/api/stock/access`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ serverId, roleId })
-                });
-                
-                alert('Access role set');
-            } catch (e) {
-                alert('Failed to set access');
-            }
-        }
-        
-        function refreshStock() {
-            fetchCandyStock();
-        }
-        
-        // ==================== 4:20 FUNCTIONS ====================
-        function saveFourTwenty() {
-            const serverId = document.getElementById('fourtwenty-server').value;
-            const channelId = document.getElementById('fourtwenty-channel').value;
-            const roleId = document.getElementById('fourtwenty-role').value;
-            const vcId = document.getElementById('fourtwenty-vc').value;
-            const timezone = document.getElementById('fourtwenty-timezone').value;
-            
-            if (!serverId || !channelId) {
-                alert('Select a server and channel');
-                return;
-            }
-            
-            // Calculate next 4:20 times
-            const now = new Date();
-            const next420am = new Date(now);
-            next420am.setHours(4, 20, 0, 0);
-            if (now > next420am) next420am.setDate(next420am.getDate() + 1);
-            
-            const next420pm = new Date(now);
-            next420pm.setHours(16, 20, 0, 0);
-            if (now > next420pm) next420pm.setDate(next420pm.getDate() + 1);
-            
-            document.getElementById('next-420am').textContent = next420am.toLocaleString();
-            document.getElementById('next-420pm').textContent = next420pm.toLocaleString();
-            
-            alert('4:20 settings saved');
-        }
-        
-        function testFourTwenty() {
-            alert('Test message sent! (Check your Discord)');
-        }
-        
-        // ==================== ECONOMY FUNCTIONS ====================
-        function dailyBonus() {
-            alert('Daily bonus claimed! (mock)');
-        }
-        
-        function enterLottery() {
-            alert('Entered lottery! (mock)');
-        }
-        
-        function buyItem(item, price) {
-            alert(`Bought ${item} for ${price} coins! (mock)`);
-        }
-        
-        // ==================== UTILITIES ====================
+        // Modal functions
         function copyResult() {
             if (currentResult) {
                 navigator.clipboard.writeText(currentResult.content);
@@ -2538,27 +1184,27 @@
         }
         
         function closeModal() {
-            document.getElementById('result-modal').classList.remove('flex');
-            document.getElementById('result-modal').classList.add('hidden');
+            document.getElementById('result-modal').classList.remove('active');
         }
         
-        function refreshServers() {
-            fetchUserGuilds();
-        }
+        // ==================== INIT ====================
+        handleAuth();
         
-        // Close dropdown when clicking outside
         window.onclick = function(e) {
             if (!e.target.matches('#user-menu, #user-menu *')) {
                 document.getElementById('user-dropdown').classList.add('hidden');
             }
         };
         
-        // Initialize
-        handleAuth();
-        fetchStats();
-        fetchLeaderboard();
+        if (window.location.hash) {
+            const section = window.location.hash.substring(1);
+            setTimeout(() => {
+                if (['dashboard', 'servers', 'premium', 'candy', 'admin', 'owner'].includes(section)) {
+                    showSection(section);
+                }
+            }, 100);
+        }
         
-        // Periodic refresh
         setInterval(fetchStats, 30000);
     </script>
 </body>
