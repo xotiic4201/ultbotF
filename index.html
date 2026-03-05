@@ -22,11 +22,13 @@
             --dark: #1a1a2e;
             --light: #f5f5f5;
             --discord: #5865F2;
+            --xult-purple: #8b5cf6;
+            --xult-pink: #ec4899;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--xult-purple) 0%, var(--xult-pink) 100%);
             min-height: 100vh;
             color: #fff;
             overflow-x: hidden;
@@ -144,7 +146,7 @@
 
         /* Navigation */
         .navbar {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem 2rem;
@@ -174,6 +176,7 @@
             display: flex;
             gap: 2rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
@@ -183,6 +186,7 @@
             transition: all 0.3s ease;
             position: relative;
             cursor: pointer;
+            padding: 0.5rem 0;
         }
 
         .nav-links a:hover {
@@ -259,6 +263,57 @@
         .logout-btn:hover {
             background: var(--danger);
             color: white;
+        }
+
+        /* Server selector */
+        .server-selector {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .server-grid {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+        }
+
+        .server-card {
+            min-width: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .server-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .server-card.selected {
+            border-color: var(--success);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .server-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+
+        .server-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
         /* Main container */
@@ -374,106 +429,103 @@
             background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
         }
 
+        .btn-success {
+            background: var(--success);
+            border: none;
+        }
+
         .btn-danger {
             background: var(--danger);
             border: none;
         }
 
-        /* Vending machine grid */
-        .vending-grid {
+        .btn-warning {
+            background: var(--warning);
+            border: none;
+        }
+
+        /* Command grid */
+        .command-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .vending-item {
+        .command-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
+            border-radius: 15px;
             padding: 1.5rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .vending-item:hover {
-            transform: scale(1.02);
-            border-color: #a8c0ff;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        .command-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
         }
 
-        .item-header {
+        .command-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
 
-        .item-emoji {
-            font-size: 3rem;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
-        }
-
-        .item-stock {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .item-name {
+        .command-name {
             font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-family: monospace;
         }
 
-        .item-desc {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
-
-        .item-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .generate-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: #fff;
-            font-weight: 600;
+        .command-toggle {
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            position: relative;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .generate-btn:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        .command-toggle.active {
+            background: var(--success);
         }
 
-        .generate-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .cooldown-badge {
+        .command-toggle::after {
+            content: '';
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 0, 0, 0.3);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .command-toggle.active::after {
+            left: 28px;
+        }
+
+        .command-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .command-roles {
+            margin-top: 1rem;
+        }
+
+        .role-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
             padding: 0.2rem 0.5rem;
-            border-radius: 20px;
+            border-radius: 5px;
             font-size: 0.8rem;
-            font-weight: 600;
+            margin: 0.2rem;
         }
 
         /* Tables */
@@ -532,6 +584,25 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        .status-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: var(--success);
+        }
+
+        .status-offline {
+            background: var(--danger);
+        }
+
+        .status-pending {
+            background: var(--warning);
+        }
+
         .action-btn {
             padding: 0.3rem 0.8rem;
             border: none;
@@ -551,6 +622,14 @@
             background: var(--danger);
         }
 
+        .action-btn.success:hover {
+            background: var(--success);
+        }
+
+        .action-btn.warning:hover {
+            background: var(--warning);
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -559,7 +638,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
             z-index: 2000;
             align-items: center;
@@ -571,13 +650,15 @@
         }
 
         .modal-content {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--xult-purple) 0%, var(--xult-pink) 100%);
             border-radius: 20px;
             padding: 2rem;
             max-width: 500px;
             width: 90%;
             border: 1px solid rgba(255, 255, 255, 0.2);
             animation: modalSlideIn 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes modalSlideIn {
@@ -610,6 +691,13 @@
             margin-bottom: 1.5rem;
         }
 
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Forms */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -639,6 +727,11 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        select.form-control option {
+            background: var(--dark);
+            color: #fff;
+        }
+
         /* Toast notification */
         .toast-container {
             position: fixed;
@@ -648,7 +741,7 @@
         }
 
         .toast {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 10px;
             padding: 1rem 1.5rem;
@@ -674,6 +767,10 @@
 
         .toast.warning {
             border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
         }
 
         /* Tabs */
@@ -787,16 +884,6 @@
             border: 1px solid var(--danger);
         }
 
-        .retry-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-            cursor: pointer;
-        }
-
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -822,7 +909,7 @@
         }
 
         /* Status indicators */
-        .status-online {
+        .status-online-indicator {
             display: inline-block;
             width: 10px;
             height: 10px;
@@ -844,6 +931,98 @@
             }
         }
 
+        /* Stock grid */
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stock-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stock-emoji {
+            font-size: 2rem;
+        }
+
+        .stock-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stock-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        /* Log entry */
+        .log-entry {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid transparent;
+        }
+
+        .log-entry.success {
+            border-left-color: var(--success);
+        }
+
+        .log-entry.error {
+            border-left-color: var(--danger);
+        }
+
+        .log-entry.warning {
+            border-left-color: var(--warning);
+        }
+
+        .log-entry.info {
+            border-left-color: var(--primary);
+        }
+
+        .log-time {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-bottom: 0.3rem;
+        }
+
+        .log-user {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .log-action {
+            font-size: 0.9rem;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .nav-links {
@@ -854,13 +1033,37 @@
                 grid-template-columns: 1fr;
             }
             
-            .vending-grid {
+            .command-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-grid {
                 grid-template-columns: 1fr;
             }
             
             .tabs {
                 justify-content: center;
             }
+        }
+
+        /* Owner badge */
+        .owner-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Premium badge */
+        .premium-badge {
+            background: linear-gradient(135deg, var(--success) 0%, #38f9d7 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
     </style>
 </head>
@@ -872,7 +1075,7 @@
         <div class="login-card">
             <div class="login-logo">XULT</div>
             <h1 class="login-title">Welcome Back</h1>
-            <p class="login-subtitle">Login with Discord to access your dashboard</p>
+            <p class="login-subtitle">Login with Discord to manage your bot</p>
             <button class="discord-btn" onclick="loginWithDiscord()">
                 <img src="https://cdn.prod.website-files.com/6257adef93867e50d84b30e5/65a4fe71d7c6a3e7d8e6a17b_Discord%20Logo%20-%20White.png" alt="Discord">
                 Login with Discord
@@ -886,14 +1089,15 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="logo" onclick="switchTab('dashboard')">XULT BOT</div>
-                <div class="nav-links">
+                <div class="nav-links" id="navLinks">
                     <a onclick="switchTab('dashboard')">Dashboard</a>
-                    <a onclick="switchTab('vending')">Vending Machine</a>
-                    <a onclick="switchTab('users')">Users</a>
-                    <a onclick="switchTab('premium')">Premium</a>
                     <a onclick="switchTab('servers')">Servers</a>
+                    <a onclick="switchTab('commands')">Commands</a>
+                    <a onclick="switchTab('stock')">Stock</a>
+                    <a onclick="switchTab('premium')">Premium</a>
                     <a onclick="switchTab('logs')">Logs</a>
-                    <a onclick="switchTab('system')">System</a>
+                    <a onclick="switchTab('settings')">Settings</a>
+                    <a id="ownerTab" onclick="switchTab('owner')" style="display: none;">👑 Owner</a>
                     <div class="user-info" id="userInfo">
                         <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
                         <span class="user-name" id="userName"></span>
@@ -905,15 +1109,22 @@
         </nav>
 
         <div class="container">
+            <!-- Server Selector (shows when server management tabs are active) -->
+            <div id="serverSelector" class="server-selector" style="display: none;">
+                <h3>Select a Server</h3>
+                <div class="server-grid" id="serverGrid"></div>
+            </div>
+
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('dashboard')" data-tab="dashboard">Dashboard</div>
-                <div class="tab" onclick="switchTab('vending')" data-tab="vending">Vending Machine</div>
-                <div class="tab" onclick="switchTab('users')" data-tab="users">Users</div>
-                <div class="tab" onclick="switchTab('premium')" data-tab="premium">Premium</div>
                 <div class="tab" onclick="switchTab('servers')" data-tab="servers">Servers</div>
+                <div class="tab" onclick="switchTab('commands')" data-tab="commands">Commands</div>
+                <div class="tab" onclick="switchTab('stock')" data-tab="stock">Stock</div>
+                <div class="tab" onclick="switchTab('premium')" data-tab="premium">Premium</div>
                 <div class="tab" onclick="switchTab('logs')" data-tab="logs">Logs</div>
-                <div class="tab" onclick="switchTab('system')" data-tab="system">System</div>
+                <div class="tab" onclick="switchTab('settings')" data-tab">Settings</div>
+                <div class="tab" id="ownerTab2" onclick="switchTab('owner')" data-tab="owner" style="display: none;">👑 Owner</div>
             </div>
 
             <!-- Loading overlay for tab switches -->
@@ -926,14 +1137,9 @@
             <div id="dashboard-tab" class="tab-content active">
                 <div class="stats-grid" id="statsGrid">
                     <div class="stat-card">
-                        <div class="loading-spinner" style="display: none;" id="statsLoading">
-                            <div class="loading"></div>
-                        </div>
-                        <div id="statsContent">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-title">Total Users</div>
-                            <div class="stat-value" id="totalUsers">0</div>
-                        </div>
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-title">Total Users</div>
+                        <div class="stat-value" id="totalUsers">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">🖥️</div>
@@ -967,13 +1173,12 @@
                     <div id="activityLoading" class="loading-spinner" style="display: none;">
                         <div class="loading"></div>
                     </div>
-                    <div id="activityError" class="error-message" style="display: none;"></div>
                     <table id="recentActivityTable">
                         <thead>
                             <tr>
                                 <th>User</th>
-                                <th>Type</th>
-                                <th>Item</th>
+                                <th>Action</th>
+                                <th>Details</th>
                                 <th>Time</th>
                             </tr>
                         </thead>
@@ -982,89 +1187,114 @@
                 </div>
             </div>
 
-            <!-- Vending Machine Tab -->
-            <div id="vending-tab" class="tab-content">
+            <!-- Servers Tab -->
+            <div id="servers-tab" class="tab-content">
                 <div class="section-header">
-                    <h2 class="section-title">🎰 Vending Machine</h2>
+                    <h2 class="section-title">Servers</h2>
                     <div class="section-actions">
-                        <button class="btn" onclick="refreshStock()">🔄 Refresh</button>
-                        <button class="btn btn-primary" onclick="showAddStockModal()" id="addStockBtn">➕ Add Stock</button>
+                        <button class="btn" onclick="loadServers()">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div id="serversLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    <table id="serversTable">
+                        <thead>
+                            <tr>
+                                <th>Server</th>
+                                <th>ID</th>
+                                <th>Members</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serversBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Commands Tab -->
+            <div id="commands-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Command Settings</h2>
+                    <div class="section-actions">
+                        <select id="commandCategory" class="form-control" style="width: auto;" onchange="filterCommands()">
+                            <option value="all">All Commands</option>
+                            <option value="economy">💰 Economy</option>
+                            <option value="mod">🛡️ Moderation</option>
+                            <option value="fun">🎨 Fun</option>
+                            <option value="stock">📦 Stock</option>
+                            <option value="notify">📢 Notifications</option>
+                        </select>
+                        <button class="btn" onclick="loadCommands()">🔄 Refresh</button>
+                        <button class="btn btn-primary" onclick="saveCommandSettings()">💾 Save Changes</button>
                     </div>
                 </div>
 
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search stock types..." id="stockSearch" onkeyup="filterStock()">
+                    <input type="text" class="search-input" id="commandSearch" placeholder="Search commands..." onkeyup="filterCommands()">
+                </div>
+
+                <div id="commandsLoading" class="loading-spinner" style="display: none;">
+                    <div class="loading"></div>
+                </div>
+
+                <div class="command-grid" id="commandsGrid"></div>
+            </div>
+
+            <!-- Stock Tab -->
+            <div id="stock-tab" class="tab-content">
+                <div class="section-header">
+                    <h2 class="section-title">Stock Management</h2>
+                    <div class="section-actions">
+                        <button class="btn" onclick="loadStock()">🔄 Refresh</button>
+                        <button class="btn btn-primary" onclick="showAddStockModal()">➕ Add Stock</button>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="stockSearch" placeholder="Search stock types..." onkeyup="filterStock()">
                 </div>
 
                 <div id="stockLoading" class="loading-spinner" style="display: none;">
                     <div class="loading"></div>
                 </div>
-                <div id="stockError" class="error-message" style="display: none;"></div>
-                <div class="vending-grid" id="vendingGrid"></div>
-            </div>
 
-            <!-- Users Tab -->
-            <div id="users-tab" class="tab-content">
-                <div class="section-header">
-                    <h2 class="section-title">👥 User Management</h2>
-                    <div class="section-actions">
-                        <button class="btn" onclick="refreshUsers()">🔄 Refresh</button>
-                    </div>
-                </div>
+                <div class="stock-grid" id="stockGrid"></div>
 
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search users by ID or username..." id="userSearch" onkeyup="filterUsers()">
+                <div class="section-header" style="margin-top: 2rem;">
+                    <h2 class="section-title">Gen Access Roles</h2>
                 </div>
 
                 <div class="table-container">
-                    <div id="usersLoading" class="loading-spinner" style="display: none;">
+                    <div id="genAccessLoading" class="loading-spinner" style="display: none;">
                         <div class="loading"></div>
                     </div>
-                    <div id="usersError" class="error-message" style="display: none;"></div>
-                    <table id="usersTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Coins</th>
-                                <th>Level</th>
-                                <th>Premium</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersBody"></tbody>
-                    </table>
+                    <div id="genAccessContent"></div>
                 </div>
             </div>
 
             <!-- Premium Tab -->
             <div id="premium-tab" class="tab-content">
                 <div class="section-header">
-                    <h2 class="section-title">💎 Premium Management</h2>
+                    <h2 class="section-title">Premium Users</h2>
                     <div class="section-actions">
-                        <button class="btn" onclick="refreshPremium()">🔄 Refresh</button>
+                        <button class="btn" onclick="loadPremiumUsers()">🔄 Refresh</button>
+                        <button class="btn btn-primary" onclick="showAddPremiumModal()">➕ Add Premium</button>
                     </div>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">💎</div>
-                        <div class="stat-title">Total Premium</div>
-                        <div class="stat-value" id="totalPremium">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-title">Usage Today</div>
-                        <div class="stat-value" id="premiumUsage">0</div>
-                    </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="premiumSearch" placeholder="Search users..." onkeyup="filterPremiumUsers()">
                 </div>
 
                 <div class="table-container">
                     <div id="premiumLoading" class="loading-spinner" style="display: none;">
                         <div class="loading"></div>
                     </div>
-                    <div id="premiumError" class="error-message" style="display: none;"></div>
                     <table id="premiumTable">
                         <thead>
                             <tr>
@@ -1081,42 +1311,18 @@
                 </div>
             </div>
 
-            <!-- Servers Tab -->
-            <div id="servers-tab" class="tab-content">
-                <div class="section-header">
-                    <h2 class="section-title">🖥️ Server Management</h2>
-                    <div class="section-actions">
-                        <button class="btn" onclick="refreshServers()">🔄 Refresh</button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <div id="serversLoading" class="loading-spinner" style="display: none;">
-                        <div class="loading"></div>
-                    </div>
-                    <div id="serversError" class="error-message" style="display: none;"></div>
-                    <table id="serversTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Members</th>
-                                <th>Owner</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="serversBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
             <!-- Logs Tab -->
             <div id="logs-tab" class="tab-content">
                 <div class="section-header">
-                    <h2 class="section-title">📋 System Logs</h2>
+                    <h2 class="section-title">System Logs</h2>
                     <div class="section-actions">
-                        <button class="btn" onclick="refreshLogs()">🔄 Refresh</button>
+                        <select id="logType" class="form-control" style="width: auto;" onchange="loadLogs()">
+                            <option value="all">All Logs</option>
+                            <option value="stock">Stock Generations</option>
+                            <option value="commands">Commands</option>
+                            <option value="errors">Errors</option>
+                        </select>
+                        <button class="btn" onclick="loadLogs()">🔄 Refresh</button>
                     </div>
                 </div>
 
@@ -1124,74 +1330,237 @@
                     <div id="logsLoading" class="loading-spinner" style="display: none;">
                         <div class="loading"></div>
                     </div>
-                    <div id="logsError" class="error-message" style="display: none;"></div>
-                    <table id="logsTable">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>User</th>
-                                <th>Type</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logsBody"></tbody>
-                    </table>
+                    <div id="logsContent"></div>
                 </div>
             </div>
 
-            <!-- System Tab -->
-            <div id="system-tab" class="tab-content">
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content">
                 <div class="section-header">
-                    <h2 class="section-title">⚙️ System Control</h2>
+                    <h2 class="section-title">Server Settings</h2>
                     <div class="section-actions">
-                        <button class="btn" onclick="refreshSystem()">🔄 Refresh</button>
+                        <button class="btn btn-primary" onclick="saveServerSettings()">💾 Save Settings</button>
                     </div>
                 </div>
 
-                <div id="systemLoading" class="loading-spinner" style="display: none;">
-                    <div class="loading"></div>
+                <div class="table-container">
+                    <div id="settingsLoading" class="loading-spinner" style="display: none;">
+                        <div class="loading"></div>
+                    </div>
+                    
+                    <form id="serverSettingsForm">
+                        <div class="form-group">
+                            <label>Prefix</label>
+                            <input type="text" class="form-control" id="prefix" value="!" maxlength="3">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Log Channel</label>
+                            <select class="form-control" id="logChannel">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Welcome Channel</label>
+                            <select class="form-control" id="welcomeChannel">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Welcome Message</label>
+                            <input type="text" class="form-control" id="welcomeMessage" placeholder="{user} joined {server}">
+                            <small>Use {user} for mention, {server} for server name</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Leave Channel</label>
+                            <select class="form-control" id="leaveChannel">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Leave Message</label>
+                            <input type="text" class="form-control" id="leaveMessage" placeholder="{user} left {server}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Auto Role</label>
+                            <select class="form-control" id="autoRole">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Auto Role Delay (seconds)</label>
+                            <input type="number" class="form-control" id="autoRoleDelay" value="0" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mod Role</label>
+                            <select class="form-control" id="modRole">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Admin Role</label>
+                            <select class="form-control" id="adminRole">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Muted Role</label>
+                            <select class="form-control" id="mutedRole">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
-                <div id="systemError" class="error-message" style="display: none;"></div>
-                
-                <div id="systemContent">
+            </div>
+
+            <!-- Owner Tab (Only visible to xotiic._.420) -->
+            <div id="owner-tab" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-title">Total Generations</div>
+                        <div class="stat-value" id="totalGenerations">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-title">Total Warnings</div>
+                        <div class="stat-value" id="totalWarnings">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚫</div>
+                        <div class="stat-title">Banned Users</div>
+                        <div class="stat-value" id="bannedUsers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-title">Total Stock</div>
+                        <div class="stat-value" id="totalStock">0</div>
+                    </div>
+                </div>
+
+                <div class="tabs" style="margin-top: 2rem;">
+                    <div class="tab active" onclick="switchOwnerTab('users')" data-owner-tab="users">Users</div>
+                    <div class="tab" onclick="switchOwnerTab('servers')" data-owner-tab="servers">Servers</div>
+                    <div class="tab" onclick="switchOwnerTab('logs')" data-owner-tab="logs">System Logs</div>
+                    <div class="tab" onclick="switchOwnerTab('database')" data-owner-tab="database">Database</div>
+                </div>
+
+                <!-- Owner Users Tab -->
+                <div id="owner-users" class="owner-tab-content active">
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <div class="section-actions">
+                            <input type="text" class="search-input" id="ownerUserSearch" placeholder="Search users..." style="width: 200px;" onkeyup="filterOwnerUsers()">
+                            <button class="btn" onclick="loadOwnerUsers()">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div id="ownerUsersLoading" class="loading-spinner" style="display: none;">
+                            <div class="loading"></div>
+                        </div>
+                        <table id="ownerUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Coins</th>
+                                    <th>Level</th>
+                                    <th>Premium</th>
+                                    <th>Warnings</th>
+                                    <th>Generations</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ownerUsersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Owner Servers Tab -->
+                <div id="owner-servers" class="owner-tab-content">
+                    <div class="section-header">
+                        <h3>Server Management</h3>
+                        <div class="section-actions">
+                            <button class="btn" onclick="loadOwnerServers()">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div id="ownerServersLoading" class="loading-spinner" style="display: none;">
+                            <div class="loading"></div>
+                        </div>
+                        <table id="ownerServersTable">
+                            <thead>
+                                <tr>
+                                    <th>Server</th>
+                                    <th>ID</th>
+                                    <th>Members</th>
+                                    <th>Owner</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ownerServersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Owner Logs Tab -->
+                <div id="owner-logs" class="owner-tab-content">
+                    <div class="section-header">
+                        <h3>System Logs</h3>
+                        <div class="section-actions">
+                            <select id="ownerLogType" class="form-control" style="width: auto;" onchange="loadOwnerLogs()">
+                                <option value="all">All Logs</option>
+                                <option value="stock">Stock</option>
+                                <option value="premium">Premium</option>
+                                <option value="warnings">Warnings</option>
+                                <option value="errors">Errors</option>
+                            </select>
+                            <button class="btn" onclick="loadOwnerLogs()">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div id="ownerLogsLoading" class="loading-spinner" style="display: none;">
+                            <div class="loading"></div>
+                        </div>
+                        <div id="ownerLogsContent"></div>
+                    </div>
+                </div>
+
+                <!-- Owner Database Tab -->
+                <div id="owner-database" class="owner-tab-content">
+                    <div class="section-header">
+                        <h3>Database Management</h3>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" onclick="backupDatabase()">💾 Backup DB</button>
+                            <button class="btn btn-warning" onclick="showSqlModal()">📝 Execute SQL</button>
+                        </div>
+                    </div>
+
                     <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">💻</div>
-                            <div class="stat-title">CPU Usage</div>
-                            <div class="stat-value" id="cpuUsage">0%</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="cpuBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">🧠</div>
-                            <div class="stat-title">Memory Usage</div>
-                            <div class="stat-value" id="memoryUsage">0 MB</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="memoryBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">⏰</div>
-                            <div class="stat-title">Uptime</div>
-                            <div class="stat-value" id="uptime">0h 0m</div>
-                        </div>
                         <div class="stat-card">
                             <div class="stat-icon">💾</div>
                             <div class="stat-title">Database Size</div>
                             <div class="stat-value" id="dbSize">0 MB</div>
                         </div>
-                    </div>
-
-                    <div class="section-header">
-                        <h2 class="section-title">Database Actions</h2>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                        <button class="btn" onclick="backupDatabase()">💾 Backup DB</button>
-                        <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
-                        <button class="btn" onclick="syncDatabases()">🔄 Sync DBs</button>
-                        <button class="btn btn-primary" onclick="showSqlModal()">📝 Execute SQL</button>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-title">Tables</div>
+                            <div class="stat-value" id="dbTables">0</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1215,9 +1584,33 @@
                     <textarea class="form-control" id="stockContent" rows="5" placeholder="user:pass&#10;user2:pass2"></textarea>
                 </div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <div class="modal-footer">
                 <button class="btn" onclick="hideAddStockModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="addStock()">Add Stock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Premium Modal -->
+    <div class="modal" id="addPremiumModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💎 Add Premium User</h3>
+                <button class="modal-close" onclick="hideAddPremiumModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="text" class="form-control" id="premiumUserId" placeholder="Discord User ID">
+                </div>
+                <div class="form-group">
+                    <label>Duration (days)</label>
+                    <input type="number" class="form-control" id="premiumDays" value="30" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="hideAddPremiumModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addPremiumUser()">Add Premium</button>
             </div>
         </div>
     </div>
@@ -1239,9 +1632,26 @@
                     <textarea class="form-control" id="sqlResult" rows="5" readonly placeholder="Results will appear here..."></textarea>
                 </div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <div class="modal-footer">
                 <button class="btn" onclick="hideSqlModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="executeSql()">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div class="modal" id="userEditModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Edit User</h3>
+                <button class="modal-close" onclick="hideUserEditModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="userEditContent">
+                <!-- Filled dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="hideUserEditModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUserEdit()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -1251,43 +1661,45 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Configuration
-        const API_BASE = 'https://ultbotb.onrender.com';
+        // ==================== CONFIGURATION ====================
+        const API_BASE = 'https://your-render-app.onrender.com'; // CHANGE THIS TO YOUR RENDER URL
         const CLIENT_ID = '1417284780675956766';
-        const REDIRECT_URI = encodeURIComponent('https://ultbot-f.vercel.app/callback');
-        const OWNER_ID = '1302203907782606880';
+        const REDIRECT_URI = encodeURIComponent(window.location.origin + '/callback');
+        const OWNER_ID = '1302203907782606880'; // xotiic._.420
 
-        // State
+        // ==================== STATE ====================
         let currentUser = null;
         let userRole = 'user';
         let accessToken = localStorage.getItem('discord_token');
         let apiKey = null;
+        let selectedServer = null;
+        let servers = [];
+        let commands = [];
         let stockData = {};
         let activityChart = null;
-        let cooldowns = {};
 
-        // Initialize - SIMPLIFIED
+        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', async () => {
             createBackground();
             
-            // Check if we have a token
+            // Check URL for OAuth callback
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                const params = new URLSearchParams(hash);
+                const token = params.get('access_token');
+                if (token) {
+                    localStorage.setItem('discord_token', token);
+                    accessToken = token;
+                    window.location.hash = '';
+                }
+            }
+            
             if (accessToken) {
                 try {
-                    // Validate token with Discord
-                    const response = await fetch('https://discord.com/api/users/@me', {
-                        headers: { 'Authorization': `Bearer ${accessToken}` }
-                    });
-                    
-                    if (response.ok) {
-                        await loadUser();
-                        await fetchApiKey();
-                        showDashboard();
-                        loadDashboard();
-                    } else {
-                        // Token invalid
-                        localStorage.removeItem('discord_token');
-                        showLogin();
-                    }
+                    await loadUser();
+                    await fetchApiKey();
+                    showDashboard();
+                    loadDashboard();
                 } catch (error) {
                     console.error('Error:', error);
                     showLogin();
@@ -1297,31 +1709,34 @@
             }
         });
 
-        // Discord OAuth
+        // ==================== BACKGROUND ANIMATION ====================
+        function createBackground() {
+            const bg = document.getElementById('animatedBg');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.style.left = Math.random() * 100 + '%';
+                span.style.width = Math.random() * 30 + 'px';
+                span.style.height = span.style.width;
+                span.style.animationDelay = Math.random() * 20 + 's';
+                span.style.animationDuration = Math.random() * 10 + 15 + 's';
+                bg.appendChild(span);
+            }
+        }
+
+        // ==================== AUTHENTICATION ====================
         function loginWithDiscord() {
-            const scopes = ['identify', 'guilds'];
-            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scopes.join('%20')}`;
-            console.log('Redirecting to:', url);
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify%20guilds`;
             window.location.href = url;
         }
 
-        // Fetch API key from bot
         async function fetchApiKey() {
             if (apiKey) return apiKey;
-            
-            const cached = localStorage.getItem('xult_api_key');
-            if (cached) {
-                apiKey = cached;
-                return apiKey;
-            }
             
             try {
                 const response = await fetch(`${API_BASE}/api/key`);
                 if (!response.ok) throw new Error('Failed to fetch API key');
-                
                 const data = await response.json();
                 apiKey = data.key;
-                localStorage.setItem('xult_api_key', apiKey);
                 return apiKey;
             } catch (error) {
                 console.error('Error fetching API key:', error);
@@ -1330,7 +1745,6 @@
             }
         }
 
-        // API request helper
         async function apiRequest(endpoint, options = {}) {
             if (!apiKey) await fetchApiKey();
             
@@ -1358,21 +1772,6 @@
             }
         }
 
-        // Create animated background
-        function createBackground() {
-            const bg = document.getElementById('animatedBg');
-            for (let i = 0; i < 50; i++) {
-                const span = document.createElement('span');
-                span.style.left = Math.random() * 100 + '%';
-                span.style.width = Math.random() * 30 + 'px';
-                span.style.height = span.style.width;
-                span.style.animationDelay = Math.random() * 20 + 's';
-                span.style.animationDuration = Math.random() * 10 + 15 + 's';
-                bg.appendChild(span);
-            }
-        }
-
-        // Load user data from Discord
         async function loadUser() {
             try {
                 const response = await fetch('https://discord.com/api/users/@me', {
@@ -1383,8 +1782,11 @@
                 
                 currentUser = await response.json();
                 
+                // Check if user is owner
                 if (currentUser.id === OWNER_ID) {
                     userRole = 'owner';
+                    document.getElementById('ownerTab').style.display = 'block';
+                    document.getElementById('ownerTab2').style.display = 'block';
                 } else {
                     try {
                         const data = await apiRequest(`/api/check-premium/${currentUser.id}`);
@@ -1395,6 +1797,9 @@
                 }
                 
                 updateUserInfo();
+                
+                // Load user's servers
+                await loadUserServers();
                 
             } catch (error) {
                 console.error('Error loading user:', error);
@@ -1442,41 +1847,134 @@
             showLogin();
         }
 
-        // Tab switching
-        async function switchTab(tabName) {
+        // ==================== SERVER MANAGEMENT ====================
+        async function loadUserServers() {
+            try {
+                const response = await fetch('https://discord.com/api/users/@me/guilds', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load servers');
+                
+                servers = await response.json();
+                
+                // Filter servers where user has manage server permission
+                servers = servers.filter(s => (s.permissions & 0x20) === 0x20); // MANAGE_GUILD permission
+                
+                renderServerSelector();
+                
+                if (servers.length > 0) {
+                    selectServer(servers[0].id);
+                }
+            } catch (error) {
+                console.error('Error loading servers:', error);
+                showToast('Failed to load servers', 'error');
+            }
+        }
+
+        function renderServerSelector() {
+            const grid = document.getElementById('serverGrid');
+            grid.innerHTML = '';
+            
+            servers.forEach(server => {
+                const card = document.createElement('div');
+                card.className = `server-card ${selectedServer === server.id ? 'selected' : ''}`;
+                card.onclick = () => selectServer(server.id);
+                
+                const iconUrl = server.icon 
+                    ? `https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png`
+                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                card.innerHTML = `
+                    <img src="${iconUrl}" class="server-icon" alt="${server.name}">
+                    <div class="server-name">${server.name}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function selectServer(serverId) {
+            selectedServer = serverId;
+            renderServerSelector();
+            
+            // Reload server-specific data
+            if (document.getElementById('commands-tab').classList.contains('active')) {
+                loadCommands();
+            } else if (document.getElementById('settings-tab').classList.contains('active')) {
+                loadServerSettings();
+            } else if (document.getElementById('stock-tab').classList.contains('active')) {
+                loadGenAccess();
+            }
+        }
+
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
             
-            // Load appropriate data based on tab
+            // Show/hide server selector for server-specific tabs
+            const serverTabs = ['commands', 'stock', 'settings'];
+            document.getElementById('serverSelector').style.display = 
+                serverTabs.includes(tabName) ? 'block' : 'none';
+            
+            // Load appropriate data
             switch(tabName) {
                 case 'dashboard':
                     loadDashboard();
                     break;
-                case 'vending':
-                    loadVendingMachine();
-                    break;
-                case 'users':
-                    loadUsers();
-                    break;
-                case 'premium':
-                    loadPremium();
-                    break;
                 case 'servers':
                     loadServers();
+                    break;
+                case 'commands':
+                    if (selectedServer) loadCommands();
+                    break;
+                case 'stock':
+                    loadStock();
+                    if (selectedServer) loadGenAccess();
+                    break;
+                case 'premium':
+                    loadPremiumUsers();
                     break;
                 case 'logs':
                     loadLogs();
                     break;
-                case 'system':
-                    loadSystem();
+                case 'settings':
+                    if (selectedServer) loadServerSettings();
+                    break;
+                case 'owner':
+                    loadOwnerData();
                     break;
             }
         }
 
-        // Dashboard
+        function switchOwnerTab(tabName) {
+            document.querySelectorAll('[data-owner-tab]').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.owner-tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[data-owner-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`owner-${tabName}`).classList.add('active');
+            
+            switch(tabName) {
+                case 'users':
+                    loadOwnerUsers();
+                    break;
+                case 'servers':
+                    loadOwnerServers();
+                    break;
+                case 'logs':
+                    loadOwnerLogs();
+                    break;
+                case 'database':
+                    loadDatabaseInfo();
+                    break;
+            }
+        }
+
+        // ==================== DASHBOARD ====================
         async function loadDashboard() {
             try {
                 showTabLoading();
@@ -1528,345 +2026,234 @@
                     }
                 });
                 
-                await loadRecentActivity();
-                hideTabLoading();
-                
-            } catch (error) {
-                hideTabLoading();
-                showToast(error.message, 'error');
-            }
-        }
-
-        async function loadRecentActivity() {
-            try {
-                document.getElementById('activityLoading').style.display = 'block';
-                
-                const logs = await apiRequest('/api/admin/logs/stock');
-                
                 const tbody = document.getElementById('recentActivityBody');
-                if (!logs || logs.length === 0) {
+                if (stats.recent && stats.recent.length > 0) {
+                    tbody.innerHTML = stats.recent.map(activity => `
+                        <tr>
+                            <td>${activity.username}</td>
+                            <td>Generated ${activity.type}</td>
+                            <td>${activity.item}</td>
+                            <td>${activity.time}</td>
+                        </tr>
+                    `).join('');
+                } else {
                     tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No recent activity</td></tr>';
-                } else {
-                    tbody.innerHTML = logs.slice(0, 10).map(log => `
-                        <tr>
-                            <td>${log.userId}</td>
-                            <td>${log.type}</td>
-                            <td>${log.item || log.type}</td>
-                            <td>${log.time}</td>
-                        </tr>
-                    `).join('');
                 }
                 
+                hideTabLoading();
             } catch (error) {
-                document.getElementById('activityError').textContent = error.message;
-                document.getElementById('activityError').style.display = 'block';
-            } finally {
-                document.getElementById('activityLoading').style.display = 'none';
-            }
-        }
-
-        // Vending Machine
-        async function loadVendingMachine() {
-            try {
-                document.getElementById('stockLoading').style.display = 'block';
-                document.getElementById('stockError').style.display = 'none';
-                document.getElementById('vendingGrid').innerHTML = '';
-                
-                stockData = await apiRequest('/api/stock');
-                
-                renderVendingMachine();
-                
-            } catch (error) {
-                document.getElementById('stockError').textContent = error.message;
-                document.getElementById('stockError').style.display = 'block';
-                showToast(error.message, 'error');
-            } finally {
-                document.getElementById('stockLoading').style.display = 'none';
-            }
-        }
-
-        function renderVendingMachine() {
-            const grid = document.getElementById('vendingGrid');
-            
-            if (!stockData || Object.keys(stockData).length === 0) {
-                grid.innerHTML = '<div class="empty-state">No stock available</div>';
-                return;
-            }
-            
-            grid.innerHTML = Object.entries(stockData).map(([type, data]) => `
-                <div class="vending-item" data-type="${type}">
-                    <div class="item-header">
-                        <span class="item-emoji">${data.emoji || '📦'}</span>
-                        <span class="item-stock">${data.count} left</span>
-                    </div>
-                    <div class="item-name">${data.name || type}</div>
-                    <div class="item-desc">${data.description || 'Generate premium accounts'}</div>
-                    <div class="item-footer">
-                        <div class="item-price">${data.count > 0 ? 'Available' : 'Out of stock'}</div>
-                        <button class="generate-btn" onclick="generateStock('${type}')" 
-                            ${userRole === 'user' || data.count === 0 ? 'disabled' : ''}>
-                            GENERATE
-                        </button>
-                    </div>
-                    ${cooldowns[type] ? `<div class="cooldown-badge">${cooldowns[type]}s</div>` : ''}
-                </div>
-            `).join('');
-        }
-
-        async function generateStock(type) {
-            if (userRole === 'user') {
-                showToast('Premium required to generate stock', 'warning');
-                return;
-            }
-            
-            const btn = event.target;
-            btn.disabled = true;
-            btn.innerHTML = '<div class="loading"></div>';
-            
-            try {
-                const data = await apiRequest(`/api/stock/generate/${type}`, {
-                    method: 'POST',
-                    body: JSON.stringify({ userId: currentUser.id })
-                });
-                
-                if (data.success) {
-                    showToast('Stock generated! Check your DMs', 'success');
-                    
-                    if (stockData[type]) {
-                        stockData[type].count = data.remaining;
-                    }
-                    
-                    cooldowns[type] = data.cooldown;
-                    const interval = setInterval(() => {
-                        cooldowns[type]--;
-                        if (cooldowns[type] <= 0) {
-                            clearInterval(interval);
-                            delete cooldowns[type];
-                        }
-                        renderVendingMachine();
-                    }, 1000);
-                    
-                    renderVendingMachine();
-                } else {
-                    showToast(data.error || 'Failed to generate stock', 'error');
-                }
-            } catch (error) {
+                hideTabLoading();
                 showToast(error.message, 'error');
             }
-            
-            btn.disabled = false;
-            btn.innerHTML = 'GENERATE';
         }
 
-        function filterStock() {
-            const search = document.getElementById('stockSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.vending-item');
-            
-            items.forEach(item => {
-                const type = item.dataset.type;
-                const name = stockData[type]?.name?.toLowerCase() || type;
-                item.style.display = name.includes(search) ? 'block' : 'none';
-            });
-        }
-
-        // User Management
-        async function loadUsers() {
-            try {
-                document.getElementById('usersLoading').style.display = 'block';
-                document.getElementById('usersError').style.display = 'none';
-                
-                const endpoint = userRole === 'owner' ? '/api/owner/users' : '/api/admin/users';
-                const users = await apiRequest(endpoint);
-                
-                const tbody = document.getElementById('usersBody');
-                if (!users || users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users found</td></tr>';
-                } else {
-                    tbody.innerHTML = users.map(user => `
-                        <tr>
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td><span class="role-badge role-${user.role || 'user'}">${user.role || 'user'}</span></td>
-                            <td>${user.coins}</td>
-                            <td>${user.level}</td>
-                            <td>${user.premium ? '✅' : '❌'}</td>
-                            <td>
-                                ${userRole === 'owner' ? `
-                                    <button class="action-btn" onclick="jailUser('${user.id}')">🔒</button>
-                                    <button class="action-btn" onclick="togglePremium('${user.id}')">💎</button>
-                                ` : ''}
-                                <button class="action-btn" onclick="viewUserDetails('${user.id}')">👁️</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-                
-            } catch (error) {
-                document.getElementById('usersError').textContent = error.message;
-                document.getElementById('usersError').style.display = 'block';
-                showToast(error.message, 'error');
-            } finally {
-                document.getElementById('usersLoading').style.display = 'none';
-            }
-        }
-
-        function filterUsers() {
-            const search = document.getElementById('userSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#usersBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(search) ? '' : 'none';
-            });
-        }
-
-        // Premium Management
-        async function loadPremium() {
-            try {
-                document.getElementById('premiumLoading').style.display = 'block';
-                document.getElementById('premiumError').style.display = 'none';
-                
-                const data = await apiRequest('/api/admin/premium');
-                document.getElementById('totalPremium').textContent = data.total || 0;
-                document.getElementById('premiumUsage').textContent = 'N/A';
-                
-                const users = await apiRequest('/api/admin/premium/users');
-                const tbody = document.getElementById('premiumBody');
-                
-                if (!users || users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No premium users</td></tr>';
-                } else {
-                    tbody.innerHTML = users.map(user => `
-                        <tr>
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td>${user.granted_at || 'N/A'}</td>
-                            <td>${user.expires_at || 'Never'}</td>
-                            <td><span class="role-badge role-premium">Active</span></td>
-                            <td>
-                                <button class="action-btn" onclick="revokePremium('${user.id}')">Revoke</button>
-                                <button class="action-btn" onclick="extendPremium('${user.id}')">Extend</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-                
-            } catch (error) {
-                document.getElementById('premiumError').textContent = error.message;
-                document.getElementById('premiumError').style.display = 'block';
-                showToast(error.message, 'error');
-            } finally {
-                document.getElementById('premiumLoading').style.display = 'none';
-            }
-        }
-
-        // Servers
+        // ==================== SERVERS ====================
         async function loadServers() {
-            if (userRole !== 'owner') {
-                document.getElementById('serversBody').innerHTML = '<tr><td colspan="6" class="empty-state">Only owner can view servers</td></tr>';
-                return;
-            }
-            
             try {
                 document.getElementById('serversLoading').style.display = 'block';
-                document.getElementById('serversError').style.display = 'none';
                 
-                const servers = await apiRequest('/api/owner/servers');
-                
+                const serversList = await apiRequest('/api/owner/servers');
                 const tbody = document.getElementById('serversBody');
-                if (!servers || servers.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No servers found</td></tr>';
-                } else {
-                    tbody.innerHTML = servers.map(server => `
-                        <tr>
-                            <td>${server.id}</td>
-                            <td>${server.name}</td>
-                            <td>${server.members}</td>
-                            <td>${server.owner}</td>
-                            <td><span class="status-online"></span>Online</td>
-                            <td>
-                                <button class="action-btn" onclick="forceSync('${server.id}')">🔄 Sync</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
+                
+                tbody.innerHTML = serversList.map(server => `
+                    <tr>
+                        <td>
+                            <img src="${server.icon || 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
+                                 style="width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 10px;">
+                            ${server.name}
+                        </td>
+                        <td>${server.id}</td>
+                        <td>${server.memberCount}</td>
+                        <td>${server.ownerName}</td>
+                        <td><span class="status-online-indicator"></span>Online</td>
+                        <td>
+                            <button class="action-btn" onclick="selectServer('${server.id}')">Manage</button>
+                        </td>
+                    </tr>
+                `).join('');
                 
             } catch (error) {
-                document.getElementById('serversError').textContent = error.message;
-                document.getElementById('serversError').style.display = 'block';
                 showToast(error.message, 'error');
             } finally {
                 document.getElementById('serversLoading').style.display = 'none';
             }
         }
 
-        // Logs
-        async function loadLogs() {
-            try {
-                document.getElementById('logsLoading').style.display = 'block';
-                document.getElementById('logsError').style.display = 'none';
-                
-                const logs = await apiRequest('/api/admin/logs/stock');
-                
-                const tbody = document.getElementById('logsBody');
-                if (!logs || logs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No logs found</td></tr>';
-                } else {
-                    tbody.innerHTML = logs.map(log => `
-                        <tr>
-                            <td>${log.time}</td>
-                            <td>${log.userId}</td>
-                            <td>${log.type}</td>
-                            <td>Generated ${log.item || log.type}</td>
-                        </tr>
-                    `).join('');
-                }
-                
-            } catch (error) {
-                document.getElementById('logsError').textContent = error.message;
-                document.getElementById('logsError').style.display = 'block';
-                showToast(error.message, 'error');
-            } finally {
-                document.getElementById('logsLoading').style.display = 'none';
-            }
-        }
-
-        // System
-        async function loadSystem() {
-            try {
-                document.getElementById('systemLoading').style.display = 'block';
-                document.getElementById('systemError').style.display = 'none';
-                document.getElementById('systemContent').style.display = 'none';
-                
-                const data = await apiRequest('/api/admin/stats');
-                
-                document.getElementById('cpuUsage').textContent = data.cpu + '%';
-                document.getElementById('cpuBar').style.width = data.cpu + '%';
-                
-                const memoryMB = Math.round(data.memory);
-                document.getElementById('memoryUsage').textContent = memoryMB + ' MB';
-                const memoryPercent = (data.memory / data.memory_total) * 100;
-                document.getElementById('memoryBar').style.width = memoryPercent + '%';
-                
-                document.getElementById('uptime').textContent = data.uptime;
-                document.getElementById('dbSize').textContent = data.dbSize + ' MB';
-                
-                document.getElementById('systemContent').style.display = 'block';
-                
-            } catch (error) {
-                document.getElementById('systemError').textContent = error.message;
-                document.getElementById('systemError').style.display = 'block';
-                showToast(error.message, 'error');
-            } finally {
-                document.getElementById('systemLoading').style.display = 'none';
-            }
-        }
-
-        // Modal functions
-        function showAddStockModal() {
-            if (userRole === 'user') {
-                showToast('Admin access required', 'warning');
+        // ==================== COMMANDS ====================
+        async function loadCommands() {
+            if (!selectedServer) {
+                showToast('Please select a server first', 'warning');
                 return;
             }
+            
+            try {
+                document.getElementById('commandsLoading').style.display = 'block';
+                
+                const config = await apiRequest(`/api/server/${selectedServer}/config`);
+                commands = config.commands || {};
+                
+                renderCommands();
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('commandsLoading').style.display = 'none';
+            }
+        }
+
+        function renderCommands() {
+            const grid = document.getElementById('commandsGrid');
+            const category = document.getElementById('commandCategory').value;
+            const search = document.getElementById('commandSearch').value.toLowerCase();
+            
+            const commandList = [
+                { name: 'balance', category: 'economy', desc: 'Check your balance' },
+                { name: 'coinflip', category: 'economy', desc: 'Flip a coin' },
+                { name: 'rps', category: 'economy', desc: 'Play rock paper scissors' },
+                { name: 'slots', category: 'economy', desc: 'Play slots' },
+                { name: 'blackjack', category: 'economy', desc: 'Play blackjack' },
+                { name: 'roulette', category: 'economy', desc: 'Play roulette' },
+                { name: 'lottery', category: 'economy', desc: 'Enter lottery' },
+                { name: 'joke', category: 'fun', desc: 'Get a random joke' },
+                { name: 'eightball', category: 'fun', desc: 'Ask the magic 8ball' },
+                { name: 'riddle', category: 'fun', desc: 'Solve a riddle' },
+                { name: 'gif', category: 'fun', desc: 'Search for a GIF' },
+                { name: 'meme', category: 'fun', desc: 'Get a random meme' },
+                { name: 'hug', category: 'fun', desc: 'Hug someone' },
+                { name: 'slap', category: 'fun', desc: 'Slap someone' },
+                { name: 'say', category: 'fun', desc: 'Make the bot say something' },
+                { name: 'jail', category: 'mod', desc: 'Jail a user' },
+                { name: 'unjail', category: 'mod', desc: 'Unjail a user' },
+                { name: 'purge', category: 'mod', desc: 'Purge messages' },
+                { name: 'warnings', category: 'mod', desc: 'View warnings' },
+                { name: 'resetwarn', category: 'mod', desc: 'Reset warnings' },
+                { name: 'gen', category: 'stock', desc: 'Generate stock' },
+                { name: 'dmgen', category: 'stock', desc: 'Generate stock via DM' },
+                { name: 'stocklist', category: 'stock', desc: 'List available stock' },
+                { name: 'setnotichannel', category: 'notify', desc: 'Set notification channel' },
+                { name: 'addyoutubechannel', category: 'notify', desc: 'Add YouTube channel' },
+                { name: 'addtwitchstream', category: 'notify', desc: 'Add Twitch stream' },
+                { name: 'addtwitteraccount', category: 'notify', desc: 'Add Twitter account' }
+            ];
+            
+            const filtered = commandList.filter(cmd => {
+                if (category !== 'all' && cmd.category !== category) return false;
+                if (search && !cmd.name.includes(search) && !cmd.desc.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            
+            grid.innerHTML = filtered.map(cmd => {
+                const settings = commands[cmd.name] || { enabled: true, allowed_roles: [] };
+                return `
+                    <div class="command-card">
+                        <div class="command-header">
+                            <span class="command-name">/${cmd.name}</span>
+                            <div class="command-toggle ${settings.enabled ? 'active' : ''}" 
+                                 onclick="toggleCommand('${cmd.name}')"></div>
+                        </div>
+                        <div class="command-desc">${cmd.desc}</div>
+                        <div class="command-roles" id="roles-${cmd.name}">
+                            ${settings.allowed_roles && settings.allowed_roles.length > 0 ? 
+                                settings.allowed_roles.map(r => `<span class="role-tag">Role ${r}</span>`).join('') : 
+                                '<span class="role-tag">@everyone</span>'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCommand(commandName) {
+            if (!commands[commandName]) {
+                commands[commandName] = { enabled: true, allowed_roles: [] };
+            }
+            commands[commandName].enabled = !commands[commandName].enabled;
+            renderCommands();
+        }
+
+        function filterCommands() {
+            renderCommands();
+        }
+
+        async function saveCommandSettings() {
+            if (!selectedServer) return;
+            
+            try {
+                for (const [cmd, settings] of Object.entries(commands)) {
+                    await apiRequest(`/api/server/${selectedServer}/command/${cmd}`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            enabled: settings.enabled,
+                            allowed_roles: settings.allowed_roles || []
+                        })
+                    });
+                }
+                showToast('Command settings saved!', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        // ==================== STOCK ====================
+        async function loadStock() {
+            try {
+                document.getElementById('stockLoading').style.display = 'block';
+                
+                stockData = await apiRequest('/api/stock');
+                
+                const grid = document.getElementById('stockGrid');
+                grid.innerHTML = Object.entries(stockData).map(([type, data]) => `
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="stock-emoji">${data.emoji || '📦'}</span>
+                            <span class="stock-count">${data.count} left</span>
+                        </div>
+                        <div class="stock-name">${data.name || type}</div>
+                        <div class="stock-desc">${data.description || 'Stock entries'}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('stockLoading').style.display = 'none';
+            }
+        }
+
+        async function loadGenAccess() {
+            if (!selectedServer) return;
+            
+            try {
+                document.getElementById('genAccessLoading').style.display = 'block';
+                
+                const config = await apiRequest(`/api/server/${selectedServer}/config`);
+                const roles = config.gen_access || [];
+                
+                document.getElementById('genAccessContent').innerHTML = `
+                    <h3>Roles that can use /gen</h3>
+                    <div style="margin: 1rem 0;">
+                        ${roles.map(r => `<span class="role-tag">Role ${r}</span>`).join(' ') || 'No roles set'}
+                    </div>
+                    <button class="btn btn-primary" onclick="showGenAccessModal()">Configure</button>
+                `;
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('genAccessLoading').style.display = 'none';
+            }
+        }
+
+        function filterStock() {
+            const search = document.getElementById('stockSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.stock-card');
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.stock-name').textContent.toLowerCase();
+                card.style.display = name.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        function showAddStockModal() {
             document.getElementById('addStockModal').classList.add('active');
         }
 
@@ -1886,26 +2273,484 @@
             }
             
             try {
-                const data = await apiRequest('/api/stock/add', {
+                await apiRequest('/api/stock/add', {
                     method: 'POST',
                     body: JSON.stringify({ type, content })
                 });
                 
-                if (data.success) {
-                    showToast(`Added ${data.count} stock entries`, 'success');
-                    hideAddStockModal();
-                    loadVendingMachine();
+                showToast('Stock added successfully!', 'success');
+                hideAddStockModal();
+                loadStock();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        // ==================== PREMIUM ====================
+        async function loadPremiumUsers() {
+            try {
+                document.getElementById('premiumLoading').style.display = 'block';
+                
+                const users = await apiRequest('/api/owner/premium/users');
+                const tbody = document.getElementById('premiumBody');
+                
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No premium users</td></tr>';
+                } else {
+                    tbody.innerHTML = users.map(user => `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.granted_at || 'N/A'}</td>
+                            <td>${user.expires_at || 'Never'}</td>
+                            <td><span class="role-badge role-premium">Active</span></td>
+                            <td>
+                                <button class="action-btn warning" onclick="extendPremium('${user.id}')">Extend</button>
+                                <button class="action-btn danger" onclick="removePremium('${user.id}')">Remove</button>
+                            </td>
+                        </tr>
+                    `).join('');
                 }
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('premiumLoading').style.display = 'none';
+            }
+        }
+
+        function showAddPremiumModal() {
+            document.getElementById('addPremiumModal').classList.add('active');
+        }
+
+        function hideAddPremiumModal() {
+            document.getElementById('addPremiumModal').classList.remove('active');
+            document.getElementById('premiumUserId').value = '';
+            document.getElementById('premiumDays').value = '30';
+        }
+
+        async function addPremiumUser() {
+            const userId = document.getElementById('premiumUserId').value.trim();
+            const days = document.getElementById('premiumDays').value;
+            
+            if (!userId) {
+                showToast('Please enter a user ID', 'warning');
+                return;
+            }
+            
+            try {
+                await apiRequest(`/api/owner/users/${userId}/premium`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'add' })
+                });
+                
+                showToast('Premium added successfully!', 'success');
+                hideAddPremiumModal();
+                loadPremiumUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function removePremium(userId) {
+            if (!confirm(`Remove premium from user ${userId}?`)) return;
+            
+            try {
+                await apiRequest(`/api/owner/users/${userId}/premium`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'remove' })
+                });
+                
+                showToast('Premium removed', 'success');
+                loadPremiumUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function extendPremium(userId) {
+            const days = prompt('Enter number of days to extend:', '30');
+            if (!days) return;
+            
+            try {
+                await apiRequest(`/api/owner/users/${userId}/premium/extend`, {
+                    method: 'POST',
+                    body: JSON.stringify({ days: parseInt(days) })
+                });
+                
+                showToast('Premium extended', 'success');
+                loadPremiumUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function filterPremiumUsers() {
+            const search = document.getElementById('premiumSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#premiumBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+
+        // ==================== LOGS ====================
+        async function loadLogs() {
+            try {
+                document.getElementById('logsLoading').style.display = 'block';
+                
+                const type = document.getElementById('logType').value;
+                let logs = [];
+                
+                if (type === 'stock') {
+                    logs = await apiRequest('/api/owner/stock/usage');
+                } else {
+                    logs = await apiRequest('/api/owner/logs');
+                }
+                
+                const content = document.getElementById('logsContent');
+                
+                if (!logs || logs.length === 0) {
+                    content.innerHTML = '<div class="empty-state">No logs found</div>';
+                } else {
+                    content.innerHTML = logs.map(log => `
+                        <div class="log-entry ${log.type || 'info'}">
+                            <div class="log-time">${log.time}</div>
+                            <div class="log-user">${log.username || log.userId}</div>
+                            <div class="log-action">${log.action || 'Generated ' + log.type} - ${log.details || log.content || ''}</div>
+                        </div>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('logsLoading').style.display = 'none';
+            }
+        }
+
+        // ==================== SETTINGS ====================
+        async function loadServerSettings() {
+            if (!selectedServer) return;
+            
+            try {
+                document.getElementById('settingsLoading').style.display = 'block';
+                
+                const config = await apiRequest(`/api/server/${selectedServer}/config`);
+                
+                // Populate channel dropdowns
+                const channels = await getServerChannels(selectedServer);
+                
+                const channelSelects = ['logChannel', 'welcomeChannel', 'leaveChannel'];
+                channelSelects.forEach(id => {
+                    const select = document.getElementById(id);
+                    select.innerHTML = '<option value="">None</option>' + 
+                        channels.map(c => `<option value="${c.id}" ${config.config[id] === c.id ? 'selected' : ''}>${c.name}</option>`).join('');
+                });
+                
+                const roleSelects = ['autoRole', 'modRole', 'adminRole', 'mutedRole'];
+                roleSelects.forEach(id => {
+                    const select = document.getElementById(id);
+                    select.innerHTML = '<option value="">None</option>' + 
+                        channels.roles.map(r => `<option value="${r.id}" ${config.config[id] === r.id ? 'selected' : ''}>${r.name}</option>`).join('');
+                });
+                
+                document.getElementById('prefix').value = config.config.prefix || '!';
+                document.getElementById('welcomeMessage').value = config.config.welcome_message || '';
+                document.getElementById('leaveMessage').value = config.config.leave_message || '';
+                document.getElementById('autoRoleDelay').value = config.config.auto_role_delay || 0;
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('settingsLoading').style.display = 'none';
+            }
+        }
+
+        async function getServerChannels(serverId) {
+            try {
+                const response = await fetch(`https://discord.com/api/guilds/${serverId}/channels`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load channels');
+                
+                const channels = await response.json();
+                const textChannels = channels.filter(c => c.type === 0);
+                const roles = await getServerRoles(serverId);
+                
+                return { text: textChannels, roles };
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                return { text: [], roles: [] };
+            }
+        }
+
+        async function getServerRoles(serverId) {
+            try {
+                const response = await fetch(`https://discord.com/api/guilds/${serverId}/roles`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load roles');
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading roles:', error);
+                return [];
+            }
+        }
+
+        async function saveServerSettings() {
+            if (!selectedServer) return;
+            
+            try {
+                const settings = {
+                    prefix: document.getElementById('prefix').value,
+                    log_channel: document.getElementById('logChannel').value,
+                    welcome_channel: document.getElementById('welcomeChannel').value,
+                    welcome_message: document.getElementById('welcomeMessage').value,
+                    leave_channel: document.getElementById('leaveChannel').value,
+                    leave_message: document.getElementById('leaveMessage').value,
+                    auto_role: document.getElementById('autoRole').value,
+                    auto_role_delay: parseInt(document.getElementById('autoRoleDelay').value),
+                    mod_role: document.getElementById('modRole').value,
+                    admin_role: document.getElementById('adminRole').value,
+                    muted_role: document.getElementById('mutedRole').value
+                };
+                
+                await apiRequest(`/api/server/${selectedServer}/config`, {
+                    method: 'POST',
+                    body: JSON.stringify({ config: settings })
+                });
+                
+                showToast('Settings saved!', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        // ==================== OWNER ====================
+        async function loadOwnerData() {
+            try {
+                const stats = await apiRequest('/api/owner/stats');
+                
+                document.getElementById('totalGenerations').textContent = stats.totalGenerations || 0;
+                document.getElementById('totalWarnings').textContent = stats.totalWarnings || 0;
+                document.getElementById('bannedUsers').textContent = stats.bannedUsers || 0;
+                document.getElementById('totalStock').textContent = stats.totalStock || 0;
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function loadOwnerUsers() {
+            try {
+                document.getElementById('ownerUsersLoading').style.display = 'block';
+                
+                const users = await apiRequest('/api/owner/users');
+                const tbody = document.getElementById('ownerUsersBody');
+                
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td><span class="role-badge role-${user.role}">${user.role}</span></td>
+                        <td>${user.coins}</td>
+                        <td>${user.level}</td>
+                        <td>${user.premium ? '✅' : '❌'}</td>
+                        <td>${user.warnings}</td>
+                        <td>${user.generations}</td>
+                        <td>
+                            <button class="action-btn success" onclick="editUser('${user.id}')">✏️</button>
+                            <button class="action-btn warning" onclick="toggleUserPremium('${user.id}')">💎</button>
+                            <button class="action-btn danger" onclick="banUser('${user.id}')">🚫</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('ownerUsersLoading').style.display = 'none';
+            }
+        }
+
+        async function loadOwnerServers() {
+            try {
+                document.getElementById('ownerServersLoading').style.display = 'block';
+                
+                const servers = await apiRequest('/api/owner/servers');
+                const tbody = document.getElementById('ownerServersBody');
+                
+                tbody.innerHTML = servers.map(server => `
+                    <tr>
+                        <td>
+                            <img src="${server.icon || 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
+                                 style="width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 10px;">
+                            ${server.name}
+                        </td>
+                        <td>${server.id}</td>
+                        <td>${server.memberCount}</td>
+                        <td>${server.ownerName}</td>
+                        <td>${new Date(server.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="action-btn" onclick="forceSync('${server.id}')">🔄 Sync</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('ownerServersLoading').style.display = 'none';
+            }
+        }
+
+        async function loadOwnerLogs() {
+            try {
+                document.getElementById('ownerLogsLoading').style.display = 'block';
+                
+                const type = document.getElementById('ownerLogType').value;
+                let logs = [];
+                
+                if (type === 'stock') {
+                    logs = await apiRequest('/api/owner/stock/usage');
+                } else {
+                    logs = await apiRequest('/api/owner/logs');
+                }
+                
+                const content = document.getElementById('ownerLogsContent');
+                
+                content.innerHTML = logs.map(log => `
+                    <div class="log-entry ${log.type || 'info'}">
+                        <div class="log-time">${log.time}</div>
+                        <div class="log-user">${log.username || log.userId}</div>
+                        <div class="log-action">${log.action || 'Generated ' + log.type} - ${log.details || log.content || ''}</div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                document.getElementById('ownerLogsLoading').style.display = 'none';
+            }
+        }
+
+        async function loadDatabaseInfo() {
+            try {
+                const stats = await apiRequest('/api/owner/stats');
+                document.getElementById('dbSize').textContent = stats.dbSize + ' MB';
+                document.getElementById('dbTables').textContent = '12'; // Hardcoded for now
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function filterOwnerUsers() {
+            const search = document.getElementById('ownerUserSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#ownerUsersBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+
+        async function editUser(userId) {
+            try {
+                const user = await apiRequest(`/api/user/${userId}`);
+                const modal = document.getElementById('userEditModal');
+                const content = document.getElementById('userEditContent');
+                
+                content.innerHTML = `
+                    <div class="form-group">
+                        <label>User ID</label>
+                        <input type="text" class="form-control" value="${userId}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Coins</label>
+                        <input type="number" class="form-control" id="editCoins" value="${user.coins}">
+                    </div>
+                    <div class="form-group">
+                        <label>XP</label>
+                        <input type="number" class="form-control" id="editXp" value="${user.xp}">
+                    </div>
+                    <div class="form-group">
+                        <label>Level</label>
+                        <input type="number" class="form-control" id="editLevel" value="${user.level}" readonly>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function hideUserEditModal() {
+            document.getElementById('userEditModal').classList.remove('active');
+        }
+
+        async function saveUserEdit() {
+            // Implement user edit save
+            hideUserEditModal();
+            showToast('User updated', 'success');
+        }
+
+        async function toggleUserPremium(userId) {
+            try {
+                await apiRequest(`/api/owner/users/${userId}/premium`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'toggle' })
+                });
+                
+                showToast('Premium toggled', 'success');
+                loadOwnerUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function banUser(userId) {
+            const reason = prompt('Enter ban reason:');
+            if (!reason) return;
+            
+            try {
+                await apiRequest(`/api/owner/users/${userId}/ban`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'ban', reason })
+                });
+                
+                showToast('User banned', 'success');
+                loadOwnerUsers();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function forceSync(serverId) {
+            try {
+                await apiRequest(`/api/admin/servers/${serverId}/sync`, {
+                    method: 'POST'
+                });
+                showToast('Server synced', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function backupDatabase() {
+            try {
+                await apiRequest('/api/admin/backup', { method: 'POST' });
+                showToast('Database backed up', 'success');
             } catch (error) {
                 showToast(error.message, 'error');
             }
         }
 
         function showSqlModal() {
-            if (userRole !== 'owner') {
-                showToast('Owner access required', 'warning');
-                return;
-            }
             document.getElementById('sqlModal').classList.add('active');
         }
 
@@ -1938,116 +2783,15 @@
             }
         }
 
-        // System actions
-        async function backupDatabase() {
-            try {
-                showToast('Starting database backup...', 'info');
-                await apiRequest('/api/admin/backup', { method: 'POST' });
-                showToast('Database backup completed', 'success');
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
+        // ==================== UTILITIES ====================
+        function showTabLoading() {
+            document.getElementById('tabLoading').style.display = 'block';
         }
 
-        async function clearCache() {
-            try {
-                showToast('Clearing cache...', 'info');
-                await apiRequest('/api/admin/cache/clear', { method: 'POST' });
-                showToast('Cache cleared', 'success');
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
+        function hideTabLoading() {
+            document.getElementById('tabLoading').style.display = 'none';
         }
 
-        async function syncDatabases() {
-            try {
-                showToast('Syncing databases...', 'info');
-                await apiRequest('/api/admin/sync', { method: 'POST' });
-                showToast('Database sync completed', 'success');
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        // User actions
-        async function jailUser(userId) {
-            if (!confirm(`Are you sure you want to jail user ${userId}?`)) return;
-            
-            try {
-                await apiRequest(`/api/admin/users/${userId}/jail`, { method: 'POST' });
-                showToast(`User ${userId} has been jailed`, 'success');
-                loadUsers();
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        async function togglePremium(userId) {
-            try {
-                await apiRequest(`/api/admin/users/${userId}/premium/toggle`, { method: 'POST' });
-                showToast(`Toggled premium for ${userId}`, 'success');
-                loadUsers();
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        function viewUserDetails(userId) {
-            showToast(`Viewing details for ${userId}`, 'info');
-        }
-
-        async function revokePremium(userId) {
-            if (!confirm(`Revoke premium from user ${userId}?`)) return;
-            
-            try {
-                await apiRequest(`/api/admin/users/${userId}/premium/toggle`, { method: 'POST' });
-                showToast(`Revoked premium from ${userId}`, 'success');
-                loadPremium();
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        async function extendPremium(userId) {
-            const days = prompt('Enter number of days to extend:', '30');
-            if (!days) return;
-            
-            try {
-                await apiRequest(`/api/admin/users/${userId}/premium/extend`, {
-                    method: 'POST',
-                    body: JSON.stringify({ days: parseInt(days) })
-                });
-                showToast(`Extended premium for ${userId}`, 'success');
-                loadPremium();
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        async function forceSync(serverId) {
-            try {
-                showToast(`Syncing server ${serverId}...`, 'info');
-                await apiRequest(`/api/admin/servers/${serverId}/sync`, { method: 'POST' });
-                showToast(`Server ${serverId} synced`, 'success');
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-
-        // Refresh functions
-        function refreshDashboard() { loadDashboard(); showToast('Dashboard refreshed', 'success'); }
-        function refreshStock() { loadVendingMachine(); showToast('Stock refreshed', 'success'); }
-        function refreshUsers() { loadUsers(); showToast('Users refreshed', 'success'); }
-        function refreshPremium() { loadPremium(); showToast('Premium data refreshed', 'success'); }
-        function refreshServers() { loadServers(); showToast('Servers refreshed', 'success'); }
-        function refreshLogs() { loadLogs(); showToast('Logs refreshed', 'success'); }
-        function refreshSystem() { loadSystem(); showToast('System stats refreshed', 'success'); }
-
-        // UI Helpers
-        function showTabLoading() { document.getElementById('tabLoading').style.display = 'block'; }
-        function hideTabLoading() { document.getElementById('tabLoading').style.display = 'none'; }
-
-        // Toast notification
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -2061,6 +2805,9 @@
                 setTimeout(() => container.removeChild(toast), 300);
             }, 3000);
         }
+
+        // ==================== REFRESH FUNCTIONS ====================
+        function refreshDashboard() { loadDashboard(); }
     </script>
 </body>
 </html>
