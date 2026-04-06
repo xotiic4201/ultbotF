@@ -794,34 +794,82 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
       </div>
     </div>
 
-    <!-- SUPPORT -->
-    <div class="tab-pane" id="tab-support">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <div class="panel">
-          <div class="panel-head"><span class="panel-title">QUICK LINKS</span></div>
-          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
-            <a href="#" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">→ Documentation</a>
-            <a href="#" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">→ Support Server</a>
-            <a href="#" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">→ Contact Support</a>
-            <a href="#" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600">→ Report a Bug</a>
-          </div>
+<!-- SUPPORT -->
+<div class="tab-pane" id="tab-support">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    
+    <!-- QUICK LINKS -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">QUICK LINKS</span>
+      </div>
+
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+
+        <!-- Support Server -->
+        <a href="https://discord.gg/SVvZFnct37" target="_blank" rel="noopener noreferrer"
+           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">
+          → Support Server
+        </a>
+
+        <!-- Contact Support -->
+        <a href="https://discord.com/channels/1344385779627069541/1404362232980181032" target="_blank" rel="noopener noreferrer"
+           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">
+          → Contact Support
+        </a>
+
+        <!-- Report a Bug -->
+        <a href="https://discord.com/channels/1344385779627069541/1404369962297987102" target="_blank" rel="noopener noreferrer"
+           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600">
+          → Report a Bug
+        </a>
+
+      </div>
+    </div>
+
+    <!-- BOT COMMANDS -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">BOT COMMANDS</span>
+      </div>
+
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto">
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <code>/help</code>
+          <span style="font-size:12px;color:var(--text2)">Show all commands</span>
         </div>
-        <div class="panel">
-          <div class="panel-head"><span class="panel-title">BOT COMMANDS</span></div>
-          <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto">
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><code>/help</code><span style="font-size:12px;color:var(--text2)">Show all commands</span></div>
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><code>/balance</code><span style="font-size:12px;color:var(--text2)">Check your balance</span></div>
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><code>/gen [type]</code><span style="font-size:12px;color:var(--text2)">Generate stock</span></div>
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><code>/stocklist</code><span style="font-size:12px;color:var(--text2)">List available stock</span></div>
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><code>/togglecommand</code><span style="font-size:12px;color:var(--text2)">Toggle commands (Admin)</span></div>
-            <div style="display:flex;gap:12px;align-items:center;padding:6px 0"><code>/owner_panel</code><span style="font-size:12px;color:var(--text2)">Owner panel (Owner only)</span></div>
-          </div>
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <code>/balance</code>
+          <span style="font-size:12px;color:var(--text2)">Check your balance</span>
         </div>
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <code>/gen [type]</code>
+          <span style="font-size:12px;color:var(--text2)">Generate stock</span>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <code>/stocklist</code>
+          <span style="font-size:12px;color:var(--text2)">List available stock</span>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <code>/togglecommand</code>
+          <span style="font-size:12px;color:var(--text2)">Toggle commands (Admin)</span>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;padding:6px 0">
+          <code>/owner_panel</code>
+          <span style="font-size:12px;color:var(--text2)">Owner panel (Owner only)</span>
+        </div>
+
       </div>
     </div>
 
   </div>
-</main>
+</div>
 
 <!-- MODALS -->
 <div class="modal-bg" id="modal-premium">
