@@ -5,536 +5,565 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XULT — Control Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root{
-  --bg:#060608;
-  --bg1:#0c0c10;
-  --bg2:#12121a;
-  --bg3:#1a1a24;
-  --red:#ff2244;
-  --red2:#cc1133;
-  --red-glow:rgba(255,34,68,0.25);
-  --red-faint:rgba(255,34,68,0.06);
-  --gold:#ffaa00;
-  --green:#00e87a;
-  --blue:#4488ff;
-  --border:rgba(255,255,255,0.06);
-  --border-r:rgba(255,34,68,0.3);
-  --text:#e8e8f0;
-  --text2:#8888a0;
-  --text3:#44444c;
-  --mono:'Space Mono',monospace;
-  --display:'Bebas Neue',cursive;
-  --body:'DM Sans',sans-serif;
-  --radius:8px;
+  --bg:#04040a;
+  --bg1:#080810;
+  --bg2:#0d0d1a;
+  --bg3:#131326;
+  --red:#e8153a;
+  --red2:#b00f2a;
+  --red-glow:rgba(232,21,58,0.2);
+  --red-faint:rgba(232,21,58,0.05);
+  --gold:#f0a500;
+  --green:#00d97e;
+  --blue:#3d7aff;
+  --cyan:#00c8e0;
+  --border:rgba(255,255,255,0.05);
+  --border-r:rgba(232,21,58,0.25);
+  --text:#dde0f0;
+  --text2:#7070a0;
+  --text3:#333352;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Syncopate',sans-serif;
+  --body:'Syne',sans-serif;
+  --radius:6px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-/* NOISE OVERLAY */
+/* SCAN LINES */
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:0.4;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+  pointer-events:none;z-index:999;
+}
+/* GRID OVERLAY */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(232,21,58,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(232,21,58,0.015) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;z-index:0;
 }
 
-/* LOADER */
+/* ── LOADER ── */
 #loader{
   position:fixed;inset:0;background:#000;z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+}
+.loader-art{
+  position:relative;width:100px;height:100px;
+  animation:spinArt 3s linear infinite;
+}
+@keyframes spinArt{to{transform:rotate(360deg)}}
+.loader-inner{
+  position:absolute;inset:20px;
+  border:1.5px solid var(--red);
+  transform:rotate(45deg);
 }
 .loader-x{
-  font-family:var(--display);font-size:120px;color:var(--red);
-  animation:xIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards 0.2s;
-  opacity:0;transform:scale(0.5) rotate(-10deg);
-  text-shadow:0 0 60px var(--red-glow),0 0 120px var(--red-glow);
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:36px;font-weight:700;
+  color:var(--red);
+  text-shadow:0 0 30px var(--red-glow);
+  animation:spinArt 3s linear infinite reverse;
 }
-@keyframes xIn{to{opacity:1;transform:scale(1) rotate(0deg)}}
-.loader-bar{
-  width:200px;height:2px;background:rgba(255,255,255,0.05);
-  border-radius:1px;overflow:hidden;
-}
-.loader-fill{
-  height:100%;width:0;background:var(--red);
-  animation:lf 1.8s ease forwards 0.6s;
-}
+.loader-bar{width:200px;height:1px;background:rgba(255,255,255,0.04);position:relative;overflow:hidden}
+.loader-fill{height:100%;width:0;background:var(--red);animation:lf 1.8s ease forwards 0.4s}
 @keyframes lf{0%{width:0}60%{width:75%}80%{width:90%}100%{width:100%}}
-.loader-msg{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.12em}
+.loader-msg{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.18em;text-transform:uppercase}
 
-/* SIDEBAR */
+/* ── SIDEBAR ── */
 .sidebar{
   position:fixed;left:0;top:0;bottom:0;width:220px;
-  background:var(--bg1);
+  background:rgba(8,8,16,0.97);
   border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  z-index:100;
-  transition:transform 0.3s;
+  display:flex;flex-direction:column;z-index:100;
+  backdrop-filter:blur(20px);
 }
 .sb-logo{
-  padding:24px 20px 20px;
+  padding:24px 20px 22px;
   border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;
+  display:flex;align-items:center;gap:14px;
 }
-.sb-logo-mark{
-  width:40px;height:40px;background:var(--red);
-  clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-size:20px;color:#fff;flex-shrink:0;
+/* SVG logo mark */
+.sb-logo-svg{flex-shrink:0}
+.sb-logo-name{font-family:var(--display);font-size:26px;font-weight:700;color:var(--red);letter-spacing:0.12em;line-height:1}
+.sb-logo-ver{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.14em;margin-top:3px}
+.sb-nav{flex:1;padding:14px 0;overflow-y:auto}
+.sb-section{
+  padding:12px 18px 5px;
+  font-family:var(--mono);font-size:8px;color:var(--text3);
+  letter-spacing:0.2em;text-transform:uppercase;
 }
-.sb-logo-name{font-family:var(--display);font-size:32px;color:var(--red);letter-spacing:0.08em;line-height:1}
-.sb-logo-ver{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em}
-.sb-nav{flex:1;padding:16px 0;overflow-y:auto}
-.sb-section{padding:8px 16px 4px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase}
 .sb-link{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 20px;
-  color:var(--text2);
-  font-size:14px;font-weight:500;
-  cursor:pointer;
-  border-left:2px solid transparent;
-  transition:all 0.15s;
-  position:relative;
+  display:flex;align-items:center;gap:11px;
+  padding:10px 18px;
+  color:var(--text2);font-size:13px;font-weight:600;
+  cursor:pointer;border-left:2px solid transparent;
+  transition:all 0.15s;letter-spacing:0.03em;
 }
-.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.02)}
 .sb-link.active{color:var(--red);border-left-color:var(--red);background:var(--red-faint)}
-.sb-link .icon{width:18px;text-align:center;font-size:15px;opacity:0.7}
-.sb-link.active .icon{opacity:1}
+.sb-icon{width:20px;height:20px;flex-shrink:0;opacity:0.6;transition:opacity 0.15s}
+.sb-link.active .sb-icon{opacity:1}
 .sb-link .badge{
-  margin-left:auto;padding:2px 7px;
-  background:var(--red);color:#fff;
-  font-family:var(--mono);font-size:9px;border-radius:3px;
+  margin-left:auto;padding:2px 6px;
+  background:rgba(240,165,0,0.15);color:var(--gold);
+  font-family:var(--mono);font-size:8px;border-radius:2px;letter-spacing:0.08em;
 }
 .sb-user{
-  padding:16px 20px;
+  padding:14px 18px;
   border-top:1px solid var(--border);
   display:flex;align-items:center;gap:10px;
 }
-.sb-avatar{
-  width:36px;height:36px;border-radius:50%;
-  border:2px solid var(--red);object-fit:cover;
-  flex-shrink:0;
-}
-.sb-avatar-placeholder{
-  width:36px;height:36px;border-radius:50%;
-  background:var(--bg3);border:2px solid var(--border);
+.sb-avatar{width:34px;height:34px;border-radius:4px;border:1px solid var(--border-r);object-fit:cover;flex-shrink:0}
+.sb-avatar-ph{
+  width:34px;height:34px;border-radius:4px;
+  background:var(--bg3);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-size:16px;color:var(--text3);
-  flex-shrink:0;cursor:pointer;
+  cursor:pointer;flex-shrink:0;
 }
-.sb-user-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em}
 .sb-user-tag{
   display:inline-flex;align-items:center;gap:4px;
-  font-family:var(--mono);font-size:9px;
-  padding:2px 6px;border-radius:3px;margin-top:2px;
+  font-family:var(--mono);font-size:8px;
+  padding:2px 5px;border-radius:2px;margin-top:2px;letter-spacing:0.06em;
 }
-.tag-owner{background:rgba(255,170,0,0.15);color:var(--gold)}
-.tag-premium{background:rgba(0,232,122,0.12);color:var(--green)}
-.tag-free{background:rgba(255,255,255,0.06);color:var(--text3)}
-.sb-login-btn{
-  width:100%;padding:10px;margin:0 0 0;
-  background:var(--red);border:none;color:#fff;
-  font-family:var(--display);font-size:18px;letter-spacing:0.06em;
-  cursor:pointer;transition:background 0.15s;
-}
-.sb-login-btn:hover{background:#ff3355}
+.tag-owner{background:rgba(240,165,0,0.12);color:var(--gold)}
+.tag-premium{background:rgba(0,217,126,0.1);color:var(--green)}
+.tag-free{background:rgba(255,255,255,0.04);color:var(--text3)}
 
-/* MAIN */
+/* ── MAIN ── */
 .main{margin-left:220px;min-height:100vh;position:relative;z-index:1}
 .topbar{
-  height:56px;
-  background:rgba(6,6,8,0.9);
+  height:54px;background:rgba(4,4,10,0.95);
   border-bottom:1px solid var(--border);
   backdrop-filter:blur(20px);
   display:flex;align-items:center;padding:0 28px;
-  gap:12px;position:sticky;top:0;z-index:50;
+  gap:10px;position:sticky;top:0;z-index:50;
 }
-.topbar-title{font-family:var(--display);font-size:22px;color:var(--text);letter-spacing:0.06em}
-.topbar-sub{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.06em}
+.topbar-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text);letter-spacing:0.12em}
+.topbar-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
+.topbar-sub{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em}
 .topbar-status{
-  margin-left:auto;display:flex;align-items:center;gap:6px;
-  font-family:var(--mono);font-size:11px;color:var(--text2);
+  margin-left:auto;display:flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:10px;color:var(--text2);
 }
-.dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
-.dot.online{background:var(--green);box-shadow:0 0 8px rgba(0,232,122,0.5);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
-.content{padding:28px;max-width:1200px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+.dot.online{background:var(--green);box-shadow:0 0 8px rgba(0,217,126,0.6);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.content{padding:24px;max-width:1240px}
 
-/* TABS */
-.tab-pane{display:none;animation:fadeUp 0.3s ease}
+/* ── TABS ── */
+.tab-pane{display:none;animation:fadeUp 0.25s ease}
 .tab-pane.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* STAT CARDS */
-.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:12px;margin-bottom:24px}
 .stat-card{
   background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px;cursor:default;
+  padding:18px 16px;cursor:default;
   transition:border-color 0.2s,transform 0.2s;
   position:relative;overflow:hidden;
 }
-.stat-card::after{
-  content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;
-  background:var(--red);transform:scaleX(0);transform-origin:left;
-  transition:transform 0.3s;
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform 0.4s;
 }
 .stat-card:hover{border-color:var(--border-r);transform:translateY(-2px)}
-.stat-card:hover::after{transform:scaleX(1)}
-.sc-icon{font-size:22px;margin-bottom:12px}
-.sc-val{font-family:var(--display);font-size:36px;color:var(--text);line-height:1}
-.sc-key{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
+.stat-card:hover::before{transform:scaleX(1)}
+.sc-icon{margin-bottom:14px}
+.sc-val{font-family:var(--display);font-size:30px;font-weight:700;color:var(--text);line-height:1}
+.sc-key{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-top:5px}
 
-/* GRID PANELS */
+/* ── PANEL ── */
 .panel{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .panel-head{
-  padding:14px 18px;background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-.panel-title{font-family:var(--display);font-size:18px;letter-spacing:0.06em;color:var(--text2)}
-.panel-body{padding:18px}
+.panel-title{font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:0.14em;color:var(--text2)}
+.panel-body{padding:16px}
 
-/* VENDING MACHINE */
-.vm-wrap{display:grid;grid-template-columns:1fr 300px;gap:20px}
+/* ── VENDING MACHINE ── */
+.vm-wrap{display:grid;grid-template-columns:1fr 290px;gap:18px}
 @media(max-width:960px){.vm-wrap{grid-template-columns:1fr}}
 .vm-machine{
-  background:var(--bg1);
-  border:1px solid var(--border-r);
-  border-radius:12px;overflow:hidden;
-  position:relative;
+  background:var(--bg1);border:1px solid var(--border-r);
+  border-radius:10px;overflow:hidden;position:relative;
 }
 .vm-stripe{
-  height:6px;
-  background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 16px,var(--red2) 16px,var(--red2) 32px);
-  animation:stripeMove 1.5s linear infinite;
+  height:3px;
+  background:linear-gradient(90deg,var(--red2),var(--red),var(--red2));
+  animation:glow-stripe 2s ease-in-out infinite;
 }
-@keyframes stripeMove{from{background-position:0}to{background-position:32px 0}}
+@keyframes glow-stripe{0%,100%{box-shadow:0 0 8px var(--red)}50%{box-shadow:0 0 20px var(--red)}}
 .vm-head{
   padding:16px 20px;border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
 }
-.vm-brand{font-family:var(--display);font-size:32px;color:var(--red);letter-spacing:0.12em;text-shadow:0 0 20px var(--red-glow)}
-.vm-brand-sub{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em}
+.vm-brand{font-family:var(--display);font-size:24px;font-weight:700;color:var(--red);letter-spacing:0.14em}
+.vm-brand-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.12em;margin-top:2px}
 .vm-pill{
-  display:flex;align-items:center;gap:7px;
-  padding:7px 14px;border-radius:20px;border:1px solid;
-  font-family:var(--mono);font-size:11px;cursor:pointer;
-  transition:all 0.2s;
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:3px;border:1px solid;
+  font-family:var(--mono);font-size:9px;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.08em;
 }
-.vm-pill.premium{border-color:rgba(0,232,122,0.4);color:var(--green);background:rgba(0,232,122,0.06)}
-.vm-pill.free{border-color:rgba(255,255,255,0.1);color:var(--text3)}
+.vm-pill.premium{border-color:rgba(0,217,126,0.3);color:var(--green);background:rgba(0,217,126,0.05)}
 .vm-slot-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-  gap:2px;padding:12px;background:#050507;margin:12px;border-radius:6px;border:1px solid var(--border);
-  min-height:220px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:1px;padding:10px;background:#020206;margin:10px;border-radius:4px;border:1px solid var(--border);
+  min-height:200px;
 }
 .vm-slot{
-  padding:14px 10px;text-align:center;cursor:pointer;border-radius:4px;
-  border:1px solid transparent;
-  transition:all 0.2s;position:relative;
+  padding:14px 8px;text-align:center;cursor:pointer;border-radius:3px;
+  border:1px solid transparent;transition:all 0.2s;position:relative;
 }
-.vm-slot:hover{background:rgba(255,34,68,0.07);border-color:var(--border-r)}
-.vm-slot.selected{background:rgba(255,34,68,0.12);border-color:var(--red)}
-.vm-slot-code{position:absolute;top:5px;left:7px;font-family:var(--mono);font-size:9px;color:var(--text3)}
-.vm-slot-emoji{font-size:32px;display:block;margin-bottom:5px;line-height:1}
-.vm-slot-name{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px}
-.vm-slot-count{font-family:var(--display);font-size:22px;color:var(--red);line-height:1}
-.vm-slot-unit{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase}
-.vm-controls{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.vm-slot:hover{background:rgba(232,21,58,0.06);border-color:var(--border-r)}
+.vm-slot.selected{background:rgba(232,21,58,0.1);border-color:var(--red)}
+.vm-slot-code{position:absolute;top:4px;left:6px;font-family:var(--mono);font-size:8px;color:var(--text3)}
+.vm-slot-art{margin-bottom:6px;display:flex;align-items:center;justify-content:center;height:36px}
+.vm-slot-name{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:2px;letter-spacing:0.02em}
+.vm-slot-count{font-family:var(--display);font-size:20px;color:var(--red);line-height:1}
+.vm-slot-unit{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em}
+.vm-controls{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
 .vm-input{
-  flex:1;padding:10px 14px;background:#000;
-  border:1px solid var(--border);border-radius:4px;
-  color:#0f0;font-family:var(--mono);font-size:13px;outline:none;
+  flex:1;padding:9px 12px;background:#000;
+  border:1px solid var(--border);border-radius:3px;
+  color:#e8ff00;font-family:var(--mono);font-size:12px;outline:none;letter-spacing:0.06em;
 }
 .vm-input:focus{border-color:var(--red)}
 .btn-gen{
-  padding:10px 24px;background:var(--red);border:none;color:#fff;
-  font-family:var(--display);font-size:18px;letter-spacing:0.08em;
-  cursor:pointer;border-radius:4px;
+  padding:9px 22px;background:var(--red);border:none;color:#fff;
+  font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:0.1em;
+  cursor:pointer;border-radius:3px;
   transition:background 0.15s,transform 0.15s;white-space:nowrap;
 }
-.btn-gen:hover{background:#ff3355;transform:scale(1.02)}
-.btn-gen:disabled{background:#440011;cursor:not-allowed;transform:none}
+.btn-gen:hover{background:#ff1a35;transform:scale(1.02)}
+.btn-gen:disabled{background:#3d0010;color:#550018;cursor:not-allowed;transform:none}
 .vm-screen{
-  margin:0 16px 16px;padding:12px 14px;
-  background:#000;border:1px solid rgba(0,255,0,0.1);border-radius:4px;
-  font-family:var(--mono);font-size:12px;color:#0f0;min-height:48px;
+  margin:0 14px 14px;padding:10px 12px;
+  background:#000;border:1px solid rgba(0,255,100,0.08);border-radius:3px;
+  font-family:var(--mono);font-size:11px;color:#00e87a;min-height:40px;letter-spacing:0.06em;
 }
-.vm-screen.error{color:#ff4444;border-color:rgba(255,68,68,0.2)}
-.vm-screen.warn{color:var(--gold);border-color:rgba(255,170,0,0.2)}
+.vm-screen.error{color:#ff3344;border-color:rgba(255,51,68,0.15)}
+.vm-screen.warn{color:var(--gold);border-color:rgba(240,165,0,0.15)}
 
-/* VENDING SIDEBAR */
-.vm-sidebar{display:flex;flex-direction:column;gap:16px}
+/* ── VM SIDEBAR ── */
+.vm-sidebar{display:flex;flex-direction:column;gap:14px}
 .vs-credits{
   background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px;text-align:center;position:relative;
+  padding:18px;text-align:center;position:relative;overflow:hidden;
 }
-.vs-credits-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
-.vs-credits-val{font-family:var(--display);font-size:52px;color:var(--red);line-height:1;text-shadow:0 0 30px var(--red-glow)}
-.vs-credits-unit{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px}
-.vs-info{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.vs-credits::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(232,21,58,0.1),transparent 70%);
+}
+.vs-credits-label{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:6px}
+.vs-credits-val{font-family:var(--display);font-size:44px;font-weight:700;color:var(--red);line-height:1}
+.vs-credits-unit{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:5px;letter-spacing:0.12em}
 .vs-info-row{
-  padding:10px 16px;display:flex;justify-content:space-between;align-items:center;
-  border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
+  padding:9px 14px;display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.02);font-size:12px;
 }
 .vs-info-row:last-child{border:none}
-.vs-key{color:var(--text3);font-family:var(--mono);font-size:11px}
-.vs-val{color:var(--text);font-family:var(--mono);font-size:11px}
+.vs-key{color:var(--text3);font-family:var(--mono);font-size:9px;letter-spacing:0.08em}
+.vs-val{color:var(--text);font-family:var(--mono);font-size:9px;letter-spacing:0.06em}
 .vs-val.g{color:var(--green)}
 .vs-val.r{color:var(--red)}
 .vs-val.gold{color:var(--gold)}
-.gen-log{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.gen-log-h{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em}
-.gen-log-body{max-height:140px;overflow-y:auto}
-.gen-log-item{padding:7px 14px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-bottom:1px solid rgba(255,255,255,0.02)}
-.gen-log-item .gl-tick{color:var(--green);font-size:10px}
+.gen-log-h{padding:9px 12px;background:var(--bg2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase}
+.gen-log-body{max-height:130px;overflow-y:auto}
+.gen-log-item{padding:6px 12px;display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:9px;color:var(--text3);border-bottom:1px solid rgba(255,255,255,0.02)}
+.gen-log-item .gl-tick{color:var(--green)}
 .gen-log-item .gl-time{margin-left:auto;color:var(--text3)}
 
-/* LOCK SCREEN */
+/* ── LOCK SCREEN ── */
 .lock-screen{
-  background:radial-gradient(ellipse at 50% 30%,rgba(255,34,68,0.08) 0%,transparent 60%),var(--bg1);
-  border:1px solid var(--border-r);border-radius:12px;
-  padding:64px 40px;text-align:center;
-  position:relative;overflow:hidden;
+  background:var(--bg1);border:1px solid var(--border-r);border-radius:10px;
+  padding:60px 40px;text-align:center;position:relative;overflow:hidden;
 }
-.lock-icon{font-size:80px;margin-bottom:24px;filter:drop-shadow(0 0 24px rgba(255,34,68,0.4))}
-.lock-title{font-family:var(--display);font-size:56px;color:var(--red);letter-spacing:0.1em;margin-bottom:12px}
-.lock-sub{font-family:var(--mono);font-size:12px;color:var(--text3);margin-bottom:36px;letter-spacing:0.06em}
-.lock-perks{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:40px}
+.lock-screen::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 20%,rgba(232,21,58,0.07),transparent 60%);
+  pointer-events:none;
+}
+.lock-art{margin:0 auto 24px;display:flex;align-items:center;justify-content:center}
+.lock-title{font-family:var(--display);font-size:48px;font-weight:700;color:var(--red);letter-spacing:0.12em;margin-bottom:10px}
+.lock-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:32px;letter-spacing:0.1em;text-transform:uppercase}
+.lock-perks{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:36px}
 .lock-perk{
-  padding:16px 20px;background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);
-  min-width:130px;text-align:center;
+  padding:14px 18px;background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius);
+  min-width:120px;text-align:center;
 }
-.lp-emoji{font-size:28px;margin-bottom:8px}
-.lp-text{font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em}
-
-/* BIG BUTTON */
+.lp-art{margin-bottom:8px;display:flex;justify-content:center}
+.lp-text{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em}
 .btn-big{
-  padding:16px 48px;
+  padding:14px 44px;
   background:linear-gradient(135deg,var(--red2),var(--red));
   border:none;color:#fff;
-  font-family:var(--display);font-size:24px;letter-spacing:0.1em;
-  cursor:pointer;border-radius:6px;
+  font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:0.14em;
+  cursor:pointer;border-radius:4px;
   transition:transform 0.2s,box-shadow 0.2s;
-  box-shadow:0 4px 20px rgba(255,34,68,0.3);
+  box-shadow:0 4px 24px rgba(232,21,58,0.3);
 }
-.btn-big:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,34,68,0.5)}
+.btn-big:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,21,58,0.5)}
 
-/* COMMANDS */
-.server-chips{display:flex;gap:8px;flex-wrap:wrap;padding:16px}
+/* ── COMMANDS ── */
+.server-chips{display:flex;gap:8px;flex-wrap:wrap;padding:14px}
 .server-chip{
   display:flex;align-items:center;gap:8px;
-  padding:8px 14px;background:var(--bg2);border:1px solid var(--border);
-  border-radius:20px;cursor:pointer;font-size:13px;font-weight:500;
-  transition:all 0.15s;
+  padding:7px 14px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:3px;cursor:pointer;font-size:12px;font-weight:700;
+  letter-spacing:0.02em;transition:all 0.15s;
 }
 .server-chip:hover,.server-chip.active{border-color:var(--red);color:var(--red);background:var(--red-faint)}
-.chip-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0}
 .server-chip.active .chip-dot{background:var(--red)}
 .cmd-toolbar{
-  padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;
 }
 .cmd-search{
-  flex:1;min-width:160px;padding:8px 12px;
-  background:#000;border:1px solid var(--border);border-radius:4px;
-  color:var(--text);font-family:var(--body);font-size:13px;outline:none;
+  flex:1;min-width:160px;padding:7px 12px;
+  background:#000;border:1px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:var(--mono);font-size:12px;outline:none;letter-spacing:0.04em;
 }
 .cmd-search:focus{border-color:var(--red)}
-.cat-btns{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--border)}
+.cat-btns{display:flex;gap:5px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--border)}
 .cat-btn{
-  padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;
+  padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;
+  color:var(--text3);font-family:var(--mono);font-size:9px;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.08em;
 }
 .cat-btn:hover,.cat-btn.active{background:var(--red);border-color:var(--red);color:#fff}
-.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:16px;max-height:540px;overflow-y:auto}
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:10px;padding:14px;max-height:530px;overflow-y:auto}
 .cmd-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
-  padding:14px;transition:border-color 0.15s;
+  background:var(--bg2);border:1px solid var(--border);border-radius:4px;
+  padding:13px;transition:border-color 0.15s;
 }
 .cmd-card:hover{border-color:var(--border-r)}
-.cmd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.cmd-name{font-family:var(--mono);font-size:13px;color:var(--red)}
+.cmd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.cmd-name{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:0.04em}
 .toggle{
-  width:38px;height:20px;background:var(--bg3);border-radius:10px;
+  width:36px;height:18px;background:var(--bg3);border-radius:9px;
   position:relative;cursor:pointer;border:1px solid var(--border);
   transition:background 0.2s;flex-shrink:0;
 }
 .toggle.on{background:var(--red);border-color:var(--red)}
 .toggle::after{
-  content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;
-  top:2px;left:2px;transition:transform 0.2s;opacity:0.5;
+  content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;
+  top:2px;left:2px;transition:transform 0.2s;opacity:0.4;
 }
 .toggle.on::after{transform:translateX(18px);opacity:1}
-.cmd-desc{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.4}
-.cmd-bottom{display:flex;gap:8px}
+.cmd-desc{font-size:11px;color:var(--text2);margin-bottom:9px;line-height:1.5}
+.cmd-bottom{display:flex;gap:6px}
 .cmd-role-input{
-  flex:1;padding:6px 10px;background:#000;border:1px solid var(--border);
-  border-radius:3px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;
+  flex:1;padding:5px 9px;background:#000;border:1px solid var(--border);
+  border-radius:2px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none;letter-spacing:0.04em;
 }
 .cmd-role-input:focus{border-color:var(--red)}
 .btn-sm{
-  padding:6px 14px;background:var(--red);border:none;color:#fff;
-  font-family:var(--display);font-size:13px;cursor:pointer;border-radius:3px;
-  transition:background 0.15s;
+  padding:5px 12px;background:var(--red);border:none;color:#fff;
+  font-family:var(--display);font-size:11px;font-weight:700;cursor:pointer;border-radius:2px;
+  letter-spacing:0.08em;transition:background 0.15s;
 }
-.btn-sm:hover{background:#ff3355}
+.btn-sm:hover{background:#ff1a35}
 
-/* ANALYTICS */
-.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+/* ── ANALYTICS ── */
+.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
 @media(max-width:900px){.analytics-grid{grid-template-columns:1fr}}
-.chart-wrap{height:240px}
+.chart-wrap{height:230px}
 .activity-item{
-  padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03);
-  display:flex;gap:12px;align-items:flex-start;
+  padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.02);
+  display:flex;gap:10px;align-items:flex-start;
 }
 .activity-item:last-child{border:none}
 .ai-avatar{
-  width:30px;height:30px;border-radius:50%;background:var(--red);
+  width:28px;height:28px;border-radius:3px;background:var(--bg3);
+  border:1px solid var(--border-r);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-size:14px;color:#fff;flex-shrink:0;
+  font-family:var(--display);font-size:12px;font-weight:700;color:var(--red);flex-shrink:0;
 }
-.ai-name{font-size:13px;font-weight:600}
-.ai-action{font-size:12px;color:var(--text2);margin-top:2px}
-.ai-time{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap}
+.ai-name{font-size:12px;font-weight:700;letter-spacing:0.02em}
+.ai-action{font-size:11px;color:var(--text2);margin-top:2px}
+.ai-time{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--text3);white-space:nowrap}
 
-/* OWNER PANEL */
-.owner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.owner-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px 16px;text-align:center;cursor:pointer;
-  transition:all 0.2s;position:relative;overflow:hidden;
+/* ── OWNER PANEL ── */
+.owner-hero{
+  position:relative;margin-bottom:24px;padding:30px 28px;
+  background:var(--bg1);border:1px solid var(--border-r);border-radius:10px;
+  overflow:hidden;display:flex;align-items:center;gap:28px;
 }
-.owner-card::before{
+.owner-hero::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 50% 50%,var(--red-faint) 0%,transparent 70%);
-  opacity:0;transition:opacity 0.2s;
+  background:radial-gradient(ellipse at 10% 50%,rgba(232,21,58,0.12),transparent 60%);
 }
-.owner-card:hover{border-color:var(--border-r);transform:translateY(-3px)}
-.owner-card:hover::before{opacity:1}
-.owner-card.danger:hover{border-color:rgba(255,68,68,0.5)}
-.oc-icon{font-size:32px;margin-bottom:10px}
-.oc-title{font-size:14px;font-weight:700;margin-bottom:4px;letter-spacing:0.02em}
-.oc-desc{font-size:11px;color:var(--text3)}
-.owner-stats{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:10px;margin-bottom:24px;
+.owner-hero-mark{flex-shrink:0;position:relative;z-index:1}
+.owner-hero-info{position:relative;z-index:1}
+.owner-hero-title{font-family:var(--display);font-size:36px;font-weight:700;color:var(--red);letter-spacing:0.12em;line-height:1;margin-bottom:6px}
+.owner-hero-sub{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.12em;margin-bottom:16px}
+.owner-hero-badges{display:flex;gap:8px;flex-wrap:wrap}
+.owner-badge{
+  padding:4px 10px;border-radius:2px;
+  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.1em;
 }
-.os-tile{
-  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
-  padding:14px;
+.badge-red{background:rgba(232,21,58,0.12);color:var(--red);border:1px solid rgba(232,21,58,0.25)}
+.badge-gold{background:rgba(240,165,0,0.1);color:var(--gold);border:1px solid rgba(240,165,0,0.2)}
+.badge-green{background:rgba(0,217,126,0.08);color:var(--green);border:1px solid rgba(0,217,126,0.2)}
+.owner-hero-stats{margin-left:auto;display:grid;grid-template-columns:1fr 1fr;gap:2px;position:relative;z-index:1}
+.ohs-tile{
+  background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  padding:12px 16px;text-align:center;
 }
-.os-val{font-family:var(--display);font-size:28px;color:var(--text)}
-.os-key{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:3px}
+.ohs-val{font-family:var(--display);font-size:24px;font-weight:700;color:var(--text)}
+.ohs-key{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.1em;margin-top:2px}
 
-/* MODAL */
+/* ── OWNER ACTION GRID ── */
+.owner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;padding:2px}
+.owner-card{
+  background:var(--bg2);
+  padding:20px 16px;cursor:pointer;
+  transition:all 0.2s;position:relative;overflow:hidden;
+  border:1px solid transparent;
+}
+.owner-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;
+}
+.owner-card:hover{background:var(--bg3);border-color:var(--border-r)}
+.owner-card:hover::after{transform:scaleX(1)}
+.owner-card.danger:hover{border-color:rgba(255,68,68,0.4);background:rgba(255,20,20,0.04)}
+.oc-art{margin-bottom:12px}
+.oc-title{font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:0.1em;margin-bottom:4px;color:var(--text)}
+.oc-desc{font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.5;letter-spacing:0.04em}
+.oc-arrow{
+  position:absolute;top:14px;right:14px;
+  font-family:var(--mono);font-size:12px;color:var(--text3);
+  transition:color 0.2s,transform 0.2s;
+}
+.owner-card:hover .oc-arrow{color:var(--red);transform:translate(2px,-2px)}
+
+/* ── MODAL ── */
 .modal-bg{
   display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);
+  background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);
   z-index:500;align-items:center;justify-content:center;
 }
 .modal-bg.open{display:flex}
 .modal-box{
-  background:var(--bg1);border:1px solid var(--border-r);border-radius:12px;
-  padding:28px;max-width:460px;width:90%;max-height:85vh;overflow-y:auto;
-  animation:modalIn 0.25s cubic-bezier(0.16,1,0.3,1);
+  background:var(--bg1);border:1px solid var(--border-r);border-radius:8px;
+  padding:28px;max-width:440px;width:90%;max-height:85vh;overflow-y:auto;
+  animation:modalIn 0.22s cubic-bezier(0.16,1,0.3,1);
 }
-@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(8px)}to{opacity:1;transform:none}}
-.modal-box::before{
-  content:'';display:block;height:3px;margin:-28px -28px 24px;
-  background:linear-gradient(90deg,var(--red2),var(--red),var(--red2));
-  border-radius:12px 12px 0 0;
-}
-.modal-title{font-family:var(--display);font-size:28px;color:var(--red);letter-spacing:0.06em;margin-bottom:4px}
-.modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+@keyframes modalIn{from{opacity:0;transform:scale(0.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-top-line{height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:-28px -28px 24px;display:block}
+.modal-title{font-family:var(--display);font-size:22px;font-weight:700;color:var(--red);letter-spacing:0.1em;margin-bottom:4px}
+.modal-sub{font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:18px;letter-spacing:0.06em}
 .modal-input,.modal-textarea{
-  width:100%;padding:10px 14px;background:#000;
-  border:1px solid var(--border);border-radius:4px;
-  color:var(--text);font-family:var(--body);font-size:13px;
-  margin-bottom:10px;outline:none;
+  width:100%;padding:9px 12px;background:#000;
+  border:1px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:var(--mono);font-size:12px;
+  margin-bottom:8px;outline:none;letter-spacing:0.04em;
 }
 .modal-input:focus,.modal-textarea:focus{border-color:var(--red)}
-.modal-textarea{font-family:var(--mono);font-size:12px;resize:vertical}
-.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.modal-textarea{resize:vertical}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 .btn-cancel{
-  padding:9px 20px;background:var(--bg2);border:1px solid var(--border);
-  color:var(--text2);font-family:var(--body);font-size:14px;font-weight:600;
-  cursor:pointer;border-radius:4px;transition:all 0.15s;
+  padding:8px 18px;background:var(--bg2);border:1px solid var(--border);
+  color:var(--text2);font-family:var(--mono);font-size:11px;letter-spacing:0.06em;
+  cursor:pointer;border-radius:3px;transition:all 0.15s;
 }
 .btn-cancel:hover{border-color:var(--border-r);color:var(--text)}
 .btn-confirm{
-  padding:9px 24px;background:var(--red);border:none;color:#fff;
-  font-family:var(--display);font-size:18px;letter-spacing:0.06em;
-  cursor:pointer;border-radius:4px;transition:background 0.15s;
+  padding:8px 22px;background:var(--red);border:none;color:#fff;
+  font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:0.08em;
+  cursor:pointer;border-radius:3px;transition:background 0.15s;
 }
-.btn-confirm:hover{background:#ff3355}
+.btn-confirm:hover{background:#ff1a35}
 .premium-list{
-  background:#080400;border:1px solid rgba(255,170,0,0.2);border-radius:4px;
-  padding:14px 16px;margin-bottom:16px;
+  background:rgba(0,0,0,0.5);border:1px solid rgba(240,165,0,0.15);border-radius:3px;
+  padding:12px 14px;margin-bottom:14px;
 }
-.pl-title{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px}
-.pl-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;font-weight:500;color:var(--text2)}
-.pl-check{color:var(--green);font-size:11px}
-.pay-row{display:flex;gap:10px;margin:14px 0}
+.pl-title{font-family:var(--mono);font-size:8px;color:var(--gold);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px}
+.pl-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;font-weight:600;color:var(--text2)}
+.pl-check{color:var(--green);font-size:10px}
+.pay-row{display:flex;gap:8px;margin:12px 0}
 .pay-btn{
-  flex:1;padding:12px;border:none;border-radius:4px;
-  font-family:var(--display);font-size:18px;letter-spacing:0.04em;
+  flex:1;padding:11px;border:none;border-radius:3px;
+  font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:0.06em;
   cursor:pointer;transition:all 0.15s;
 }
 .pay-paypal{background:#0070ba;color:#fff}
 .pay-cashapp{background:#00d632;color:#000}
 .pay-btn:hover{filter:brightness(1.15);transform:scale(1.02)}
 
-/* CONNECTION STATUS */
+/* ── CONNECTION BAR ── */
 .conn-bar{
-  display:flex;align-items:center;gap:8px;padding:8px 16px;
-  background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2);
-  border-radius:4px;margin-bottom:20px;font-size:13px;color:#ff6666;
+  display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.15);
+  border-radius:3px;margin-bottom:18px;font-family:var(--mono);font-size:10px;color:#ff6666;letter-spacing:0.06em;
 }
-.conn-bar.ok{background:rgba(0,232,122,0.06);border-color:rgba(0,232,122,0.2);color:var(--green)}
-.conn-bar.ok .dot{background:var(--green)}
-.conn-bar .dot{background:#ff6666;width:7px;height:7px;border-radius:50%}
+.conn-bar.ok{background:rgba(0,217,126,0.05);border-color:rgba(0,217,126,0.15);color:var(--green)}
+.conn-bar .dot{background:#ff6666;width:6px;height:6px;border-radius:50%}
 
-/* ERROR STATE */
-.empty-state{text-align:center;padding:40px;font-family:var(--mono);font-size:12px;color:var(--text3)}
-
-/* TOAST */
+/* ── MISC ── */
+.empty-state{text-align:center;padding:36px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em}
 .toast{
-  position:fixed;bottom:24px;right:24px;z-index:1000;
-  padding:12px 18px;background:var(--bg2);border-left:3px solid var(--red);
-  border-radius:4px;color:var(--text);font-size:14px;font-weight:500;
-  animation:toastIn 0.25s ease;pointer-events:none;
-  box-shadow:0 4px 20px rgba(0,0,0,0.6);
+  position:fixed;bottom:22px;right:22px;z-index:1000;
+  padding:10px 16px;background:var(--bg2);border-left:2px solid var(--red);
+  border-radius:3px;color:var(--text);font-size:12px;font-weight:700;
+  animation:toastIn 0.22s ease;pointer-events:none;
+  box-shadow:0 4px 24px rgba(0,0,0,0.7);font-family:var(--mono);letter-spacing:0.06em;
 }
 .toast.ok{border-left-color:var(--green)}
 @keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
 ::-webkit-scrollbar-thumb:hover{background:var(--red)}
-
 .hidden{display:none!important}
 pre{white-space:pre-wrap;word-break:break-all}
-code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255,34,68,0.08);padding:2px 6px;border-radius:3px}
+code{font-family:var(--mono);font-size:11px;color:var(--red);background:rgba(232,21,58,0.07);padding:2px 5px;border-radius:2px}
+
+/* ── SVG ICON HELPERS ── */
+.icon-svg{display:block}
 </style>
 </head>
 <body>
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-x">X</div>
+  <div class="loader-art">
+    <svg width="100" height="100" viewBox="0 0 100 100">
+      <polygon points="50,4 96,26 96,74 50,96 4,74 4,26" fill="none" stroke="#e8153a" stroke-width="1" opacity="0.3"/>
+      <polygon points="50,16 84,34 84,66 50,84 16,66 16,34" fill="none" stroke="#e8153a" stroke-width="1"/>
+      <line x1="30" y1="30" x2="70" y2="70" stroke="#e8153a" stroke-width="2"/>
+      <line x1="70" y1="30" x2="30" y2="70" stroke="#e8153a" stroke-width="2"/>
+      <circle cx="50" cy="50" r="4" fill="#e8153a"/>
+    </svg>
+  </div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
-  <div class="loader-msg" id="loader-msg">INITIALIZING SYSTEMS...</div>
+  <div class="loader-msg" id="loader-msg">INITIALIZING SYSTEMS</div>
 </div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sb-logo">
-    <div class="sb-logo-mark">X</div>
+    <svg class="sb-logo-svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+      <polygon points="18,2 34,10 34,26 18,34 2,26 2,10" fill="none" stroke="#e8153a" stroke-width="1.5"/>
+      <line x1="10" y1="10" x2="26" y2="26" stroke="#e8153a" stroke-width="2"/>
+      <line x1="26" y1="10" x2="10" y2="26" stroke="#e8153a" stroke-width="2"/>
+    </svg>
     <div>
       <div class="sb-logo-name">XULT</div>
       <div class="sb-logo-ver">CONTROL PANEL v2</div>
@@ -542,17 +571,60 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
   </div>
   <nav class="sb-nav">
     <div class="sb-section">MAIN</div>
-    <div class="sb-link active" data-tab="dashboard"><span class="icon">📊</span> Dashboard</div>
-    <div class="sb-link" data-tab="vending"><span class="icon">🎰</span> Vending Machine</div>
+    <div class="sb-link active" data-tab="dashboard">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/>
+        <rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/>
+      </svg>
+      Dashboard
+    </div>
+    <div class="sb-link" data-tab="vending">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="2" width="14" height="16" rx="2"/>
+        <line x1="3" y1="8" x2="17" y2="8"/>
+        <rect x="6" y="11" width="8" height="4" rx="1"/>
+        <circle cx="10" cy="5" r="1" fill="currentColor"/>
+      </svg>
+      Vending Machine
+    </div>
     <div class="sb-section">MANAGEMENT</div>
-    <div class="sb-link" data-tab="commands"><span class="icon">⚡</span> Commands</div>
-    <div class="sb-link" data-tab="analytics"><span class="icon">📈</span> Analytics</div>
-    <div class="sb-link hidden" id="owner-sb-link" data-tab="owner"><span class="icon">👑</span> Owner Panel <span class="badge">OWNER</span></div>
+    <div class="sb-link" data-tab="commands">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="4,7 2,10 4,13"/><polyline points="16,7 18,10 16,13"/>
+        <line x1="12" y1="4" x2="8" y2="16"/>
+      </svg>
+      Commands
+    </div>
+    <div class="sb-link" data-tab="analytics">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="2,14 6,9 10,11 14,6 18,8"/>
+        <line x1="2" y1="18" x2="18" y2="18"/>
+      </svg>
+      Analytics
+    </div>
+    <div class="sb-link hidden" id="owner-sb-link" data-tab="owner">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="10,2 12.5,8 19,8 13.5,12 15.5,18 10,14 4.5,18 6.5,12 1,8 7.5,8"/>
+      </svg>
+      Owner Panel
+      <span class="badge">OWNER</span>
+    </div>
     <div class="sb-section">INFO</div>
-    <div class="sb-link" data-tab="support"><span class="icon">💬</span> Support</div>
+    <div class="sb-link" data-tab="support">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="10" cy="10" r="8"/>
+        <path d="M7.5,7.5 Q7.5,5 10,5 Q12.5,5 12.5,7.5 Q12.5,10 10,10"/>
+        <circle cx="10" cy="14" r="0.8" fill="currentColor"/>
+      </svg>
+      Support
+    </div>
   </nav>
   <div class="sb-user" id="sb-user-zone">
-    <div class="sb-avatar-placeholder" onclick="doLogin()" title="Login with Discord">?</div>
+    <div class="sb-avatar-ph" onclick="doLogin()" title="Login with Discord">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#333352" stroke-width="1.5">
+        <circle cx="10" cy="7" r="4"/><path d="M2,18 Q2,13 10,13 Q18,13 18,18"/>
+      </svg>
+    </div>
     <div style="flex:1;min-width:0">
       <div class="sb-user-name" id="sb-username">Not logged in</div>
       <div id="sb-tag"><span class="sb-user-tag tag-free">FREE</span></div>
@@ -560,13 +632,12 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
   </div>
 </aside>
 
-<!-- MAIN AREA -->
+<!-- MAIN -->
 <main class="main">
   <header class="topbar">
-    <div>
-      <div class="topbar-title" id="topbar-title">DASHBOARD</div>
-      <div class="topbar-sub" id="topbar-sub">Bot statistics overview</div>
-    </div>
+    <div class="topbar-title" id="topbar-title">DASHBOARD</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-sub" id="topbar-sub">Bot statistics overview</div>
     <div class="topbar-status">
       <div class="dot" id="api-dot"></div>
       <span id="api-status">Connecting...</span>
@@ -574,22 +645,51 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
   </header>
   <div class="content">
 
-    <!-- CONNECTION BAR -->
     <div class="conn-bar" id="conn-bar" style="display:none">
       <div class="dot"></div>
       <span id="conn-msg">Cannot reach bot backend.</span>
-      <button onclick="retryConnection()" style="margin-left:auto;padding:4px 10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:12px;border-radius:3px;cursor:pointer">Retry</button>
+      <button onclick="retryConnection()" style="margin-left:auto;padding:3px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;font-family:var(--mono);font-size:9px;border-radius:2px;cursor:pointer;letter-spacing:0.08em">RETRY</button>
     </div>
 
     <!-- DASHBOARD -->
     <div class="tab-pane active" id="tab-dashboard">
       <div class="stat-row">
-        <div class="stat-card"><div class="sc-icon">👥</div><div class="sc-val" id="s-users">—</div><div class="sc-key">Total Users</div></div>
-        <div class="stat-card"><div class="sc-icon">🏠</div><div class="sc-val" id="s-servers">—</div><div class="sc-key">Servers</div></div>
-        <div class="stat-card"><div class="sc-icon">⚡</div><div class="sc-val" id="s-cmds">—</div><div class="sc-key">Commands Today</div></div>
-        <div class="stat-card"><div class="sc-icon">💎</div><div class="sc-val" id="s-prem">—</div><div class="sc-key">Premium Users</div></div>
-        <div class="stat-card"><div class="sc-icon">📦</div><div class="sc-val" id="s-stock">—</div><div class="sc-key">Stock Items</div></div>
-        <div class="stat-card"><div class="sc-icon">📡</div><div class="sc-val" id="s-ping">—</div><div class="sc-key">Latency</div></div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><circle cx="10" cy="7" r="4"/><path d="M2,18 Q2,13 10,13 Q18,13 18,18"/></svg>
+          </div>
+          <div class="sc-val" id="s-users">—</div><div class="sc-key">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M6,4 L6,2 L14,2 L14,4"/></svg>
+          </div>
+          <div class="sc-val" id="s-servers">—</div><div class="sc-key">Servers</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><polyline points="4,7 2,10 4,13"/><polyline points="16,7 18,10 16,13"/><line x1="12" y1="4" x2="8" y2="16"/></svg>
+          </div>
+          <div class="sc-val" id="s-cmds">—</div><div class="sc-key">Commands Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><polygon points="10,2 12.5,8 19,8 13.5,12 15.5,18 10,14 4.5,18 6.5,12 1,8 7.5,8"/></svg>
+          </div>
+          <div class="sc-val" id="s-prem">—</div><div class="sc-key">Premium Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><rect x="6" y="11" width="8" height="4" rx="1"/></svg>
+          </div>
+          <div class="sc-val" id="s-stock">—</div><div class="sc-key">Stock Items</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><circle cx="10" cy="10" r="2"/><line x1="10" y1="2" x2="10" y2="6"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="2" y1="10" x2="6" y2="10"/><line x1="14" y1="10" x2="18" y2="10"/></svg>
+          </div>
+          <div class="sc-val" id="s-ping">—</div><div class="sc-key">Latency</div>
+        </div>
       </div>
       <div class="analytics-grid">
         <div class="panel">
@@ -605,20 +705,38 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
 
     <!-- VENDING MACHINE -->
     <div class="tab-pane" id="tab-vending">
-      <!-- Lock screen -->
       <div class="lock-screen" id="lock-screen">
-        <div class="lock-icon">🔒</div>
+        <div class="lock-art">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <rect x="20" y="36" width="40" height="32" rx="4" stroke="#e8153a" stroke-width="1.5"/>
+            <path d="M28,36 L28,26 Q28,12 40,12 Q52,12 52,26 L52,36" stroke="#e8153a" stroke-width="1.5" fill="none"/>
+            <circle cx="40" cy="52" r="5" stroke="#e8153a" stroke-width="1.5"/>
+            <line x1="40" y1="57" x2="40" y2="62" stroke="#e8153a" stroke-width="1.5"/>
+            <circle cx="40" cy="40" r="38" stroke="#e8153a" stroke-width="0.5" stroke-dasharray="3 6" opacity="0.3"/>
+          </svg>
+        </div>
         <div class="lock-title">PREMIUM ONLY</div>
-        <div class="lock-sub">THE VENDING MACHINE IS FOR PREMIUM MEMBERS</div>
-        <button class="btn-big" onclick="openPremiumModal()">★ UPGRADE — $3</button>
+        <div class="lock-sub">The vending machine is for premium members</div>
+        <button class="btn-big" onclick="openPremiumModal()">UPGRADE — $3/MONTH</button>
         <div class="lock-perks">
-          <div class="lock-perk"><div class="lp-emoji">⚡</div><div class="lp-text">No Cooldown</div></div>
-          <div class="lock-perk"><div class="lp-emoji">📦</div><div class="lp-text">All Stock Types</div></div>
-          <div class="lock-perk"><div class="lp-emoji">🎯</div><div class="lp-text">Priority Access</div></div>
-          <div class="lock-perk"><div class="lp-emoji">💬</div><div class="lp-text">VIP Support</div></div>
+          <div class="lock-perk">
+            <div class="lp-art"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7070a0" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+            <div class="lp-text">No Cooldown</div>
+          </div>
+          <div class="lock-perk">
+            <div class="lp-art"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7070a0" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><rect x="7" y="13" width="10" height="5" rx="1"/></svg></div>
+            <div class="lp-text">All Stock Types</div>
+          </div>
+          <div class="lock-perk">
+            <div class="lp-art"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7070a0" stroke-width="1.5"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg></div>
+            <div class="lp-text">Priority Access</div>
+          </div>
+          <div class="lock-perk">
+            <div class="lp-art"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7070a0" stroke-width="1.5"><path d="M21,15 Q21,19 17,19 L7,19 Q3,19 3,15 L3,9 Q3,5 7,5 L17,5 Q21,5 21,9 Z"/><polyline points="3,9 12,14 21,9"/></svg></div>
+            <div class="lp-text">VIP Support</div>
+          </div>
         </div>
       </div>
-      <!-- Vending machine -->
       <div id="vending-machine" style="display:none">
         <div class="vm-wrap">
           <div class="vm-machine">
@@ -638,7 +756,7 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
             </div>
             <div class="vm-controls">
               <input type="text" class="vm-input" id="vm-input" placeholder="Select slot or type code...">
-              <button class="btn-gen" id="btn-dispense" onclick="dispense()">▶ DISPENSE</button>
+              <button class="btn-gen" id="btn-dispense" onclick="dispense()">DISPENSE</button>
             </div>
             <div class="vm-screen" id="vm-screen">READY — SELECT AN ITEM ABOVE AND PRESS DISPENSE</div>
           </div>
@@ -654,12 +772,12 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
               <div class="vs-info-row"><span class="vs-key">TIER</span><span class="vs-val g" id="vs-tier">PREMIUM</span></div>
               <div class="vs-info-row"><span class="vs-key">COOLDOWN</span><span class="vs-val g" id="vs-cd">NONE</span></div>
               <div class="vs-info-row"><span class="vs-key">GENERATED</span><span class="vs-val" id="vs-count">0</span></div>
-              <div class="vs-info-row"><span class="vs-key">BOT</span><span class="vs-val g" id="vs-bot">ONLINE</span></div>
+              <div class="vs-info-row"><span class="vs-key">BOT STATUS</span><span class="vs-val g" id="vs-bot">ONLINE</span></div>
             </div>
-            <div class="gen-log">
+            <div class="gen-log panel">
               <div class="gen-log-h">RECENT GENERATIONS</div>
               <div class="gen-log-body" id="gen-log-body">
-                <div style="padding:12px 14px;font-family:var(--mono);font-size:10px;color:var(--text3)">No generations yet...</div>
+                <div style="padding:12px;font-family:var(--mono);font-size:9px;color:var(--text3)">No generations yet...</div>
               </div>
             </div>
           </div>
@@ -669,10 +787,10 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
 
     <!-- COMMANDS -->
     <div class="tab-pane" id="tab-commands">
-      <div class="panel" style="margin-bottom:20px">
-        <div class="panel-head"><span class="panel-title">SELECT SERVER</span><span id="cmd-server-label" style="font-family:var(--mono);font-size:11px;color:var(--text3)">No server selected</span></div>
+      <div class="panel" style="margin-bottom:18px">
+        <div class="panel-head"><span class="panel-title">SELECT SERVER</span><span id="cmd-server-label" style="font-family:var(--mono);font-size:9px;color:var(--text3)">No server selected</span></div>
         <div class="server-chips" id="server-chips">
-          <div class="empty-state" style="padding:16px">Login to see your servers</div>
+          <div class="empty-state" style="padding:14px">Login to see your servers</div>
         </div>
       </div>
       <div class="panel" id="cmd-panel" style="display:none">
@@ -681,12 +799,12 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
         </div>
         <div class="cat-btns" id="cat-btns">
           <div class="cat-btn active" data-cat="all">ALL</div>
-          <div class="cat-btn" data-cat="economy">💰 ECONOMY</div>
-          <div class="cat-btn" data-cat="stock">📦 STOCK</div>
-          <div class="cat-btn" data-cat="moderation">🛡️ MOD</div>
-          <div class="cat-btn" data-cat="notifications">📢 NOTIFY</div>
-          <div class="cat-btn" data-cat="management">⚙️ MANAGE</div>
-          <div class="cat-btn" data-cat="fun">🎨 FUN</div>
+          <div class="cat-btn" data-cat="economy">ECONOMY</div>
+          <div class="cat-btn" data-cat="stock">STOCK</div>
+          <div class="cat-btn" data-cat="moderation">MOD</div>
+          <div class="cat-btn" data-cat="notifications">NOTIFY</div>
+          <div class="cat-btn" data-cat="management">MANAGE</div>
+          <div class="cat-btn" data-cat="fun">FUN</div>
         </div>
         <div class="cmd-grid" id="cmd-grid"></div>
       </div>
@@ -695,10 +813,10 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
     <!-- ANALYTICS -->
     <div class="tab-pane" id="tab-analytics">
       <div class="stat-row">
-        <div class="stat-card"><div class="sc-icon">📊</div><div class="sc-val" id="a-users">—</div><div class="sc-key">Total Users</div></div>
-        <div class="stat-card"><div class="sc-icon">🔥</div><div class="sc-val" id="a-active">—</div><div class="sc-key">Active Today</div></div>
-        <div class="stat-card"><div class="sc-icon">📦</div><div class="sc-val" id="a-gens">—</div><div class="sc-key">Generations</div></div>
-        <div class="stat-card"><div class="sc-icon">💎</div><div class="sc-val" id="a-prem">—</div><div class="sc-key">Premium</div></div>
+        <div class="stat-card"><div class="sc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><circle cx="10" cy="7" r="4"/><path d="M2,18 Q2,13 10,13 Q18,13 18,18"/></svg></div><div class="sc-val" id="a-users">—</div><div class="sc-key">Total Users</div></div>
+        <div class="stat-card"><div class="sc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><polyline points="2,14 6,9 10,11 14,6 18,8"/></svg></div><div class="sc-val" id="a-active">—</div><div class="sc-key">Active Today</div></div>
+        <div class="stat-card"><div class="sc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><rect x="6" y="11" width="8" height="4" rx="1"/></svg></div><div class="sc-val" id="a-gens">—</div><div class="sc-key">Generations</div></div>
+        <div class="stat-card"><div class="sc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#7070a0" stroke-width="1.5"><polygon points="10,2 12.5,8 19,8 13.5,12 15.5,18 10,14 4.5,18 6.5,12 1,8 7.5,8"/></svg></div><div class="sc-val" id="a-prem">—</div><div class="sc-key">Premium</div></div>
       </div>
       <div class="analytics-grid">
         <div class="panel">
@@ -714,166 +832,244 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
 
     <!-- OWNER PANEL -->
     <div class="tab-pane" id="tab-owner">
-      <div class="owner-stats" id="owner-stats">
-        <div class="os-tile"><div class="os-val" id="ow-users">—</div><div class="os-key">TOTAL USERS</div></div>
-        <div class="os-tile"><div class="os-val" id="ow-servers">—</div><div class="os-key">SERVERS</div></div>
-        <div class="os-tile"><div class="os-val" id="ow-prem">—</div><div class="os-key">PREMIUM</div></div>
-        <div class="os-tile"><div class="os-val" id="ow-banned">—</div><div class="os-key">BANNED</div></div>
-        <div class="os-tile"><div class="os-val" id="ow-stock">—</div><div class="os-key">STOCK ENTRIES</div></div>
-        <div class="os-tile"><div class="os-val" id="ow-ping">—</div><div class="os-key">LATENCY</div></div>
+      <!-- HERO -->
+      <div class="owner-hero">
+        <div class="owner-hero-mark">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <polygon points="40,4 76,22 76,58 40,76 4,58 4,22" fill="none" stroke="#e8153a" stroke-width="1" opacity="0.3"/>
+            <polygon points="40,14 66,27 66,53 40,66 14,53 14,27" fill="none" stroke="#e8153a" stroke-width="1.5"/>
+            <line x1="24" y1="24" x2="56" y2="56" stroke="#e8153a" stroke-width="2.5"/>
+            <line x1="56" y1="24" x2="24" y2="56" stroke="#e8153a" stroke-width="2.5"/>
+            <circle cx="40" cy="40" r="5" fill="#e8153a" opacity="0.8"/>
+            <circle cx="40" cy="40" r="2" fill="#e8153a"/>
+          </svg>
+        </div>
+        <div class="owner-hero-info">
+          <div class="owner-hero-title">OWNER PANEL</div>
+          <div class="owner-hero-sub">ELEVATED ACCESS — HANDLE WITH CARE</div>
+          <div class="owner-hero-badges">
+            <span class="owner-badge badge-red">ROOT ACCESS</span>
+            <span class="owner-badge badge-gold">OWNER TIER</span>
+            <span class="owner-badge badge-green">ALL PERMISSIONS</span>
+          </div>
+        </div>
+        <div class="owner-hero-stats">
+          <div class="ohs-tile"><div class="ohs-val" id="ow-users">—</div><div class="ohs-key">USERS</div></div>
+          <div class="ohs-tile"><div class="ohs-val" id="ow-servers">—</div><div class="ohs-key">SERVERS</div></div>
+          <div class="ohs-tile"><div class="ohs-val" id="ow-prem">—</div><div class="ohs-key">PREMIUM</div></div>
+          <div class="ohs-tile"><div class="ohs-val" id="ow-ping">—</div><div class="ohs-key">LATENCY</div></div>
+        </div>
       </div>
+
+      <!-- ACTION GRID -->
       <div class="panel">
         <div class="panel-head">
           <span class="panel-title">CONTROL ACTIONS</span>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--red)">● ELEVATED ACCESS</span>
+          <span style="font-family:var(--mono);font-size:8px;color:var(--red);letter-spacing:0.12em">ELEVATED ACCESS ACTIVE</span>
         </div>
-        <div style="padding:16px">
+        <div style="padding:2px">
           <div class="owner-grid">
+
             <div class="owner-card" onclick="ownerAction('pull')">
-              <div class="oc-icon">👥</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <circle cx="10" cy="8" r="4"/><path d="M2,22 Q2,17 10,17 Q18,17 18,22"/>
+                  <line x1="21" y1="11" x2="21" y2="21"/><polyline points="17,17 21,21 25,17"/>
+                </svg>
+              </div>
               <div class="oc-title">PULL MEMBERS</div>
               <div class="oc-desc">Restore saved members to a server</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('save_all')">
-              <div class="oc-icon">💾</div>
-              <div class="oc-title">SAVE ALL SERVERS</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <rect x="4" y="4" width="20" height="20" rx="3"/>
+                  <rect x="8" y="4" width="12" height="8" rx="1"/>
+                  <rect x="9" y="16" width="10" height="6" rx="1"/>
+                </svg>
+              </div>
+              <div class="oc-title">SAVE ALL</div>
               <div class="oc-desc">Backup every server at once</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('server_list')">
-              <div class="oc-icon">📋</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <rect x="3" y="5" width="22" height="18" rx="3"/>
+                  <line x1="3" y1="11" x2="25" y2="11"/>
+                  <line x1="8" y1="16" x2="20" y2="16"/>
+                  <line x1="8" y1="19" x2="15" y2="19"/>
+                </svg>
+              </div>
               <div class="oc-title">SERVER LIST</div>
               <div class="oc-desc">View all active servers</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('coins')">
-              <div class="oc-icon">💰</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="10"/>
+                  <path d="M14,8 L14,20 M11,10.5 Q11,8 14,8 Q17,8 17,10.5 Q17,13 14,14 Q17,14 17,17.5 Q17,20 14,20 Q11,20 11,17.5"/>
+                </svg>
+              </div>
               <div class="oc-title">MANAGE COINS</div>
               <div class="oc-desc">Add or remove user coins</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card danger" onclick="ownerAction('ban')">
-              <div class="oc-icon">🔨</div>
-              <div class="oc-title">BAN USER</div>
-              <div class="oc-desc">Ban from bot access</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#ff4444" stroke-width="1.5">
+                  <circle cx="14" cy="14" r="10"/>
+                  <line x1="8" y1="8" x2="20" y2="20"/>
+                </svg>
+              </div>
+              <div class="oc-title" style="color:#ff6666">BAN USER</div>
+              <div class="oc-desc">Revoke bot access</div>
+              <span class="oc-arrow" style="color:#ff4444">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('premium_list')">
-              <div class="oc-icon">⭐</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <polygon points="14,3 17,10 25,10 18.5,15 21,22 14,17.5 7,22 9.5,15 3,10 11,10"/>
+                </svg>
+              </div>
               <div class="oc-title">PREMIUM USERS</div>
               <div class="oc-desc">View premium member list</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('logs')">
-              <div class="oc-icon">📝</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <rect x="5" y="3" width="18" height="22" rx="2"/>
+                  <line x1="9" y1="9" x2="19" y2="9"/><line x1="9" y1="13" x2="19" y2="13"/>
+                  <line x1="9" y1="17" x2="14" y2="17"/>
+                </svg>
+              </div>
               <div class="oc-title">SYSTEM LOGS</div>
               <div class="oc-desc">View recent system logs</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('stock_stats')">
-              <div class="oc-icon">📦</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <rect x="4" y="8" width="5" height="16" rx="1"/><rect x="11.5" y="4" width="5" height="20" rx="1"/>
+                  <rect x="19" y="11" width="5" height="13" rx="1"/>
+                </svg>
+              </div>
               <div class="oc-title">STOCK STATS</div>
               <div class="oc-desc">View all stock counts</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('broadcast')">
-              <div class="oc-icon">📡</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <path d="M4,10 L4,18 Q4,20 6,20 L10,20 L18,24 L18,6 L10,10 Z"/>
+                  <path d="M21,10 Q24,14 21,18" stroke-linecap="round"/>
+                  <path d="M23,7 Q28,14 23,21" stroke-linecap="round" opacity="0.5"/>
+                </svg>
+              </div>
               <div class="oc-title">BROADCAST</div>
               <div class="oc-desc">Send message to all servers</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('backup_db')">
-              <div class="oc-icon">🗄️</div>
-              <div class="oc-title">BACKUP DATABASE</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <ellipse cx="14" cy="8" rx="10" ry="4"/>
+                  <path d="M4,8 L4,20 Q4,24 14,24 Q24,24 24,20 L24,8"/>
+                  <path d="M4,14 Q4,18 14,18 Q24,18 24,14"/>
+                </svg>
+              </div>
+              <div class="oc-title">BACKUP DB</div>
               <div class="oc-desc">Full database backup</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('restore')">
-              <div class="oc-icon">🔄</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <path d="M5,14 Q5,7 14,7 Q19,7 22,11" stroke-linecap="round"/>
+                  <polyline points="20,7 24,11 20,15"/>
+                  <path d="M5,17 L5,23 L23,23 L23,17"/>
+                </svg>
+              </div>
               <div class="oc-title">RESTORE SERVER</div>
               <div class="oc-desc">Restore from saved backup</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
             <div class="owner-card" onclick="ownerAction('grant_premium')">
-              <div class="oc-icon">🎁</div>
+              <div class="oc-art">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5">
+                  <rect x="5" y="12" width="18" height="13" rx="2"/>
+                  <path d="M10,12 L10,8 Q10,4 14,4 Q18,4 18,8 L18,12"/>
+                  <circle cx="14" cy="18" r="2" fill="#e8153a" opacity="0.5"/>
+                </svg>
+              </div>
               <div class="oc-title">GRANT PREMIUM</div>
               <div class="oc-desc">Manually assign premium role</div>
+              <span class="oc-arrow">↗</span>
             </div>
+
           </div>
         </div>
       </div>
     </div>
 
-<!-- SUPPORT -->
-<div class="tab-pane" id="tab-support">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-    
-    <!-- QUICK LINKS -->
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-title">QUICK LINKS</span>
-      </div>
-
-      <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
-
-        <!-- Support Server -->
-        <a href="https://discord.gg/SVvZFnct37" target="_blank" rel="noopener noreferrer"
-           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">
-          → Support Server
-        </a>
-
-        <!-- Contact Support -->
-        <a href="https://discord.com/channels/1344385779627069541/1404362232980181032" target="_blank" rel="noopener noreferrer"
-           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600;border-bottom:1px solid var(--border)">
-          → Contact Support
-        </a>
-
-        <!-- Report a Bug -->
-        <a href="https://discord.com/channels/1344385779627069541/1404369962297987102" target="_blank" rel="noopener noreferrer"
-           style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:600">
-          → Report a Bug
-        </a>
-
-      </div>
-    </div>
-
-    <!-- BOT COMMANDS -->
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-title">BOT COMMANDS</span>
-      </div>
-
-      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto">
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <code>/help</code>
-          <span style="font-size:12px;color:var(--text2)">Show all commands</span>
+    <!-- SUPPORT -->
+    <div class="tab-pane" id="tab-support">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">QUICK LINKS</span></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:8px">
+            <a href="https://discord.gg/SVvZFnct37" target="_blank" rel="noopener"
+               style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);letter-spacing:0.04em">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="8" x2="12" y2="8"/><polyline points="8,4 12,8 8,12"/></svg>
+              Support Server
+            </a>
+            <a href="https://discord.com/channels/1344385779627069541/1404362232980181032" target="_blank" rel="noopener"
+               style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);letter-spacing:0.04em">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="8" x2="12" y2="8"/><polyline points="8,4 12,8 8,12"/></svg>
+              Contact Support
+            </a>
+            <a href="https://discord.com/channels/1344385779627069541/1404369962297987102" target="_blank" rel="noopener"
+               style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--red);text-decoration:none;font-weight:700;font-size:13px;letter-spacing:0.04em">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="8" x2="12" y2="8"/><polyline points="8,4 12,8 8,12"/></svg>
+              Report a Bug
+            </a>
+          </div>
         </div>
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <code>/balance</code>
-          <span style="font-size:12px;color:var(--text2)">Check your balance</span>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">BOT COMMANDS</span></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto">
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)"><code>/help</code><span style="font-size:11px;color:var(--text2)">Show all commands</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)"><code>/balance</code><span style="font-size:11px;color:var(--text2)">Check your balance</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)"><code>/gen [type]</code><span style="font-size:11px;color:var(--text2)">Generate stock</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)"><code>/stocklist</code><span style="font-size:11px;color:var(--text2)">List available stock</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)"><code>/togglecommand</code><span style="font-size:11px;color:var(--text2)">Toggle commands (Admin)</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:5px 0"><code>/owner_panel</code><span style="font-size:11px;color:var(--text2)">Owner panel (Owner only)</span></div>
+          </div>
         </div>
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <code>/gen [type]</code>
-          <span style="font-size:12px;color:var(--text2)">Generate stock</span>
-        </div>
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <code>/stocklist</code>
-          <span style="font-size:12px;color:var(--text2)">List available stock</span>
-        </div>
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <code>/togglecommand</code>
-          <span style="font-size:12px;color:var(--text2)">Toggle commands (Admin)</span>
-        </div>
-
-        <div style="display:flex;gap:12px;align-items:center;padding:6px 0">
-          <code>/owner_panel</code>
-          <span style="font-size:12px;color:var(--text2)">Owner panel (Owner only)</span>
-        </div>
-
       </div>
     </div>
 
   </div>
-</div>
+</main>
 
 <!-- MODALS -->
 <div class="modal-bg" id="modal-premium">
   <div class="modal-box">
+    <span class="modal-top-line"></span>
     <div class="modal-title">PREMIUM ACCESS</div>
     <div class="modal-sub">Unlock the vending machine and all exclusive features.</div>
     <div class="premium-list">
@@ -888,13 +1084,14 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
       <button class="pay-btn pay-paypal" onclick="processPayment('paypal')">PayPal — $3</button>
       <button class="pay-btn pay-cashapp" onclick="processPayment('cashapp')">CashApp — $3</button>
     </div>
-    <p style="font-size:11px;color:var(--text3);text-align:center">Premium role is assigned automatically after payment verification.</p>
+    <p style="font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;letter-spacing:0.06em">Premium role is assigned automatically after payment verification.</p>
     <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modal-premium')">CLOSE</button></div>
   </div>
 </div>
 
 <div class="modal-bg" id="modal-main">
   <div class="modal-box">
+    <span class="modal-top-line"></span>
     <div class="modal-title" id="mm-title">CONFIRM</div>
     <div class="modal-sub" id="mm-sub"></div>
     <div id="mm-body"></div>
@@ -906,755 +1103,556 @@ code{font-family:var(--mono);font-size:12px;color:var(--red);background:rgba(255
 </div>
 
 <script>
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // CONFIG
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 const API_URL = 'https://ultbotb.onrender.com';
 const OWNER_ID = '1302203907782606880';
 const CLIENT_ID = '1417284780675956766';
 
-let API_KEY = null;
-let currentUser = null;
-let isPremium = false;
-let isOwner = false;
-let selectedServer = null;
-let commandsData = {};
-let genCount = 0;
-let selectedSlot = null;
-let actChart = null;
-let backendOnline = false;
+let API_KEY = null, currentUser = null, isPremium = false, isOwner = false;
+let selectedServer = null, commandsData = {}, genCount = 0, selectedSlot = null;
+let actChart = null, dashChart = null, backendOnline = false;
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // LOADER
-// ═══════════════════════════════════════
-const loaderMsgs = [
-  'INITIALIZING SYSTEMS...','LOADING STOCK DATABASE...',
-  'CONNECTING TO API...','VERIFYING BACKEND...','LAUNCHING...'
-];
-let lmi = 0;
-const lmEl = document.getElementById('loader-msg');
-const lmInt = setInterval(() => {
-  lmi++;
-  if (lmi < loaderMsgs.length) lmEl.textContent = loaderMsgs[lmi];
-  else clearInterval(lmInt);
-}, 350);
-setTimeout(() => {
-  const l = document.getElementById('loader');
-  l.style.transition = 'opacity 0.5s';
-  l.style.opacity = '0';
-  setTimeout(() => l.remove(), 500);
-}, 2200);
+// ═══════════════════════════════════
+const loaderMsgs=['INITIALIZING SYSTEMS','LOADING STOCK DATABASE','CONNECTING TO API','VERIFYING BACKEND','LAUNCHING'];
+let lmi=0;
+const lmEl=document.getElementById('loader-msg');
+const lmInt=setInterval(()=>{lmi++;if(lmi<loaderMsgs.length)lmEl.textContent=loaderMsgs[lmi];else clearInterval(lmInt)},380);
+setTimeout(()=>{const l=document.getElementById('loader');l.style.transition='opacity 0.5s';l.style.opacity='0';setTimeout(()=>l.remove(),500)},2200);
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // UTILITIES
-// ═══════════════════════════════════════
-function toast(msg, ok = false) {
-  const t = document.createElement('div');
-  t.className = 'toast' + (ok ? ' ok' : '');
-  t.textContent = msg;
+// ═══════════════════════════════════
+function toast(msg,ok=false){
+  const t=document.createElement('div');
+  t.className='toast'+(ok?' ok':'');t.textContent=msg;
   document.body.appendChild(t);
-  setTimeout(() => { t.style.transition = 'opacity 0.3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2800);
+  setTimeout(()=>{t.style.transition='opacity 0.3s';t.style.opacity='0';setTimeout(()=>t.remove(),300)},2800);
 }
 
-function setApiStatus(online) {
-  backendOnline = online;
-  const dot = document.getElementById('api-dot');
-  const status = document.getElementById('api-status');
-  const bar = document.getElementById('conn-bar');
-  if (online) {
-    dot.className = 'dot online';
-    status.textContent = 'Backend Online';
-    bar.style.display = 'none';
-  } else {
-    dot.className = 'dot';
-    dot.style.background = '#ff4444';
-    status.textContent = 'Backend Offline';
-    bar.style.display = 'flex';
-    bar.className = 'conn-bar';
-    document.getElementById('conn-msg').textContent = 'Cannot reach bot backend — some features unavailable.';
+function setApiStatus(online){
+  backendOnline=online;
+  const dot=document.getElementById('api-dot');
+  const status=document.getElementById('api-status');
+  const bar=document.getElementById('conn-bar');
+  if(online){
+    dot.className='dot online';status.textContent='Backend Online';bar.style.display='none';
+  }else{
+    dot.className='dot';dot.style.background='#ff4444';
+    status.textContent='Backend Offline';bar.style.display='flex';bar.className='conn-bar';
+    document.getElementById('conn-msg').textContent='Cannot reach bot backend — some features unavailable.';
   }
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // API
-// ═══════════════════════════════════════
-async function getKey() {
-  try {
-    const r = await fetch(`${API_URL}/api/key`, { signal: AbortSignal.timeout(6000) });
-    if (!r.ok) throw new Error(r.status);
-    const d = await r.json();
-    API_KEY = d.key;
-    setApiStatus(true);
-    return true;
-  } catch {
-    setApiStatus(false);
-    return false;
-  }
+// ═══════════════════════════════════
+async function getKey(){
+  try{
+    const r=await fetch(`${API_URL}/api/key`,{signal:AbortSignal.timeout(6000)});
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();API_KEY=d.key;setApiStatus(true);return true;
+  }catch{setApiStatus(false);return false;}
 }
-
-async function retryConnection() {
+async function retryConnection(){
   toast('Retrying connection...');
-  const ok = await getKey();
-  if (ok) {
-    toast('Connected!', true);
-    loadStats();
-  } else {
-    toast('Still offline. Check if the bot is running.');
-  }
+  const ok=await getKey();
+  if(ok){toast('Connected!',true);loadStats();}else toast('Still offline.');
 }
-
-async function api(endpoint, opts = {}) {
-  if (!API_KEY) {
-    const ok = await getKey();
-    if (!ok) throw new Error('Backend offline');
-  }
-  const headers = {
-    'Authorization': `Bearer ${API_KEY}`,
-    'Content-Type': 'application/json',
-    ...(opts.headers || {})
-  };
-  const r = await fetch(`${API_URL}${endpoint}`, { ...opts, headers, signal: AbortSignal.timeout(10000) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+async function api(endpoint,opts={}){
+  if(!API_KEY){const ok=await getKey();if(!ok)throw new Error('Backend offline');}
+  const headers={'Authorization':`Bearer ${API_KEY}`,'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(`${API_URL}${endpoint}`,{...opts,headers,signal:AbortSignal.timeout(10000)});
+  if(!r.ok)throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // TABS
-// ═══════════════════════════════════════
-const tabTitles = {
-  dashboard: ['DASHBOARD', 'Bot statistics overview'],
-  vending: ['VENDING MACHINE', 'Generate premium content'],
-  commands: ['COMMANDS', 'Manage server commands'],
-  analytics: ['ANALYTICS', 'Usage insights'],
-  owner: ['OWNER PANEL', 'Elevated control access'],
-  support: ['SUPPORT', 'Help & documentation'],
+// ═══════════════════════════════════
+const tabTitles={
+  dashboard:['DASHBOARD','Bot statistics overview'],
+  vending:['VENDING MACHINE','Generate premium content'],
+  commands:['COMMANDS','Manage server commands'],
+  analytics:['ANALYTICS','Usage insights'],
+  owner:['OWNER PANEL','Elevated control access'],
+  support:['SUPPORT','Help & documentation'],
 };
-
-function switchTab(name) {
-  document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
-  const pane = document.getElementById(`tab-${name}`);
-  if (pane) pane.classList.add('active');
-  document.querySelectorAll(`[data-tab="${name}"]`).forEach(l => l.classList.add('active'));
-  const t = tabTitles[name] || [name.toUpperCase(), ''];
-  document.getElementById('topbar-title').textContent = t[0];
-  document.getElementById('topbar-sub').textContent = t[1];
-  if (name === 'dashboard') loadStats();
-  if (name === 'analytics') loadAnalytics();
-  if (name === 'owner') loadOwnerStats();
-  if (name === 'vending') { updateVending(); loadStock(); }
-  if (name === 'commands' && currentUser) loadServers();
+function switchTab(name){
+  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  const pane=document.getElementById(`tab-${name}`);
+  if(pane)pane.classList.add('active');
+  document.querySelectorAll(`[data-tab="${name}"]`).forEach(l=>l.classList.add('active'));
+  const t=tabTitles[name]||[name.toUpperCase(),''];
+  document.getElementById('topbar-title').textContent=t[0];
+  document.getElementById('topbar-sub').textContent=t[1];
+  if(name==='dashboard')loadStats();
+  if(name==='analytics')loadAnalytics();
+  if(name==='owner')loadOwnerStats();
+  if(name==='vending'){updateVending();loadStock();}
+  if(name==='commands'&&currentUser)loadServers();
 }
-
-document.querySelectorAll('[data-tab]').forEach(el => {
-  el.addEventListener('click', () => switchTab(el.dataset.tab));
+document.querySelectorAll('[data-tab]').forEach(el=>{
+  el.addEventListener('click',()=>switchTab(el.dataset.tab));
 });
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // AUTH
-// ═══════════════════════════════════════
-function doLogin() {
-  const redir = encodeURIComponent(window.location.origin + '/callback');
-  window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redir}&response_type=token&scope=identify+guilds`;
+// ═══════════════════════════════════
+function doLogin(){
+  const redir=encodeURIComponent(window.location.origin+'/callback');
+  window.location.href=`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redir}&response_type=token&scope=identify+guilds`;
 }
-
-function handleCallback() {
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const token = params.get('access_token');
-  if (token) {
-    localStorage.setItem('discord_token', token);
-    window.history.pushState({}, '', '/');
-    loadUser(token);
-  } else {
-    const t = localStorage.getItem('discord_token');
-    if (t) loadUser(t);
-  }
+function handleCallback(){
+  const hash=window.location.hash.substring(1);
+  const params=new URLSearchParams(hash);
+  const token=params.get('access_token');
+  if(token){localStorage.setItem('discord_token',token);window.history.pushState({},'','/');loadUser(token);}
+  else{const t=localStorage.getItem('discord_token');if(t)loadUser(t);}
 }
-
-async function loadUser(token) {
-  try {
-    const r = await fetch('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(6000)
-    });
-    if (!r.ok) { localStorage.removeItem('discord_token'); return; }
-    const u = await r.json();
-    currentUser = u;
-    isOwner = u.id === OWNER_ID;
-    // Owner is always premium — no check needed
-    if (isOwner) isPremium = true;
-    else await checkPremium();
-
-    // Update sidebar
-    const zone = document.getElementById('sb-user-zone');
-    const avatarUrl = u.avatar
-      ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png`
-      : `https://cdn.discordapp.com/embed/avatars/0.png`;
-    zone.innerHTML = `
+async function loadUser(token){
+  try{
+    const r=await fetch('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(6000)});
+    if(!r.ok){localStorage.removeItem('discord_token');return;}
+    const u=await r.json();currentUser=u;isOwner=u.id===OWNER_ID;
+    if(isOwner)isPremium=true;else await checkPremium();
+    const zone=document.getElementById('sb-user-zone');
+    const avatarUrl=u.avatar?`https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png`:`https://cdn.discordapp.com/embed/avatars/0.png`;
+    zone.innerHTML=`
       <img class="sb-avatar" src="${avatarUrl}" alt="">
       <div style="flex:1;min-width:0">
         <div class="sb-user-name">${u.username}</div>
         <div id="sb-tag">
-          ${isOwner ? '<span class="sb-user-tag tag-owner">👑 OWNER</span>' :
-            isPremium ? '<span class="sb-user-tag tag-premium">★ PREMIUM</span>' :
+          ${isOwner?'<span class="sb-user-tag tag-owner">OWNER</span>':
+            isPremium?'<span class="sb-user-tag tag-premium">PREMIUM</span>':
             '<span class="sb-user-tag tag-free">FREE</span>'}
         </div>
       </div>`;
-    document.getElementById('vs-user').textContent = u.username.toUpperCase().slice(0, 10);
-
-    if (isOwner) document.getElementById('owner-sb-link').classList.remove('hidden');
-    updateVending();
-    await loadServers();
-  } catch (e) {
-    localStorage.removeItem('discord_token');
-    console.error('Auth error:', e);
-  }
+    document.getElementById('vs-user').textContent=u.username.toUpperCase().slice(0,10);
+    if(isOwner)document.getElementById('owner-sb-link').classList.remove('hidden');
+    updateVending();await loadServers();
+  }catch(e){localStorage.removeItem('discord_token');}
+}
+async function checkPremium(){
+  if(!currentUser||!backendOnline)return;
+  try{const r=await api(`/api/check-premium/${currentUser.id}`);isPremium=r.hasPremium;}catch{isPremium=false;}
 }
 
-async function checkPremium() {
-  if (!currentUser || !backendOnline) return;
-  try {
-    const r = await api(`/api/check-premium/${currentUser.id}`);
-    isPremium = r.hasPremium;
-  } catch { isPremium = false; }
-}
-
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // VENDING
-// ═══════════════════════════════════════
-function updateVending() {
-  const lock = document.getElementById('lock-screen');
-  const machine = document.getElementById('vending-machine');
-  const hasAccess = isOwner || isPremium;
-  lock.style.display = hasAccess ? 'none' : 'block';
-  machine.style.display = hasAccess ? 'block' : 'none';
-  if (hasAccess) {
-    document.getElementById('vs-tier').textContent = isOwner ? 'OWNER' : 'PREMIUM';
-    document.getElementById('vs-tier').className = 'vs-val gold';
-    document.getElementById('vs-cd').textContent = 'NONE';
+// ═══════════════════════════════════
+function updateVending(){
+  const lock=document.getElementById('lock-screen');
+  const machine=document.getElementById('vending-machine');
+  const hasAccess=isOwner||isPremium;
+  lock.style.display=hasAccess?'none':'block';
+  machine.style.display=hasAccess?'block':'none';
+  if(hasAccess){
+    document.getElementById('vs-tier').textContent=isOwner?'OWNER':'PREMIUM';
+    document.getElementById('vs-tier').className='vs-val gold';
+    document.getElementById('vs-cd').textContent='NONE';
   }
 }
+const SLOT_CODES=['A1','A2','A3','A4','A5','B1','B2','B3','B4','B5','C1','C2','C3','C4','C5'];
 
-const SLOT_CODES = ['A1','A2','A3','A4','A5','B1','B2','B3','B4','B5','C1','C2','C3','C4','C5'];
+// SVG icons per stock type
+function getSlotSVG(type){
+  const icons={
+    steam:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><circle cx="14" cy="14" r="10"/><path d="M14,8 Q18,8 18,12 Q18,16 14,16 L8,18"/><circle cx="9" cy="19" r="2.5"/></svg>`,
+    netflix:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.5"><rect x="7" y="4" width="4" height="20" rx="1"/><rect x="17" y="4" width="4" height="20" rx="1"/><line x1="11" y1="4" x2="17" y2="24"/></svg>`,
+    spotify:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><circle cx="14" cy="14" r="10"/><path d="M9,11 Q14,9 19,11" stroke-linecap="round"/><path d="M10,14 Q14,12 18,14" stroke-linecap="round"/><path d="M11,17 Q14,15 17,17" stroke-linecap="round"/></svg>`,
+    discord:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><path d="M8,6 Q6,6 5,8 L4,18 Q4,22 8,22 L10,22 L10,24 L14,22 L18,22 Q22,22 22,18 L21,8 Q20,6 18,6 Z"/><circle cx="10.5" cy="15" r="2"/><circle cx="17.5" cy="15" r="2"/></svg>`,
+    minecraft:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="5" y="5" width="18" height="18" rx="1"/><rect x="9" y="9" width="4" height="4"/><rect x="15" y="9" width="4" height="4"/><rect x="11" y="15" width="6" height="4" rx="1"/></svg>`,
+    roblox:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="6" y="6" width="16" height="16" rx="2"/><rect x="10" y="10" width="8" height="8"/></svg>`,
+    instagram:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="5" y="5" width="18" height="18" rx="4"/><circle cx="14" cy="14" r="5"/><circle cx="20" cy="8" r="1" fill="#e8153a"/></svg>`,
+    email:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="4" y="7" width="20" height="14" rx="2"/><polyline points="4,7 14,16 24,7"/></svg>`,
+    combo:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="7" y="10" width="14" height="12" rx="2"/><path d="M10,10 L10,7 Q10,4 14,4 Q18,4 18,7 L18,10"/><circle cx="14" cy="16" r="2"/></svg>`,
+    accounts:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><circle cx="14" cy="10" r="5"/><path d="M4,24 Q4,18 14,18 Q24,18 24,24"/></svg>`,
+    mega:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><path d="M5,8 L5,22 Q5,24 7,24 L21,24 Q23,24 23,22 L23,8"/><rect x="3" y="5" width="22" height="5" rx="2"/><line x1="14" y1="10" x2="14" y2="19"/><polyline points="10,15 14,19 18,15"/></svg>`,
+    randomip:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><circle cx="14" cy="14" r="10"/><line x1="4" y1="14" x2="24" y2="14"/><path d="M14,4 Q18,9 18,14 Q18,19 14,24"/><path d="M14,4 Q10,9 10,14 Q10,19 14,24"/></svg>`,
+  };
+  return icons[type]||`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#e8153a" stroke-width="1.2"><rect x="6" y="4" width="16" height="20" rx="2"/><line x1="10" y1="10" x2="18" y2="10"/><line x1="10" y1="14" x2="18" y2="14"/><line x1="10" y1="18" x2="14" y2="18"/></svg>`;
+}
 
-async function loadStock() {
-  if (!backendOnline) {
-    document.getElementById('vm-grid').innerHTML = '<div class="empty-state">Backend offline — cannot load stock.</div>';
-    return;
-  }
-  document.getElementById('vm-grid').innerHTML = '<div class="empty-state">LOADING STOCK...</div>';
-  try {
-    const stock = await api('/api/stock');
-    const entries = Object.entries(stock);
-    if (!entries.length) {
-      document.getElementById('vm-grid').innerHTML = '<div class="empty-state">NO STOCK AVAILABLE</div>';
-      return;
-    }
-    document.getElementById('vm-grid').innerHTML = entries.map(([type, data], i) => `
-      <div class="vm-slot" onclick="selectSlot('${type}','${SLOT_CODES[i] || `D${i+1}`}')" id="slot-${type}">
-        <div class="vm-slot-code">${SLOT_CODES[i] || `D${i+1}`}</div>
-        <span class="vm-slot-emoji">${data.emoji || '📄'}</span>
-        <div class="vm-slot-name">${(data.name || type).slice(0, 14)}</div>
+async function loadStock(){
+  if(!backendOnline){document.getElementById('vm-grid').innerHTML='<div class="empty-state">Backend offline — cannot load stock.</div>';return;}
+  document.getElementById('vm-grid').innerHTML='<div class="empty-state">LOADING STOCK...</div>';
+  try{
+    const stock=await api('/api/stock');
+    const entries=Object.entries(stock);
+    if(!entries.length){document.getElementById('vm-grid').innerHTML='<div class="empty-state">NO STOCK AVAILABLE</div>';return;}
+    document.getElementById('vm-grid').innerHTML=entries.map(([type,data],i)=>`
+      <div class="vm-slot" onclick="selectSlot('${type}','${SLOT_CODES[i]||`D${i+1}`}')" id="slot-${type}">
+        <div class="vm-slot-code">${SLOT_CODES[i]||`D${i+1}`}</div>
+        <div class="vm-slot-art">${getSlotSVG(type)}</div>
+        <div class="vm-slot-name">${(data.name||type).slice(0,14).toUpperCase()}</div>
         <div class="vm-slot-count">${data.count}</div>
         <div class="vm-slot-unit">IN STOCK</div>
       </div>`).join('');
-  } catch (e) {
-    document.getElementById('vm-grid').innerHTML = `<div class="empty-state">FAILED TO LOAD — ${e.message}</div>`;
-  }
+  }catch(e){document.getElementById('vm-grid').innerHTML=`<div class="empty-state">FAILED — ${e.message}</div>`;}
 }
 
-function selectSlot(type, code) {
-  selectedSlot = type;
-  document.querySelectorAll('.vm-slot').forEach(s => s.classList.remove('selected'));
-  const el = document.getElementById(`slot-${type}`);
-  if (el) el.classList.add('selected');
-  document.getElementById('vm-input').value = code;
-  setVmScreen(`SELECTED: ${type.toUpperCase()} [${code}] — PRESS DISPENSE TO GENERATE`, '');
+function selectSlot(type,code){
+  selectedSlot=type;
+  document.querySelectorAll('.vm-slot').forEach(s=>s.classList.remove('selected'));
+  const el=document.getElementById(`slot-${type}`);if(el)el.classList.add('selected');
+  document.getElementById('vm-input').value=code;
+  setVmScreen(`SELECTED: ${type.toUpperCase()} [${code}] — PRESS DISPENSE TO GENERATE`,'');
+}
+function setVmScreen(msg,cls=''){
+  const s=document.getElementById('vm-screen');s.textContent=msg;
+  s.className='vm-screen'+(cls?` ${cls}`:'');
+}
+async function dispense(){
+  if(!currentUser){setVmScreen('LOGIN REQUIRED — USE LOGIN IN THE SIDEBAR','error');return;}
+  if(!isOwner&&!isPremium){setVmScreen('PREMIUM REQUIRED — CLICK UPGRADE','error');return;}
+  if(!selectedSlot){setVmScreen('NO SLOT SELECTED — CLICK A SLOT FIRST','warn');return;}
+  if(!backendOnline){setVmScreen('BACKEND OFFLINE — BOT IS NOT RUNNING','error');return;}
+  const btn=document.getElementById('btn-dispense');
+  btn.disabled=true;setVmScreen('PROCESSING REQUEST...','warn');
+  try{
+    const r=await api('/api/gen',{method:'POST',body:JSON.stringify({stock_type:selectedSlot,user_id:currentUser.id})});
+    if(r.success){
+      setVmScreen(`DISPENSED: ${selectedSlot.toUpperCase()} — CHECK YOUR DMS`,'');
+      genCount++;document.getElementById('vs-count').textContent=genCount;
+      addGenLog(selectedSlot);loadStock();toast('Stock sent to your DMs!',true);
+    }else{setVmScreen(`ERROR: ${(r.error||r.message||'UNKNOWN').toUpperCase()}`, 'error');}
+  }catch(e){setVmScreen(`CONNECTION ERROR — ${e.message.toUpperCase()}`,'error');}
+  setTimeout(()=>{btn.disabled=false;setVmScreen('READY — SELECT AN ITEM AND PRESS DISPENSE','');},3500);
+}
+function addGenLog(type){
+  const list=document.getElementById('gen-log-body');
+  const now=new Date();
+  const t=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  const p=list.querySelector('div');if(p&&p.textContent.includes('yet'))p.remove();
+  const item=document.createElement('div');item.className='gen-log-item';
+  item.innerHTML=`<span class="gl-tick">✓</span><span>${type.toUpperCase()}</span><span class="gl-time">${t}</span>`;
+  list.prepend(item);if(list.children.length>8)list.lastChild.remove();
 }
 
-function setVmScreen(msg, cls = '') {
-  const s = document.getElementById('vm-screen');
-  s.textContent = msg;
-  s.className = 'vm-screen' + (cls ? ` ${cls}` : '');
-}
-
-async function dispense() {
-  if (!currentUser) { setVmScreen('LOGIN REQUIRED — USE LOGIN IN THE SIDEBAR', 'error'); return; }
-  if (!isOwner && !isPremium) { setVmScreen('PREMIUM REQUIRED — CLICK UPGRADE', 'error'); return; }
-  if (!selectedSlot) { setVmScreen('NO SLOT SELECTED — CLICK A SLOT FIRST', 'warn'); return; }
-  if (!backendOnline) { setVmScreen('BACKEND OFFLINE — BOT IS NOT RUNNING', 'error'); return; }
-
-  const btn = document.getElementById('btn-dispense');
-  btn.disabled = true;
-  setVmScreen('PROCESSING REQUEST...', 'warn');
-
-  try {
-    const r = await api('/api/gen', {
-      method: 'POST',
-      body: JSON.stringify({ stock_type: selectedSlot, user_id: currentUser.id })
-    });
-    if (r.success) {
-      setVmScreen(`✓ DISPENSED: ${selectedSlot.toUpperCase()} — CHECK YOUR DMS`, '');
-      genCount++;
-      document.getElementById('vs-count').textContent = genCount;
-      addGenLog(selectedSlot);
-      loadStock();
-      toast('Stock sent to your DMs!', true);
-    } else {
-      setVmScreen(`ERROR: ${(r.error || r.message || 'UNKNOWN ERROR').toUpperCase()}`, 'error');
-    }
-  } catch (e) {
-    setVmScreen(`CONNECTION ERROR — ${e.message.toUpperCase()}`, 'error');
-  }
-  setTimeout(() => {
-    btn.disabled = false;
-    setVmScreen('READY — SELECT AN ITEM AND PRESS DISPENSE', '');
-  }, 3500);
-}
-
-function addGenLog(type) {
-  const list = document.getElementById('gen-log-body');
-  const now = new Date();
-  const t = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-  // Remove placeholder
-  const p = list.querySelector('div');
-  if (p && p.style.color.includes('text3') || (p && p.textContent.includes('yet'))) p.remove();
-  const item = document.createElement('div');
-  item.className = 'gen-log-item';
-  item.innerHTML = `<span class="gl-tick">✓</span><span>${type.toUpperCase()}</span><span class="gl-time">${t}</span>`;
-  list.prepend(item);
-  if (list.children.length > 8) list.lastChild.remove();
-}
-
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // STATS
-// ═══════════════════════════════════════
-async function loadStats() {
-  if (!backendOnline) return;
-  try {
-    const [s, stock] = await Promise.all([api('/api/stats'), api('/api/stock')]);
-    document.getElementById('s-users').textContent = (s.total_users || 0).toLocaleString();
-    document.getElementById('s-servers').textContent = (s.total_servers || 0).toLocaleString();
-    document.getElementById('s-cmds').textContent = (s.total_commands || 0).toLocaleString();
-    document.getElementById('s-prem').textContent = (s.premium_users || 0).toLocaleString();
-    document.getElementById('s-ping').textContent = s.latency ? `${s.latency}ms` : '—';
-    let total = 0;
-    for (const d of Object.values(stock)) total += d.count;
-    document.getElementById('s-stock').textContent = total.toLocaleString();
-    document.getElementById('vs-coins').textContent = (s.total_coins || 0).toLocaleString();
-
-    // Activity chart
-    renderDashChart(s.activity || [0,0,0,0,0,0,0]);
-
-    // Activity feed
-    const list = document.getElementById('activity-list');
-    if (s.recent && s.recent.length) {
-      list.innerHTML = s.recent.map(r => `
+// ═══════════════════════════════════
+async function loadStats(){
+  if(!backendOnline)return;
+  try{
+    const[s,stock]=await Promise.all([api('/api/stats'),api('/api/stock')]);
+    document.getElementById('s-users').textContent=(s.total_users||0).toLocaleString();
+    document.getElementById('s-servers').textContent=(s.total_servers||0).toLocaleString();
+    document.getElementById('s-cmds').textContent=(s.total_commands||0).toLocaleString();
+    document.getElementById('s-prem').textContent=(s.premium_users||0).toLocaleString();
+    document.getElementById('s-ping').textContent=s.latency?`${s.latency}ms`:'—';
+    let total=0;for(const d of Object.values(stock))total+=d.count;
+    document.getElementById('s-stock').textContent=total.toLocaleString();
+    document.getElementById('vs-coins').textContent=(s.total_coins||0).toLocaleString();
+    renderDashChart(s.activity||[0,0,0,0,0,0,0]);
+    const list=document.getElementById('activity-list');
+    if(s.recent&&s.recent.length){
+      list.innerHTML=s.recent.map(r=>`
         <div class="activity-item">
-          <div class="ai-avatar">${(r.username || '?')[0].toUpperCase()}</div>
-          <div><div class="ai-name">${r.username || 'Unknown'}</div><div class="ai-action">generated ${r.type || 'item'}</div></div>
-          <span class="ai-time">${r.time || ''}</span>
+          <div class="ai-avatar">${(r.username||'?')[0].toUpperCase()}</div>
+          <div><div class="ai-name">${r.username||'Unknown'}</div><div class="ai-action">generated ${r.type||'item'}</div></div>
+          <span class="ai-time">${r.time||''}</span>
         </div>`).join('');
-    } else {
-      list.innerHTML = '<div class="empty-state">No recent activity</div>';
-    }
-  } catch (e) {
-    console.error('Stats error:', e);
+    }else{list.innerHTML='<div class="empty-state">No recent activity</div>';}
+  }catch(e){console.error('Stats error:',e);}
+}
+
+const chartCfg={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#7070a0',font:{family:'JetBrains Mono',size:10}}}},
+  scales:{
+    y:{grid:{color:'rgba(255,255,255,0.03'},ticks:{color:'#333352',font:{family:'JetBrains Mono',size:9}}},
+    x:{grid:{color:'rgba(255,255,255,0.03'},ticks:{color:'#333352',font:{family:'JetBrains Mono',size:9}}}
   }
+};
+function renderDashChart(data){
+  if(dashChart)dashChart.destroy();
+  const ctx=document.getElementById('activity-chart').getContext('2d');
+  dashChart=new Chart(ctx,{type:'line',data:{
+    labels:['7D','6D','5D','4D','3D','YDAY','TODAY'],
+    datasets:[{label:'COMMANDS',data,borderColor:'#e8153a',backgroundColor:'rgba(232,21,58,0.06)',fill:true,tension:0.4,pointBackgroundColor:'#e8153a',pointRadius:3,borderWidth:1.5}]
+  },options:chartCfg});
 }
 
-let dashChart = null;
-function renderDashChart(data) {
-  if (dashChart) dashChart.destroy();
-  const ctx = document.getElementById('activity-chart').getContext('2d');
-  dashChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['7d','6d','5d','4d','3d','Yesterday','Today'],
-      datasets: [{
-        label: 'Commands',
-        data,
-        borderColor: '#ff2244',
-        backgroundColor: 'rgba(255,34,68,0.07)',
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#ff2244',
-        pointRadius: 4,
-        borderWidth: 2,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#88889a', font: { family: 'Bebas Neue', size: 13 } } } },
-      scales: {
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44444c', font: { family: 'Space Mono', size: 10 } } },
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44444c', font: { family: 'Space Mono', size: 10 } } }
-      }
-    }
-  });
-}
-
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // ANALYTICS
-// ═══════════════════════════════════════
-async function loadAnalytics() {
-  if (!backendOnline) return;
-  try {
-    const s = await api('/api/stats');
-    document.getElementById('a-users').textContent = (s.total_users || 0).toLocaleString();
-    document.getElementById('a-active').textContent = (s.total_commands || 0).toLocaleString();
-    document.getElementById('a-gens').textContent = (s.total_commands || 0).toLocaleString();
-    document.getElementById('a-prem').textContent = (s.premium_users || 0).toLocaleString();
-
-    if (actChart) actChart.destroy();
-    const ctx = document.getElementById('analytics-chart').getContext('2d');
-    actChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['7d','6d','5d','4d','3d','Yesterday','Today'],
-        datasets: [{
-          label: 'Commands',
-          data: s.activity || [0,0,0,0,0,0,0],
-          backgroundColor: 'rgba(255,34,68,0.7)',
-          borderRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#88889a' } } },
-        scales: {
-          y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44444c', font: { family: 'Space Mono', size: 10 } } },
-          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#44444c', font: { family: 'Space Mono', size: 10 } } }
-        }
-      }
-    });
-
-    const feed = document.getElementById('analytics-feed');
-    if (s.recent && s.recent.length) {
-      feed.innerHTML = s.recent.map(r => `
+// ═══════════════════════════════════
+async function loadAnalytics(){
+  if(!backendOnline)return;
+  try{
+    const s=await api('/api/stats');
+    document.getElementById('a-users').textContent=(s.total_users||0).toLocaleString();
+    document.getElementById('a-active').textContent=(s.total_commands||0).toLocaleString();
+    document.getElementById('a-gens').textContent=(s.total_commands||0).toLocaleString();
+    document.getElementById('a-prem').textContent=(s.premium_users||0).toLocaleString();
+    if(actChart)actChart.destroy();
+    const ctx=document.getElementById('analytics-chart').getContext('2d');
+    actChart=new Chart(ctx,{type:'bar',data:{
+      labels:['7D','6D','5D','4D','3D','YDAY','TODAY'],
+      datasets:[{label:'COMMANDS',data:s.activity||[0,0,0,0,0,0,0],backgroundColor:'rgba(232,21,58,0.6)',borderRadius:2}]
+    },options:chartCfg});
+    const feed=document.getElementById('analytics-feed');
+    if(s.recent&&s.recent.length){
+      feed.innerHTML=s.recent.map(r=>`
         <div class="activity-item">
           <div class="ai-avatar">${(r.username||'?')[0].toUpperCase()}</div>
           <div><div class="ai-name">${r.username||'Unknown'}</div><div class="ai-action">${r.type||'unknown'}</div></div>
           <span class="ai-time">${r.time||''}</span>
         </div>`).join('');
-    } else {
-      feed.innerHTML = '<div class="empty-state">No recent activity</div>';
-    }
-  } catch (e) { console.error('Analytics error:', e); }
+    }else{feed.innerHTML='<div class="empty-state">No recent activity</div>';}
+  }catch(e){console.error(e);}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // OWNER STATS
-// ═══════════════════════════════════════
-async function loadOwnerStats() {
-  if (!backendOnline) return;
-  try {
-    const [s, stock] = await Promise.all([api('/api/stats'), api('/api/stock')]);
-    document.getElementById('ow-users').textContent = (s.total_users || 0).toLocaleString();
-    document.getElementById('ow-servers').textContent = (s.total_servers || 0).toLocaleString();
-    document.getElementById('ow-prem').textContent = (s.premium_users || 0).toLocaleString();
-    document.getElementById('ow-banned').textContent = '—';
-    document.getElementById('ow-ping').textContent = s.latency ? `${s.latency}ms` : '—';
-    let total = 0;
-    for (const d of Object.values(stock)) total += d.count;
-    document.getElementById('ow-stock').textContent = total.toLocaleString();
-  } catch {}
+// ═══════════════════════════════════
+async function loadOwnerStats(){
+  if(!backendOnline)return;
+  try{
+    const[s,stock]=await Promise.all([api('/api/stats'),api('/api/stock')]);
+    document.getElementById('ow-users').textContent=(s.total_users||0).toLocaleString();
+    document.getElementById('ow-servers').textContent=(s.total_servers||0).toLocaleString();
+    document.getElementById('ow-prem').textContent=(s.premium_users||0).toLocaleString();
+    document.getElementById('ow-ping').textContent=s.latency?`${s.latency}ms`:'—';
+  }catch{}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // SERVERS / COMMANDS
-// ═══════════════════════════════════════
-async function loadServers() {
-  const chips = document.getElementById('server-chips');
-  if (!backendOnline) {
-    chips.innerHTML = '<div class="empty-state" style="padding:16px">Backend offline</div>';
-    return;
-  }
-  chips.innerHTML = '<div class="empty-state" style="padding:16px">Loading servers...</div>';
-  try {
-    const servers = await api('/api/servers');
-    if (!servers.length) { chips.innerHTML = '<div class="empty-state" style="padding:16px">No servers found</div>'; return; }
-    chips.innerHTML = servers.map(s => `
+// ═══════════════════════════════════
+async function loadServers(){
+  const chips=document.getElementById('server-chips');
+  if(!backendOnline){chips.innerHTML='<div class="empty-state" style="padding:14px">Backend offline</div>';return;}
+  chips.innerHTML='<div class="empty-state" style="padding:14px">Loading...</div>';
+  try{
+    const servers=await api('/api/servers');
+    if(!servers.length){chips.innerHTML='<div class="empty-state" style="padding:14px">No servers found</div>';return;}
+    chips.innerHTML=servers.map(s=>`
       <div class="server-chip" onclick="selectServer('${s.id}','${s.name}',this)">
         <div class="chip-dot"></div>${s.name}
-        <span style="font-size:11px;color:var(--text3);margin-left:4px">${s.memberCount}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:4px">${s.memberCount}</span>
       </div>`).join('');
-  } catch (e) {
-    chips.innerHTML = `<div class="empty-state" style="padding:16px">Failed: ${e.message}</div>`;
-  }
+  }catch(e){chips.innerHTML=`<div class="empty-state" style="padding:14px">Failed: ${e.message}</div>`;}
 }
-
-const cmdCats = {
+const cmdCats={
   balance:'economy',daily:'economy',coinflip:'economy',rps:'economy',slots:'economy',blackjack:'economy',joke:'economy',eightball:'economy',riddle:'economy',
   gen:'stock',dmgen:'stock',stocklist:'stock',addstock:'stock',deletestock:'stock',setgenaccess:'stock',setautoupdate:'stock',
   jail:'moderation',unjail:'moderation',purge:'moderation',warnings:'moderation',resetwarn:'moderation',setroleonjoin:'moderation',set_logs:'moderation',add_allowed_channel:'moderation',upload_bad_words:'moderation',sendnotice:'moderation',
   setnotichannel:'notifications',addyoutubechannel:'notifications',addtwitchstream:'notifications',addtwitteraccount:'notifications',
-  reactionrole:'management',setreportchannel:'management',report:'management',setlogchannels:'management',save_server:'management',load_server:'management',add_to_channel:'management',test:'management',togglecommand:'management',commandroles:'management',commandchannels:'management',listcommands:'management',view_enabled_commands:'management',
+  reactionrole:'management',setreportchannel:'management',report:'management',save_server:'management',load_server:'management',add_to_channel:'management',test:'management',togglecommand:'management',commandroles:'management',commandchannels:'management',listcommands:'management',view_enabled_commands:'management',setup_logging:'management',ticket_panel:'management',close_ticket:'management',add_ticket_panel:'management',create_application:'management',application_panel:'management',review_app:'management',list_applications:'management',
   gif:'fun',meme:'fun',hug:'fun',slap:'fun',say:'fun'
 };
-const cmdDesc = {
+const cmdDesc={
   balance:'Check coins, XP, and level',daily:'Claim daily coins (24h cooldown)',coinflip:'Flip a coin',rps:'Rock Paper Scissors',slots:'Slot machine (20 coins)',blackjack:'Play blackjack',joke:'Random joke',eightball:'Magic 8-ball',riddle:'Riddle for coins',
   gen:'Generate stock entry',dmgen:'Generate via DM',stocklist:'List stock types',addstock:'Add stock entries (Admin)',deletestock:'Delete stock file (Admin)',setgenaccess:'Set gen access roles (Admin)',setautoupdate:'Set auto-update channel (Admin)',
   jail:'Jail a member',unjail:'Unjail a member',purge:'Delete messages',warnings:'View user warnings',resetwarn:'Reset warnings (Admin)',setroleonjoin:'Auto-assign role on join (Admin)',set_logs:'Set log channel (Admin)',add_allowed_channel:'Allow channel (Admin)',upload_bad_words:'Upload bad word list (Admin)',sendnotice:'Send a notification',
   setnotichannel:'Set notification channel (Admin)',addyoutubechannel:'Track YouTube channel',addtwitchstream:'Track Twitch stream',addtwitteraccount:'Track Twitter account',
-  reactionrole:'Create reaction role menu',setreportchannel:'Set report channel (Admin)',report:'Report to moderators',setlogchannels:'Set all log channels (Admin)',save_server:'Save server backup (Admin)',load_server:'Restore from backup (Admin)',add_to_channel:'Configure 4:20 messages (Admin)',test:'Test 4:20 message',togglecommand:'Toggle a command',commandroles:'Set command roles',commandchannels:'Disable command in channels',listcommands:'List all commands',view_enabled_commands:'View enabled commands',
-  gif:'Get a GIF',meme:'Random meme',hug:'Hug someone',slap:'Slap someone',say:'Bot repeats text'
+  reactionrole:'Create reaction role menu',setreportchannel:'Set report channel (Admin)',report:'Report to moderators',save_server:'Save server backup (Admin)',load_server:'Restore from backup (Admin)',add_to_channel:'Configure 4:20 messages (Admin)',test:'Test 4:20 message',togglecommand:'Toggle a command on/off',commandroles:'Set command role restrictions',commandchannels:'Disable command in channels',listcommands:'List all commands',view_enabled_commands:'View your available commands',setup_logging:'Configure all log channels',ticket_panel:'Create support ticket panel',close_ticket:'Close current ticket',add_ticket_panel:'Add ticket panel to channel',create_application:'Create application form',application_panel:'Create application panel',review_app:'Review an application',list_applications:'List pending applications',
+  gif:'Get a GIF from GIPHY',meme:'Random meme',hug:'Hug someone',slap:'Slap someone',say:'Bot repeats your text'
 };
 
-async function selectServer(id, name, el) {
-  selectedServer = id;
-  document.querySelectorAll('.server-chip').forEach(c => c.classList.remove('active'));
+async function selectServer(id,name,el){
+  selectedServer=id;
+  document.querySelectorAll('.server-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('cmd-server-label').textContent = name;
-  document.getElementById('cmd-panel').style.display = 'block';
-  try {
-    const cfg = await api(`/api/server/${id}/config`);
-    commandsData = cfg.commands || {};
-    renderCmds();
-  } catch (e) {
-    document.getElementById('cmd-grid').innerHTML = `<div class="empty-state">Failed to load: ${e.message}</div>`;
-  }
+  document.getElementById('cmd-server-label').textContent=name;
+  document.getElementById('cmd-panel').style.display='block';
+  try{
+    const cfg=await api(`/api/server/${id}/config`);
+    commandsData=cfg.commands||{};renderCmds();
+  }catch(e){document.getElementById('cmd-grid').innerHTML=`<div class="empty-state">Failed to load: ${e.message}</div>`;}
 }
 
-function renderCmds() {
-  const grid = document.getElementById('cmd-grid');
-  const search = document.getElementById('cmd-search').value.toLowerCase();
-  const cat = document.querySelector('.cat-btn.active').dataset.cat;
-  const cmds = Object.keys(commandsData).filter(c =>
-    c.toLowerCase().includes(search) && (cat === 'all' || cmdCats[c] === cat)
-  );
-  if (!cmds.length) { grid.innerHTML = '<div class="empty-state">No commands found</div>'; return; }
-  grid.innerHTML = cmds.map(c => {
-    const cfg = commandsData[c] || { enabled: true, allowed_roles: [] };
-    return `<div class="cmd-card">
+function renderCmds(){
+  const grid=document.getElementById('cmd-grid');
+  const search=document.getElementById('cmd-search').value.toLowerCase();
+  const cat=document.querySelector('.cat-btn.active').dataset.cat;
+  const cmds=Object.keys(commandsData).filter(c=>c.toLowerCase().includes(search)&&(cat==='all'||cmdCats[c]===cat));
+  if(!cmds.length){grid.innerHTML='<div class="empty-state">No commands found</div>';return;}
+  grid.innerHTML=cmds.map(c=>{
+    const cfg=commandsData[c]||{enabled:true,allowed_roles:[]};
+    return`<div class="cmd-card">
       <div class="cmd-top">
         <span class="cmd-name">/${c}</span>
-        <div class="toggle ${cfg.enabled ? 'on' : ''}" onclick="toggleCmd('${c}')"></div>
+        <div class="toggle ${cfg.enabled?'on':''}" onclick="toggleCmd('${c}')"></div>
       </div>
-      <div class="cmd-desc">${cmdDesc[c] || 'Configure this command'}</div>
+      <div class="cmd-desc">${cmdDesc[c]||'Configure this command'}</div>
       <div class="cmd-bottom">
-        <input type="text" class="cmd-role-input" id="role-${c}" placeholder="Role IDs (comma separated)" value="${(cfg.allowed_roles || []).join(',')}">
+        <input type="text" class="cmd-role-input" id="role-${c}" placeholder="Role IDs (comma sep.)" value="${(cfg.allowed_roles||[]).join(',')}">
         <button class="btn-sm" onclick="saveCmd('${c}')">SAVE</button>
       </div>
     </div>`;
   }).join('');
 }
 
-async function toggleCmd(c) {
-  const cfg = commandsData[c] || { enabled: true };
-  const ns = !cfg.enabled;
-  try {
-    await api(`/api/server/${selectedServer}/command/${c}`, {
-      method: 'POST',
-      body: JSON.stringify({ enabled: ns, allowed_roles: cfg.allowed_roles || [], disabled_channels: cfg.disabled_channels || [] })
-    });
-    commandsData[c] = { ...cfg, enabled: ns };
-    renderCmds();
-    toast(`/${c} ${ns ? 'enabled' : 'disabled'}`, ns);
-  } catch { toast('Failed to update', false); }
+async function toggleCmd(c){
+  const cfg=commandsData[c]||{enabled:true};const ns=!cfg.enabled;
+  try{
+    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:ns,allowed_roles:cfg.allowed_roles||[],disabled_channels:cfg.disabled_channels||[]})});
+    commandsData[c]={...cfg,enabled:ns};renderCmds();toast(`/${c} ${ns?'enabled':'disabled'}`,ns);
+  }catch{toast('Failed to update',false);}
+}
+async function saveCmd(c){
+  const cfg=commandsData[c]||{enabled:true};
+  const inp=document.getElementById(`role-${c}`);
+  const roles=inp?.value?inp.value.split(',').map(r=>parseInt(r.trim())).filter(r=>!isNaN(r)):[];
+  try{
+    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:cfg.enabled,allowed_roles:roles,disabled_channels:cfg.disabled_channels||[]})});
+    commandsData[c]={...cfg,allowed_roles:roles};toast(`/${c} saved`,true);
+  }catch{toast('Failed to save',false);}
 }
 
-async function saveCmd(c) {
-  const cfg = commandsData[c] || { enabled: true };
-  const inp = document.getElementById(`role-${c}`);
-  const roles = inp?.value ? inp.value.split(',').map(r => parseInt(r.trim())).filter(r => !isNaN(r)) : [];
-  try {
-    await api(`/api/server/${selectedServer}/command/${c}`, {
-      method: 'POST',
-      body: JSON.stringify({ enabled: cfg.enabled, allowed_roles: roles, disabled_channels: cfg.disabled_channels || [] })
-    });
-    commandsData[c] = { ...cfg, allowed_roles: roles };
-    toast(`/${c} saved`, true);
-  } catch { toast('Failed to save', false); }
-}
-
-document.getElementById('cmd-search').addEventListener('input', renderCmds);
-document.querySelectorAll('.cat-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderCmds();
+document.getElementById('cmd-search').addEventListener('input',renderCmds);
+document.querySelectorAll('.cat-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');renderCmds();
   });
 });
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // MODALS
-// ═══════════════════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function openPremiumModal() { openModal('modal-premium'); }
-document.querySelectorAll('.modal-bg').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
-});
+// ═══════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openPremiumModal(){openModal('modal-premium');}
+document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
 
-function showModal(title, sub, bodyHtml, onConfirm) {
-  document.getElementById('mm-title').textContent = title;
-  document.getElementById('mm-sub').textContent = sub || '';
-  document.getElementById('mm-body').innerHTML = bodyHtml || '';
-  const btn = document.getElementById('mm-confirm');
-  const newBtn = btn.cloneNode(true);
-  btn.parentNode.replaceChild(newBtn, btn);
-  if (onConfirm) {
-    newBtn.style.display = '';
-    newBtn.addEventListener('click', () => { closeModal('modal-main'); onConfirm(); });
-  } else {
-    newBtn.style.display = 'none';
-  }
+function showModal(title,sub,bodyHtml,onConfirm){
+  document.getElementById('mm-title').textContent=title;
+  document.getElementById('mm-sub').textContent=sub||'';
+  document.getElementById('mm-body').innerHTML=bodyHtml||'';
+  const btn=document.getElementById('mm-confirm');
+  const newBtn=btn.cloneNode(true);btn.parentNode.replaceChild(newBtn,btn);
+  if(onConfirm){newBtn.style.display='';newBtn.addEventListener('click',()=>{closeModal('modal-main');onConfirm();});}
+  else{newBtn.style.display='none';}
   openModal('modal-main');
 }
 
-function processPayment(method) {
-  const link = method === 'paypal' ? 'https://paypal.me/yourusername/3' : 'https://cash.app/$yourcashapp/3';
-  showModal('PAYMENT', 'Send $3 then verify below.', `
-    <div style="display:flex;gap:10px;margin:12px 0">
-      <a href="${link}" target="_blank" style="flex:1;padding:11px;background:var(--red);color:#fff;text-align:center;text-decoration:none;font-family:var(--display);font-size:16px;letter-spacing:0.06em;border-radius:4px">PAY NOW</a>
-      <button onclick="verifyPayment()" style="flex:1;padding:11px;background:var(--bg2);border:1px solid var(--border-r);color:var(--red);font-family:var(--display);font-size:16px;cursor:pointer;border-radius:4px">I HAVE PAID</button>
-    </div>`, null);
+function processPayment(method){
+  const link=method==='paypal'?'https://paypal.me/yourusername/3':'https://cash.app/$yourcashapp/3';
+  showModal('PAYMENT','Send $3 then verify below.',`
+    <div style="display:flex;gap:8px;margin:12px 0">
+      <a href="${link}" target="_blank" style="flex:1;padding:10px;background:var(--red);color:#fff;text-align:center;text-decoration:none;font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:0.08em;border-radius:3px">PAY NOW</a>
+      <button onclick="verifyPayment()" style="flex:1;padding:10px;background:var(--bg2);border:1px solid var(--border-r);color:var(--red);font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer;border-radius:3px;letter-spacing:0.08em">I PAID</button>
+    </div>`,null);
 }
-
-function verifyPayment() {
-  closeModal('modal-main');
-  closeModal('modal-premium');
+function verifyPayment(){
+  closeModal('modal-main');closeModal('modal-premium');
   toast('Verifying payment...');
-  setTimeout(() => {
-    isPremium = true;
-    updateVending();
-    loadStock();
-    toast('Premium activated!', true);
-  }, 1800);
+  setTimeout(()=>{isPremium=true;updateVending();loadStock();toast('Premium activated!',true);},1800);
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // OWNER ACTIONS
-// ═══════════════════════════════════════
-async function ownerAction(action) {
-  switch(action) {
+// ═══════════════════════════════════
+async function ownerAction(action){
+  switch(action){
     case 'pull':
-      showModal('PULL MEMBERS', 'Restore saved members to a server.',
+      showModal('PULL MEMBERS','Restore saved members to a server.',
         '<input class="modal-input" id="pull-srv" placeholder="Server ID or Name"><input class="modal-input" id="pull-cnt" placeholder="Count or all" value="all">',
-        async () => {
-          const s = document.getElementById('pull-srv').value;
-          if (!s) { toast('Enter a server'); return; }
+        async()=>{
+          const s=document.getElementById('pull-srv').value;if(!s){toast('Enter a server');return;}
           toast('Pulling members...');
-          try { const r = await api('/api/owner/pull', { method:'POST', body: JSON.stringify({ target_server:s, count: document.getElementById('pull-cnt').value }) }); toast(r.message || 'Done!', true); }
-          catch { toast('Failed — backend may not support this endpoint yet'); }
-        });
-      break;
+          try{const r=await api('/api/owner/pull',{method:'POST',body:JSON.stringify({target_server:s,count:document.getElementById('pull-cnt').value})});toast(r.message||'Done!',true);}
+          catch{toast('Failed');}
+        });break;
     case 'save_all':
-      showModal('SAVE ALL SERVERS', 'This will backup every server. Continue?', null,
-        async () => { toast('Saving...'); try { await api('/api/owner/save_all', { method:'POST' }); toast('All servers saved!', true); } catch { toast('Failed'); } });
-      break;
+      showModal('SAVE ALL SERVERS','This will backup every server. Continue?',null,
+        async()=>{toast('Saving...');try{await api('/api/owner/save_all',{method:'POST'});toast('All servers saved!',true);}catch{toast('Failed');}});break;
     case 'server_list':
-      try {
-        const s = await api('/api/servers');
-        showModal('SERVER LIST', `${s.length} servers total`,
-          `<pre style="font-family:var(--mono);font-size:11px;color:#0f0;max-height:300px;overflow:auto;background:#000;padding:12px;border-radius:4px">${s.map(x => `${x.name}\n  ID: ${x.id}  Members: ${x.memberCount}`).join('\n\n')}</pre>`, null);
-      } catch { toast('Failed to load servers'); }
-      break;
+      try{
+        const s=await api('/api/servers');
+        showModal('SERVER LIST',`${s.length} servers total`,
+          `<pre style="font-family:var(--mono);font-size:10px;color:#0f0;max-height:280px;overflow:auto;background:#000;padding:12px;border-radius:3px">${s.map(x=>`${x.name}\n  ID: ${x.id}  Members: ${x.memberCount}`).join('\n\n')}</pre>`,null);
+      }catch{toast('Failed to load servers');}break;
     case 'coins':
-      showModal('MANAGE COINS', 'Add or remove coins from a user.',
+      showModal('MANAGE COINS','Add or remove coins from a user.',
         '<input class="modal-input" id="c-uid" placeholder="User ID"><input class="modal-input" type="number" id="c-amt" placeholder="Amount (negative to remove)">',
-        async () => {
-          const uid = document.getElementById('c-uid').value;
-          const amt = parseInt(document.getElementById('c-amt').value);
-          if (!uid || isNaN(amt)) { toast('Invalid input'); return; }
-          try { await api('/api/owner/manage_coins', { method:'POST', body: JSON.stringify({ user_id: uid, amount: amt }) }); toast(`${amt > 0 ? 'Added' : 'Removed'} ${Math.abs(amt)} coins`, true); }
-          catch { toast('Failed'); }
-        });
-      break;
+        async()=>{
+          const uid=document.getElementById('c-uid').value;const amt=parseInt(document.getElementById('c-amt').value);
+          if(!uid||isNaN(amt)){toast('Invalid input');return;}
+          try{await api('/api/owner/manage_coins',{method:'POST',body:JSON.stringify({user_id:uid,amount:amt})});toast(`${amt>0?'Added':'Removed'} ${Math.abs(amt)} coins`,true);}
+          catch{toast('Failed');}
+        });break;
     case 'ban':
-      showModal('BAN USER', 'Ban a user from accessing the bot.',
+      showModal('BAN USER','Ban a user from accessing the bot.',
         '<input class="modal-input" id="b-uid" placeholder="User ID"><input class="modal-input" id="b-rsn" placeholder="Reason">',
-        async () => {
-          const uid = document.getElementById('b-uid').value;
-          if (!uid) { toast('Enter a user ID'); return; }
-          try { await api('/api/owner/ban_user', { method:'POST', body: JSON.stringify({ user_id: uid, reason: document.getElementById('b-rsn').value || 'No reason' }) }); toast(`User ${uid} banned`, true); }
-          catch { toast('Failed'); }
-        });
-      break;
+        async()=>{
+          const uid=document.getElementById('b-uid').value;if(!uid){toast('Enter a user ID');return;}
+          try{await api('/api/owner/ban_user',{method:'POST',body:JSON.stringify({user_id:uid,reason:document.getElementById('b-rsn').value||'No reason'})});toast(`User ${uid} banned`,true);}
+          catch{toast('Failed');}
+        });break;
     case 'premium_list':
-      try {
-        const p = await api('/api/owner/premium_users');
-        showModal('PREMIUM USERS', `${(p||[]).length} premium users`,
-          `<pre style="font-family:var(--mono);font-size:11px;color:#0f0;max-height:300px;overflow:auto;background:#000;padding:12px;border-radius:4px">${(p||[]).map(u => `${u.username}\n  Status: ${u.is_active?'ACTIVE':'INACTIVE'}  Since: ${(u.granted_at||'').slice(0,10)}`).join('\n\n') || 'No premium users'}</pre>`, null);
-      } catch { toast('Failed to load'); }
-      break;
+      try{
+        const p=await api('/api/owner/premium_users');
+        showModal('PREMIUM USERS',`${(p||[]).length} premium users`,
+          `<pre style="font-family:var(--mono);font-size:10px;color:#0f0;max-height:280px;overflow:auto;background:#000;padding:12px;border-radius:3px">${(p||[]).map(u=>`${u.username}\n  Status: ${u.is_active?'ACTIVE':'INACTIVE'}  Since: ${(u.granted_at||'').slice(0,10)}`).join('\n\n')||'No premium users'}</pre>`,null);
+      }catch{toast('Failed to load');}break;
     case 'logs':
-      try {
-        const l = await api('/api/owner/logs');
-        showModal('SYSTEM LOGS', 'Recent system activity',
-          `<pre style="font-family:var(--mono);font-size:10px;color:#0f0;max-height:320px;overflow:auto;background:#000;padding:12px;border-radius:4px">${(l||[]).map(x => `[${(x.time||'').slice(0,19)}] uid:${x.userId} → ${x.action}`).join('\n') || 'No logs'}</pre>`, null);
-      } catch { toast('Failed to load logs'); }
-      break;
+      try{
+        const l=await api('/api/owner/logs');
+        showModal('SYSTEM LOGS','Recent system activity',
+          `<pre style="font-family:var(--mono);font-size:9px;color:#0f0;max-height:300px;overflow:auto;background:#000;padding:12px;border-radius:3px">${(l||[]).map(x=>`[${(x.time||'').slice(0,19)}] uid:${x.userId} → ${x.action}`).join('\n')||'No logs'}</pre>`,null);
+      }catch{toast('Failed to load logs');}break;
     case 'stock_stats':
-      try {
-        const s = await api('/api/stock');
-        let total = 0, txt = '';
-        for (const [k,d] of Object.entries(s)) { txt += `${d.emoji||'📄'} ${k}: ${d.count} entries\n`; total += d.count; }
-        showModal('STOCK STATS', `${total.toLocaleString()} total entries`,
-          `<pre style="font-family:var(--mono);font-size:12px;color:#0f0;background:#000;padding:12px;border-radius:4px">${txt || 'No stock'}</pre>`, null);
-      } catch { toast('Failed to load stock'); }
-      break;
+      try{
+        const s=await api('/api/stock');let total=0,txt='';
+        for(const[k,d]of Object.entries(s)){txt+=`${k.padEnd(16)} ${d.count} entries\n`;total+=d.count;}
+        showModal('STOCK STATS',`${total.toLocaleString()} total entries`,
+          `<pre style="font-family:var(--mono);font-size:11px;color:#0f0;background:#000;padding:12px;border-radius:3px">${txt||'No stock'}</pre>`,null);
+      }catch{toast('Failed to load stock');}break;
     case 'broadcast':
-      showModal('BROADCAST', 'Send an announcement to all configured servers.',
+      showModal('BROADCAST','Send an announcement to all configured servers.',
         '<textarea class="modal-textarea" id="bc-msg" rows="4" placeholder="Enter your message..."></textarea>',
-        async () => {
-          const msg = document.getElementById('bc-msg').value;
-          if (!msg) { toast('Enter a message'); return; }
-          try { const r = await api('/api/owner/broadcast', { method:'POST', body: JSON.stringify({ message: msg }) }); toast(r.message || 'Broadcast sent!', true); }
-          catch { toast('Failed to broadcast'); }
-        });
-      break;
+        async()=>{
+          const msg=document.getElementById('bc-msg').value;if(!msg){toast('Enter a message');return;}
+          try{const r=await api('/api/owner/broadcast',{method:'POST',body:JSON.stringify({message:msg})});toast(r.message||'Broadcast sent!',true);}
+          catch{toast('Failed to broadcast');}
+        });break;
     case 'backup_db':
-      showModal('BACKUP DATABASE', 'Create a full database backup?', null,
-        async () => { toast('Backing up...'); try { const r = await api('/api/owner/backup_db', { method:'POST' }); toast(`Backed up: ${r.filename||'done'}`, true); } catch { toast('Failed'); } });
-      break;
+      showModal('BACKUP DATABASE','Create a full database backup?',null,
+        async()=>{toast('Backing up...');try{const r=await api('/api/owner/backup_db',{method:'POST'});toast(`Backed up: ${r.filename||'done'}`,true);}catch{toast('Failed');}});break;
     case 'restore':
-      showModal('RESTORE SERVER', 'Restore a server from its saved backup.',
+      showModal('RESTORE SERVER','Restore a server from its saved backup.',
         '<input class="modal-input" id="r-sid" placeholder="Server ID">',
-        async () => {
-          const sid = document.getElementById('r-sid').value;
-          if (!sid) { toast('Enter a server ID'); return; }
+        async()=>{
+          const sid=document.getElementById('r-sid').value;if(!sid){toast('Enter a server ID');return;}
           toast('Restoring...');
-          try { await api('/api/owner/restore_server', { method:'POST', body: JSON.stringify({ server_id: sid }) }); toast('Server restored!', true); }
-          catch { toast('Failed'); }
-        });
-      break;
+          try{await api('/api/owner/restore_server',{method:'POST',body:JSON.stringify({server_id:sid})});toast('Server restored!',true);}
+          catch{toast('Failed');}
+        });break;
     case 'grant_premium':
-      showModal('GRANT PREMIUM', 'Manually assign premium role to a user.',
+      showModal('GRANT PREMIUM','Manually assign premium role to a user.',
         '<input class="modal-input" id="gp-uid" placeholder="User ID">',
-        async () => {
-          const uid = document.getElementById('gp-uid').value;
-          if (!uid) { toast('Enter a user ID'); return; }
-          try { await api('/api/verify-payment', { method:'POST', body: JSON.stringify({ user_id: uid, method: 'manual', transaction_id: 'manual' }) }); toast(`Premium granted to ${uid}`, true); }
-          catch { toast('Failed'); }
-        });
-      break;
+        async()=>{
+          const uid=document.getElementById('gp-uid').value;if(!uid){toast('Enter a user ID');return;}
+          try{await api('/api/verify-payment',{method:'POST',body:JSON.stringify({user_id:uid,method:'manual',transaction_id:'manual'})});toast(`Premium granted to ${uid}`,true);}
+          catch{toast('Failed');}
+        });break;
   }
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
 // INIT
-// ═══════════════════════════════════════
-async function init() {
-  await getKey();
-  handleCallback();
-  switchTab('dashboard');
-
-  // Auto-refresh
-  setInterval(async () => {
-    if (!backendOnline) { await getKey(); return; }
-    const activePane = document.querySelector('.tab-pane.active');
-    if (!activePane) return;
-    const id = activePane.id;
-    if (id === 'tab-dashboard') loadStats();
-    if (id === 'tab-analytics') loadAnalytics();
-    if (id === 'tab-vending' && (isOwner || isPremium)) loadStock();
-    if (id === 'tab-owner') loadOwnerStats();
-  }, 30000);
+// ═══════════════════════════════════
+async function init(){
+  await getKey();handleCallback();switchTab('dashboard');
+  setInterval(async()=>{
+    if(!backendOnline){await getKey();return;}
+    const pane=document.querySelector('.tab-pane.active');if(!pane)return;
+    const id=pane.id;
+    if(id==='tab-dashboard')loadStats();
+    if(id==='tab-analytics')loadAnalytics();
+    if(id==='tab-vending'&&(isOwner||isPremium))loadStock();
+    if(id==='tab-owner')loadOwnerStats();
+  },30000);
 }
-
 init();
 </script>
 </body>
