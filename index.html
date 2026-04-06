@@ -1,1996 +1,1742 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XULT Dashboard | Ultimate Discord Bot</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cc0000;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff0000;
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(204, 0, 0, 0.3);
-            z-index: 1000;
-            padding: 0 24px;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 64px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #cc0000, #ff3333);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .logo-text {
-            background: linear-gradient(135deg, #ffffff, #cc0000);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: #a0a0a0;
-            text-decoration: none;
-            transition: color 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: #cc0000;
-        }
-
-        .login-btn {
-            background: linear-gradient(135deg, #cc0000, #990000);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid #cc0000;
-        }
-
-        .premium-badge {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #000;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .owner-badge {
-            background: #cc0000;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 88px 24px 48px;
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 48px 0;
-            background: linear-gradient(135deg, rgba(204,0,0,0.1), rgba(0,0,0,0));
-            border-radius: 24px;
-            margin-bottom: 48px;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .hero .highlight {
-            color: #cc0000;
-        }
-
-        .hero p {
-            color: #a0a0a0;
-            font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 48px;
-        }
-
-        .stat-card {
-            background: #111111;
-            border: 1px solid #222222;
-            border-radius: 16px;
-            padding: 20px;
-            transition: transform 0.3s, border-color 0.3s;
-            cursor: pointer;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: #cc0000;
-        }
-
-        .stat-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            color: #a0a0a0;
-            font-size: 13px;
-        }
-
-        /* Vending Machine */
-        .vending-machine {
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border: 2px solid #cc0000;
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vending-machine::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #cc0000, #ff6666, #cc0000);
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        .machine-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .machine-title {
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .machine-title span {
-            background: #cc0000;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        .premium-status {
-            background: rgba(204, 0, 0, 0.2);
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid #cc0000;
-        }
-
-        .premium-status.premium {
-            background: rgba(0, 255, 0, 0.1);
-            border-color: #00ff00;
-            color: #00ff00;
-        }
-
-        .stock-grid-machine {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .vending-item {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vending-item:hover {
-            transform: translateY(-4px);
-            border-color: #cc0000;
-            box-shadow: 0 0 20px rgba(204, 0, 0, 0.3);
-        }
-
-        .vending-item.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .vending-item.disabled:hover {
-            transform: none;
-        }
-
-        .item-emoji {
-            font-size: 48px;
-            margin-bottom: 8px;
-        }
-
-        .item-name {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .item-count {
-            font-size: 20px;
-            font-weight: 700;
-            color: #cc0000;
-            margin-bottom: 8px;
-        }
-
-        .gen-button {
-            background: linear-gradient(135deg, #cc0000, #990000);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s;
-        }
-
-        .gen-button:hover:not(:disabled) {
-            transform: scale(1.02);
-        }
-
-        .gen-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .vending-screen {
-            background: #000;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 16px;
-            border: 1px solid #cc0000;
-            min-height: 80px;
-            font-family: monospace;
-            font-size: 14px;
-            color: #00ff00;
-        }
-
-        /* Premium Modal */
-        .premium-modal {
-            text-align: center;
-        }
-
-        .payment-methods {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .payment-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .payment-btn.paypal {
-            background: #0070ba;
-            color: white;
-        }
-
-        .payment-btn.cashapp {
-            background: #00d632;
-            color: white;
-        }
-
-        .payment-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Server Selector */
-        .server-selector {
-            background: #111111;
-            border: 1px solid #222222;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .server-selector h2 {
-            margin-bottom: 16px;
-            font-size: 18px;
-        }
-
-        .server-list {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-
-        .server-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .server-item:hover, .server-item.active {
-            border-color: #cc0000;
-            background: rgba(204, 0, 0, 0.1);
-        }
-
-        .server-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .server-icon img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 8px 20px;
-            background: transparent;
-            border: none;
-            color: #a0a0a0;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        .tab-btn:hover {
-            color: #cc0000;
-        }
-
-        .tab-btn.active {
-            background: rgba(204, 0, 0, 0.2);
-            color: #cc0000;
-        }
-
-        /* Commands Panel */
-        .commands-panel, .analytics-panel, .owner-panel {
-            background: #111111;
-            border: 1px solid #222222;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .panel-header {
-            padding: 16px 20px;
-            background: #1a1a1a;
-            border-bottom: 1px solid #222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .panel-header h2 {
-            font-size: 18px;
-        }
-
-        .search-box {
-            padding: 8px 14px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: white;
-            width: 220px;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #cc0000;
-        }
-
-        .category-filters {
-            padding: 12px 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            border-bottom: 1px solid #222;
-        }
-
-        .category-btn {
-            padding: 5px 14px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 20px;
-            color: #a0a0a0;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 12px;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background: #cc0000;
-            border-color: #cc0000;
-            color: white;
-        }
-
-        .commands-grid {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 14px;
-            max-height: 550px;
-            overflow-y: auto;
-        }
-
-        .command-card {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 14px;
-            transition: all 0.3s;
-        }
-
-        .command-card:hover {
-            border-color: #cc0000;
-        }
-
-        .command-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .command-name {
-            font-family: monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: #cc0000;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 44px;
-            height: 22px;
-            background: #333;
-            border-radius: 11px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: #cc0000;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 3px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(20px);
-        }
-
-        .command-desc {
-            font-size: 12px;
-            color: #a0a0a0;
-            margin-bottom: 10px;
-        }
-
-        .command-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .role-select {
-            flex: 1;
-            padding: 6px 10px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: white;
-            font-size: 11px;
-        }
-
-        .save-settings {
-            padding: 6px 12px;
-            background: #cc0000;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            font-size: 11px;
-            transition: background 0.3s;
-        }
-
-        .save-settings:hover {
-            background: #ff0000;
-        }
-
-        /* Owner Panel */
-        .owner-grid {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .owner-card {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .owner-card:hover {
-            border-color: #cc0000;
-            transform: translateY(-3px);
-            background: rgba(204, 0, 0, 0.1);
-        }
-
-        .owner-card-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .owner-card-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .owner-card-desc {
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #111;
-            border: 1px solid #cc0000;
-            border-radius: 20px;
-            padding: 28px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #cc0000;
-            text-align: center;
-        }
-
-        .modal-body {
-            margin-bottom: 24px;
-        }
-
-        .modal-body input, .modal-body textarea, .modal-body select {
-            width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .modal-body input:focus, .modal-body textarea:focus {
-            outline: none;
-            border-color: #cc0000;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .modal-btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .modal-btn-cancel {
-            background: #333;
-            color: white;
-        }
-
-        .modal-btn-confirm {
-            background: #cc0000;
-            color: white;
-        }
-
-        /* Loading */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid #333;
-            border-top-color: #cc0000;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            padding: 12px 20px;
-            background: #1a1a1a;
-            border-left: 4px solid #cc0000;
-            border-radius: 8px;
-            color: white;
-            z-index: 2000;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 24px;
-            border-top: 1px solid #222;
-            margin-top: 40px;
-            color: #666;
-            font-size: 13px;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            .hero h1 {
-                font-size: 28px;
-            }
-            .commands-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .stock-grid-machine {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XULT — Ultimate Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --red: #e60000;
+  --red-dim: #990000;
+  --red-glow: rgba(230,0,0,0.35);
+  --red-faint: rgba(230,0,0,0.08);
+  --black: #080808;
+  --surface: #101010;
+  --surface2: #181818;
+  --surface3: #222;
+  --border: rgba(255,255,255,0.07);
+  --border-red: rgba(230,0,0,0.4);
+  --text: #f0f0f0;
+  --muted: #888;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-ui: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-ui);
+  background:var(--black);
+  color:var(--text);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* ── LOADER ── */
+#loader{
+  position:fixed;inset:0;
+  background:#000;
+  z-index:9999;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:24px;
+}
+.loader-logo{
+  font-family:var(--font-display);
+  font-size:96px;font-weight:800;
+  letter-spacing:0.15em;
+  color:transparent;
+  -webkit-text-stroke:2px var(--red);
+  text-transform:uppercase;
+  animation:logoReveal 0.6s ease forwards 0.3s;
+  opacity:0;
+}
+@keyframes logoReveal{
+  from{opacity:0;transform:scaleX(0.6);letter-spacing:0.6em}
+  to{opacity:1;transform:scaleX(1);letter-spacing:0.15em}
+}
+.loader-bar-wrap{
+  width:240px;height:3px;
+  background:rgba(255,255,255,0.08);
+  border-radius:2px;overflow:hidden;
+}
+.loader-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--red-dim),var(--red));
+  animation:loadBar 1.6s ease forwards 0.8s;
+}
+@keyframes loadBar{
+  0%{width:0%}60%{width:70%}80%{width:88%}100%{width:100%}
+}
+.loader-text{
+  font-family:var(--font-mono);
+  font-size:12px;color:var(--muted);
+  letter-spacing:0.1em;
+  animation:blink 0.8s ease infinite 1.2s;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.loader-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,transparent 2px,
+    rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
+  );
+  pointer-events:none;
+}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;
+  height:60px;
+  background:rgba(8,8,8,0.96);
+  border-bottom:1px solid var(--border-red);
+  backdrop-filter:blur(12px);
+  z-index:100;
+  display:flex;align-items:center;
+  padding:0 32px;
+  gap:0;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:12px;
+  margin-right:40px;
+  text-decoration:none;
+}
+.nav-logo-icon{
+  width:34px;height:34px;
+  background:var(--red);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:#fff;
+  font-family:var(--font-display);
+}
+.nav-logo-text{
+  font-family:var(--font-display);
+  font-size:28px;font-weight:800;
+  color:var(--red);
+  letter-spacing:0.12em;
+}
+.nav-links{
+  display:flex;align-items:center;gap:2px;
+  flex:1;
+}
+.nav-link{
+  padding:8px 16px;
+  background:none;border:none;
+  color:var(--muted);
+  font-family:var(--font-display);
+  font-size:15px;font-weight:600;
+  letter-spacing:0.06em;
+  cursor:pointer;
+  transition:color 0.2s;
+  border-bottom:2px solid transparent;
+  position:relative;
+}
+.nav-link:hover{color:#fff}
+.nav-link.active{color:var(--red);border-bottom-color:var(--red)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-login{
+  padding:8px 22px;
+  background:var(--red);
+  border:none;color:#fff;
+  font-family:var(--font-display);
+  font-size:15px;font-weight:700;
+  letter-spacing:0.08em;
+  cursor:pointer;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:background 0.2s,transform 0.15s;
+}
+.btn-login:hover{background:#ff1a1a;transform:translateY(-1px)}
+.user-pill{
+  display:flex;align-items:center;gap:10px;
+  padding:5px 14px 5px 5px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:40px;
+}
+.user-pill img{width:30px;height:30px;border-radius:50%;border:2px solid var(--red)}
+.user-pill span{font-size:14px;font-weight:600;color:var(--text)}
+.owner-tag{
+  font-family:var(--font-mono);
+  font-size:10px;
+  background:var(--red);
+  color:#fff;
+  padding:2px 8px;
+  border-radius:3px;
+  letter-spacing:0.05em;
+}
+
+/* ── LAYOUT ── */
+.wrap{
+  max-width:1380px;margin:0 auto;
+  padding:80px 28px 60px;
+}
+
+/* ── HERO ── */
+.hero{
+  padding:56px 0 40px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 120%, rgba(230,0,0,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;color:var(--red);
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(42px,6vw,80px);
+  font-weight:800;
+  line-height:0.95;
+  letter-spacing:0.04em;
+}
+.hero h1 .line2{
+  color:transparent;
+  -webkit-text-stroke:1.5px rgba(255,255,255,0.2);
+}
+.hero h1 .accent{color:var(--red)}
+.hero-sub{
+  margin-top:16px;
+  font-size:17px;font-weight:400;
+  color:var(--muted);
+  max-width:500px;
+  letter-spacing:0.03em;
+}
+.hero-rule{
+  width:60px;height:3px;
+  background:var(--red);
+  margin-top:24px;
+}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+  margin-bottom:40px;
+}
+.stat-tile{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color 0.2s,transform 0.2s;
+  cursor:default;
+}
+.stat-tile::before{
+  content:'';position:absolute;
+  top:0;left:0;width:3px;height:100%;
+  background:var(--red);
+  opacity:0;transition:opacity 0.2s;
+}
+.stat-tile:hover{border-color:var(--border-red);transform:translateY(-2px)}
+.stat-tile:hover::before{opacity:1}
+.stat-icon{font-size:20px;margin-bottom:8px;opacity:0.7}
+.stat-val{
+  font-family:var(--font-display);
+  font-size:32px;font-weight:700;
+  color:var(--text);
+  line-height:1;
+}
+.stat-label{
+  font-size:12px;color:var(--muted);
+  margin-top:4px;letter-spacing:0.05em;
+  text-transform:uppercase;
+}
+
+/* ── TABS ── */
+.tab-bar{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+  margin-bottom:28px;
+  flex-wrap:wrap;
+}
+.tab-btn{
+  padding:10px 24px;
+  background:none;border:none;
+  color:var(--muted);
+  font-family:var(--font-display);
+  font-size:15px;font-weight:600;
+  letter-spacing:0.06em;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  transition:color 0.2s,border-color 0.2s;
+}
+.tab-btn:hover{color:#fff}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ══════════════════════════════
+   VENDING MACHINE
+══════════════════════════════ */
+.vm-shell{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:20px;
+  align-items:start;
+}
+@media(max-width:960px){.vm-shell{grid-template-columns:1fr}}
+
+/* Machine body */
+.vm-body{
+  background:var(--surface);
+  border:2px solid var(--border-red);
+  border-radius:8px;
+  position:relative;
+  overflow:hidden;
+}
+.vm-top-strip{
+  height:8px;
+  background:repeating-linear-gradient(
+    90deg,
+    var(--red) 0px,var(--red) 20px,
+    var(--red-dim) 20px,var(--red-dim) 40px
+  );
+  animation:stripScroll 2s linear infinite;
+}
+@keyframes stripScroll{
+  from{background-position:0 0}
+  to{background-position:40px 0}
+}
+.vm-header{
+  padding:18px 24px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.vm-brand{
+  font-family:var(--font-display);
+  font-size:28px;font-weight:800;
+  color:var(--red);
+  letter-spacing:0.12em;
+  text-shadow:0 0 20px var(--red-glow);
+}
+.vm-brand-sub{
+  font-family:var(--font-mono);
+  font-size:11px;color:var(--muted);
+  letter-spacing:0.1em;
+  margin-top:2px;
+}
+.vm-status-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px;
+  border-radius:3px;
+  border:1px solid;
+  font-family:var(--font-mono);
+  font-size:12px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.vm-status-pill.locked{
+  border-color:rgba(255,255,255,0.15);
+  color:var(--muted);
+}
+.vm-status-pill.premium{
+  border-color:rgba(255,180,0,0.5);
+  color:#ffb400;
+  background:rgba(255,180,0,0.06);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  animation:pulse 1.5s ease-in-out infinite;
+}
+.locked .status-dot{background:#555}
+.premium .status-dot{background:#ffb400}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+/* Glass display */
+.vm-glass{
+  margin:16px 20px;
+  background:#050505;
+  border:1px solid var(--border);
+  border-radius:4px;
+  min-height:240px;
+  position:relative;
+  overflow:hidden;
+}
+.vm-glass-inner{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:2px;
+  padding:2px;
+}
+.vm-glass::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 50%,rgba(255,255,255,0.01) 100%);
+  pointer-events:none;z-index:2;
+}
+.vm-slot{
+  background:#0a0a0a;
+  padding:16px 12px;
+  text-align:center;
+  position:relative;
+  cursor:pointer;
+  transition:background 0.2s;
+  border:1px solid transparent;
+}
+.vm-slot:hover{
+  background:#131313;
+  border-color:rgba(230,0,0,0.3);
+}
+.vm-slot-num{
+  position:absolute;top:6px;left:8px;
+  font-family:var(--font-mono);
+  font-size:10px;color:#333;
+}
+.vm-slot-emoji{font-size:36px;display:block;margin-bottom:6px;line-height:1}
+.vm-slot-name{
+  font-family:var(--font-display);
+  font-size:13px;font-weight:600;
+  color:#ccc;letter-spacing:0.04em;
+  margin-bottom:4px;
+}
+.vm-slot-count{
+  font-family:var(--font-mono);
+  font-size:18px;font-weight:400;
+  color:var(--red);
+  line-height:1;
+}
+.vm-slot-label{
+  font-size:10px;color:#444;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+
+/* Dispensing button row */
+.vm-btn-row{
+  padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.vm-input{
+  flex:1;min-width:120px;
+  padding:10px 14px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:3px;
+  color:#0f0;
+  font-family:var(--font-mono);
+  font-size:13px;
+  outline:none;
+}
+.vm-input:focus{border-color:var(--red)}
+.vm-input::placeholder{color:#333}
+.btn-dispense{
+  padding:10px 28px;
+  background:var(--red);
+  border:none;
+  color:#fff;
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:background 0.15s,transform 0.15s;
+  white-space:nowrap;
+}
+.btn-dispense:hover{background:#ff1a1a;transform:scale(1.02)}
+.btn-dispense:active{transform:scale(0.98)}
+
+/* Screen / Output */
+.vm-screen{
+  margin:0 20px 20px;
+  background:#000;
+  border:1px solid rgba(0,255,0,0.15);
+  border-radius:3px;
+  padding:14px 16px;
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:#0f0;
+  min-height:64px;
+  position:relative;
+  overflow:hidden;
+}
+.vm-screen::before{
+  content:'> ';
+  opacity:0.5;
+}
+.vm-screen-scanline{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 3px,
+    rgba(0,255,0,0.02) 3px,rgba(0,255,0,0.02) 4px
+  );
+  pointer-events:none;
+}
+
+/* Side panel */
+.vm-side{
+  display:flex;flex-direction:column;gap:16px;
+}
+.vm-coin-display{
+  background:var(--surface);
+  border:2px solid var(--border);
+  border-radius:8px;
+  padding:20px;
+  text-align:center;
+  position:relative;
+}
+.vm-coin-display::after{
+  content:'CREDITS';
+  position:absolute;
+  top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--surface);
+  padding:0 8px;
+  font-family:var(--font-mono);
+  font-size:10px;color:var(--muted);
+  letter-spacing:0.12em;
+}
+.coin-amount{
+  font-family:var(--font-display);
+  font-size:56px;font-weight:700;
+  color:var(--red);
+  text-shadow:0 0 30px var(--red-glow);
+  line-height:1;
+}
+.coin-label{
+  font-family:var(--font-mono);
+  font-size:11px;color:var(--muted);
+  letter-spacing:0.12em;
+  margin-top:6px;
+}
+.coin-level-bar{
+  margin-top:12px;
+  height:4px;background:#1a1a1a;
+  border-radius:2px;overflow:hidden;
+}
+.coin-level-fill{
+  height:100%;width:68%;
+  background:linear-gradient(90deg,var(--red-dim),var(--red));
+  border-radius:2px;
+  transition:width 0.6s ease;
+}
+
+.vm-info-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 18px;
+}
+.vm-info-title{
+  font-family:var(--font-display);
+  font-size:13px;font-weight:700;
+  letter-spacing:0.1em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+.vm-info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;
+  font-size:14px;font-weight:500;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.vm-info-row:last-child{border:none}
+.vm-info-key{color:var(--muted);font-size:13px}
+.vm-info-val{color:var(--text);font-family:var(--font-mono);font-size:13px}
+.vm-info-val.green{color:#0f0}
+.vm-info-val.red{color:var(--red)}
+
+.btn-premium{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg, #1a0800, #2a0a00);
+  border:1px solid rgba(255,180,0,0.3);
+  border-radius:6px;
+  color:#ffb400;
+  font-family:var(--font-display);
+  font-size:17px;font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-transform:uppercase;
+}
+.btn-premium:hover{
+  background:linear-gradient(135deg,#220d00,#380e00);
+  border-color:rgba(255,180,0,0.6);
+  transform:translateY(-1px);
+}
+
+/* Recent gen log */
+.gen-log{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.gen-log-header{
+  padding:10px 14px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);
+  font-size:11px;color:var(--muted);
+  letter-spacing:0.1em;
+}
+.gen-log-list{
+  max-height:160px;overflow-y:auto;
+  padding:6px 0;
+}
+.gen-log-item{
+  padding:6px 14px;
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);
+  font-size:11px;color:#555;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.gen-log-item:last-child{border:none}
+.gen-log-item .tick{color:#0a0;font-size:10px}
+.gen-log-item .time{margin-left:auto;color:#333}
+
+/* ── COMMANDS ── */
+.server-pick{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:16px 18px;
+  margin-bottom:20px;
+}
+.server-pick h3{
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.server-chips{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.server-chip{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-size:14px;font-weight:600;
+}
+.server-chip:hover,.server-chip.active{
+  border-color:var(--red);
+  background:var(--red-faint);
+  color:var(--red);
+}
+.chip-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#333;
+}
+.server-chip.active .chip-dot{background:var(--red)}
+
+.cmd-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+}
+.cmd-toolbar{
+  padding:14px 18px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.cmd-search{
+  flex:1;min-width:180px;
+  padding:8px 14px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:3px;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:14px;
+  outline:none;
+}
+.cmd-search:focus{border-color:var(--red)}
+.cat-chips{
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding:10px 18px;
+  border-bottom:1px solid var(--border);
+}
+.cat-chip{
+  padding:4px 12px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:2px;
+  color:var(--muted);
+  font-size:12px;font-weight:600;
+  cursor:pointer;
+  letter-spacing:0.05em;
+  transition:all 0.2s;
+}
+.cat-chip:hover,.cat-chip.active{
+  background:var(--red);
+  border-color:var(--red);
+  color:#fff;
+}
+.cmd-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:12px;
+  padding:16px;
+  max-height:520px;overflow-y:auto;
+}
+.cmd-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:14px 16px;
+  transition:border-color 0.2s;
+}
+.cmd-card:hover{border-color:var(--border-red)}
+.cmd-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;
+}
+.cmd-name{
+  font-family:var(--font-mono);
+  font-size:14px;color:var(--red);
+}
+.toggle{
+  width:40px;height:20px;
+  background:#1a1a1a;
+  border-radius:10px;
+  position:relative;
+  cursor:pointer;
+  border:1px solid var(--border);
+  transition:background 0.2s,border-color 0.2s;
+}
+.toggle.on{background:var(--red);border-color:var(--red)}
+.toggle::after{
+  content:'';
+  position:absolute;
+  width:14px;height:14px;
+  background:#fff;
+  border-radius:50%;
+  top:2px;left:2px;
+  transition:transform 0.2s;
+  opacity:0.6;
+}
+.toggle.on::after{transform:translateX(20px);opacity:1}
+.cmd-desc{font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.cmd-bottom{display:flex;gap:8px;align-items:center}
+.cmd-role-input{
+  flex:1;padding:6px 10px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:2px;
+  color:var(--text);font-size:12px;
+  font-family:var(--font-mono);
+  outline:none;
+}
+.cmd-role-input:focus{border-color:var(--red)}
+.btn-save-cmd{
+  padding:6px 14px;
+  background:var(--red);border:none;
+  color:#fff;
+  font-family:var(--font-display);
+  font-size:13px;font-weight:700;
+  cursor:pointer;
+  border-radius:2px;
+  transition:background 0.15s;
+}
+.btn-save-cmd:hover{background:#ff1a1a}
+
+/* ── ANALYTICS ── */
+.analytics-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+}
+@media(max-width:900px){.analytics-grid{grid-template-columns:1fr}}
+.chart-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+}
+.chart-header{
+  padding:14px 18px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.chart-body{padding:18px;height:260px}
+.activity-feed{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+}
+.activity-item{
+  padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex;gap:12px;align-items:flex-start;
+}
+.activity-item:last-child{border:none}
+.a-avatar{
+  width:28px;height:28px;
+  border-radius:50%;
+  background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+  color:#fff;flex-shrink:0;
+  font-family:var(--font-display);
+}
+.a-name{font-size:14px;font-weight:600;color:var(--text)}
+.a-action{font-size:12px;color:var(--muted);margin-top:2px}
+.a-time{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:#333;white-space:nowrap}
+
+/* ── OWNER ── */
+.owner-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;
+  padding:20px;
+}
+.owner-tile{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:22px 18px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+.owner-tile::before{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--red);
+  transform:scaleX(0);
+  transition:transform 0.2s;
+  transform-origin:left;
+}
+.owner-tile:hover{
+  border-color:var(--border-red);
+  transform:translateY(-3px);
+  background:rgba(230,0,0,0.06);
+}
+.owner-tile:hover::before{transform:scaleX(1)}
+.owner-tile-icon{font-size:28px;margin-bottom:10px}
+.owner-tile-title{
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;
+  letter-spacing:0.06em;
+  margin-bottom:6px;
+}
+.owner-tile-desc{font-size:12px;color:var(--muted)}
+
+/* ── MODAL ── */
+.modal-bg{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:500;
+  align-items:center;justify-content:center;
+}
+.modal-bg.open{display:flex}
+.modal-box{
+  background:var(--surface);
+  border:1px solid var(--border-red);
+  border-radius:8px;
+  padding:30px;
+  max-width:480px;width:90%;
+  max-height:85vh;overflow-y:auto;
+  position:relative;
+}
+.modal-box::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--red-dim),var(--red),var(--red-dim));
+  animation:shimmer 2s linear infinite;
+  background-size:200% 100%;
+}
+@keyframes shimmer{from{background-position:200%}to{background-position:-200%}}
+.modal-title{
+  font-family:var(--font-display);
+  font-size:26px;font-weight:800;
+  letter-spacing:0.06em;
+  color:var(--red);
+  margin-bottom:6px;
+}
+.modal-sub{
+  font-size:14px;color:var(--muted);
+  margin-bottom:22px;
+}
+.modal-input{
+  width:100%;
+  padding:11px 14px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:3px;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:14px;
+  margin-bottom:10px;
+  outline:none;
+}
+.modal-input:focus{border-color:var(--red)}
+.modal-textarea{
+  width:100%;
+  padding:11px 14px;
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:3px;
+  color:var(--text);
+  font-family:var(--font-mono);
+  font-size:13px;
+  resize:vertical;
+  margin-bottom:10px;
+  outline:none;
+  line-height:1.5;
+}
+.modal-textarea:focus{border-color:var(--red)}
+.modal-footer{
+  display:flex;justify-content:flex-end;gap:10px;
+  margin-top:20px;
+}
+.btn-cancel{
+  padding:10px 22px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted);
+  font-family:var(--font-display);
+  font-size:15px;font-weight:600;
+  cursor:pointer;border-radius:3px;
+  transition:all 0.2s;
+}
+.btn-cancel:hover{border-color:var(--border-red);color:#fff}
+.btn-confirm{
+  padding:10px 28px;
+  background:var(--red);border:none;
+  color:#fff;
+  font-family:var(--font-display);
+  font-size:15px;font-weight:700;
+  letter-spacing:0.06em;
+  cursor:pointer;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:background 0.15s;
+}
+.btn-confirm:hover{background:#ff1a1a}
+.premium-perks{
+  background:#0a0400;
+  border:1px solid rgba(255,180,0,0.2);
+  border-radius:4px;
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.perk-title{
+  font-family:var(--font-display);
+  font-size:13px;font-weight:700;
+  color:#ffb400;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.perk-row{
+  display:flex;align-items:center;gap:8px;
+  padding:4px 0;
+  font-size:14px;font-weight:500;
+  color:#ccc;
+}
+.perk-check{color:#0f0;font-size:12px}
+.pay-btns{display:flex;gap:10px;margin:14px 0}
+.pay-btn{
+  flex:1;padding:12px;
+  border:none;border-radius:4px;
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;
+  letter-spacing:0.05em;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.pay-paypal{background:#0070ba;color:#fff}
+.pay-cashapp{background:#00d632;color:#000}
+.pay-btn:hover{filter:brightness(1.15);transform:scale(1.02)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;
+  bottom:28px;right:28px;
+  padding:12px 20px;
+  background:var(--surface2);
+  border-left:3px solid var(--red);
+  border-radius:3px;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:14px;font-weight:500;
+  z-index:800;
+  animation:toastIn 0.25s ease;
+  pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+@keyframes toastIn{
+  from{transform:translateX(120%);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+
+/* ── SUPPORT ── */
+.support-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+@media(max-width:700px){.support-grid{grid-template-columns:1fr}}
+.support-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:22px;
+}
+.support-card h3{
+  font-family:var(--font-display);
+  font-size:20px;font-weight:700;
+  letter-spacing:0.06em;
+  margin-bottom:14px;
+  color:var(--text);
+}
+.support-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  color:var(--red);
+  text-decoration:none;
+  font-size:15px;font-weight:600;
+  border-bottom:1px solid var(--border);
+  transition:gap 0.2s;
+}
+.support-link:hover{gap:14px}
+.support-link:last-child{border:none}
+.cmd-ref-row{
+  display:flex;gap:12px;align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:14px;
+}
+.cmd-ref-row:last-child{border:none}
+code{
+  font-family:var(--font-mono);
+  font-size:13px;color:var(--red);
+  background:rgba(230,0,0,0.1);
+  padding:2px 8px;border-radius:2px;
+}
+.cmd-ref-desc{color:var(--muted);font-size:13px}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;
+  padding:24px;
+  border-top:1px solid var(--border);
+  margin-top:48px;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:#333;
+  letter-spacing:0.08em;
+}
+
+/* scrollbars */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+
+/* no-display helper */
+.hidden{display:none!important}
+
+/* entrance animations */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fadein{animation:fadeUp 0.4s ease both}
+</style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <span class="logo-text">XULT</span>
-            </div>
-            <div class="nav-links">
-                <a class="nav-link active" data-tab="vending">🎰 Vending Machine</a>
-                <a class="nav-link" data-tab="dashboard">Dashboard</a>
-                <a class="nav-link" data-tab="commands">Commands</a>
-                <a class="nav-link" data-tab="analytics">Analytics</a>
-                <a id="owner-tab-link" class="nav-link" data-tab="owner" style="display: none;">👑 Owner</a>
-                <a class="nav-link" data-tab="support">Support</a>
-            </div>
-            <div id="auth-section">
-                <button class="login-btn" onclick="login()">Login with Discord</button>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container">
-        <div class="hero">
-            <h1>Welcome to <span class="highlight">XULT</span> Dashboard</h1>
-            <p>Premium vending machine access • Generate accounts • Get exclusive content</p>
-        </div>
+<!-- ══ LOADER ══ -->
+<div id="loader">
+  <div class="loader-scanlines"></div>
+  <div class="loader-logo">XULT</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text" id="loader-msg">INITIALIZING SYSTEMS...</div>
+</div>
 
-        <!-- Vending Machine Tab -->
-        <div id="vending-tab" class="tab-content">
-            <div class="vending-machine">
-                <div class="machine-header">
-                    <div class="machine-title">
-                        🎰 XULT Vending Machine
-                        <span>PREMIUM</span>
-                    </div>
-                    <div id="premium-status" class="premium-status">
-                        🔒 Checking premium status...
-                    </div>
-                </div>
-                
-                <div class="stock-grid-machine" id="vending-grid">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-                
-                <div class="vending-screen" id="vending-screen">
-                    💡 Select an item to generate. Premium users have no cooldown!
-                </div>
-            </div>
-            
-            <div class="server-selector" id="server-selector" style="display: none;">
-                <h2>📌 Select a Server to Configure</h2>
-                <div class="server-list" id="server-list"></div>
-            </div>
-        </div>
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">X</div>
+    <span class="nav-logo-text">XULT</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" data-tab="vending">VENDING</button>
+    <button class="nav-link" data-tab="dashboard">DASHBOARD</button>
+    <button class="nav-link" data-tab="commands">COMMANDS</button>
+    <button class="nav-link" data-tab="analytics">ANALYTICS</button>
+    <button class="nav-link hidden" id="owner-nav-link" data-tab="owner">OWNER</button>
+    <button class="nav-link" data-tab="support">SUPPORT</button>
+  </div>
+  <div class="nav-right">
+    <div id="auth-zone">
+      <button class="btn-login" onclick="doLogin()">LOGIN WITH DISCORD</button>
+    </div>
+  </div>
+</nav>
 
-        <!-- Dashboard Tab -->
-        <div id="dashboard-tab" class="tab-content" style="display: none;">
-            <div class="stats-grid" id="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-value" id="total-users">-</div>
-                    <div class="stat-label">Total Users</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🏠</div>
-                    <div class="stat-value" id="total-servers">-</div>
-                    <div class="stat-label">Servers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-value" id="total-commands">-</div>
-                    <div class="stat-label">Commands Today</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💎</div>
-                    <div class="stat-value" id="premium-users">-</div>
-                    <div class="stat-label">Premium Users</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-value" id="stock-total">-</div>
-                    <div class="stat-label">Stock Entries</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📡</div>
-                    <div class="stat-value" id="latency">-</div>
-                    <div class="stat-label">Latency</div>
-                </div>
-            </div>
-        </div>
+<!-- ══ MAIN ══ -->
+<div class="wrap">
 
-        <!-- Commands Tab -->
-        <div id="commands-tab" class="tab-content" style="display: none;">
-            <div class="server-selector" id="commands-server-selector" style="display: none;">
-                <h2>📌 Select a Server</h2>
-                <div class="server-list" id="commands-server-list"></div>
-            </div>
-
-            <div class="commands-panel" id="commands-panel" style="display: none;">
-                <div class="panel-header">
-                    <h2>⚙️ Command Configuration</h2>
-                    <input type="text" class="search-box" placeholder="Search commands..." id="search-commands">
-                </div>
-                <div class="category-filters" id="category-filters">
-                    <button class="category-btn active" data-category="all">All</button>
-                    <button class="category-btn" data-category="economy">💰 Economy</button>
-                    <button class="category-btn" data-category="stock">📦 Stock</button>
-                    <button class="category-btn" data-category="moderation">🛡️ Moderation</button>
-                    <button class="category-btn" data-category="notifications">📢 Notifications</button>
-                    <button class="category-btn" data-category="management">⚙️ Management</button>
-                    <button class="category-btn" data-category="fun">🎨 Fun</button>
-                </div>
-                <div class="commands-grid" id="commands-grid">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Analytics Tab -->
-        <div id="analytics-tab" class="tab-content" style="display: none;">
-            <div class="analytics-panel">
-                <div class="panel-header">
-                    <h2>📊 Activity Analytics</h2>
-                </div>
-                <div style="padding: 20px; height: 280px;">
-                    <canvas id="activity-chart"></canvas>
-                </div>
-                <div class="panel-header" style="margin-top: 16px;">
-                    <h2>🕐 Recent Activity</h2>
-                </div>
-                <div class="recent-list" id="recent-list">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Owner Tab -->
-        <div id="owner-tab" class="tab-content" style="display: none;">
-            <div class="owner-panel">
-                <div class="panel-header">
-                    <h2>👑 Owner Control Panel</h2>
-                    <span style="color: #cc0000; font-size: 12px;">Owner ID: 1302203907782606880</span>
-                </div>
-                <div class="owner-grid" id="owner-grid">
-                    <div class="owner-card" onclick="openPullModal()">
-                        <div class="owner-card-icon">👥</div>
-                        <div class="owner-card-title">Pull Members</div>
-                        <div class="owner-card-desc">Pull saved members to any server</div>
-                    </div>
-                    <div class="owner-card" onclick="saveAllServers()">
-                        <div class="owner-card-icon">💾</div>
-                        <div class="owner-card-title">Save All Servers</div>
-                        <div class="owner-card-desc">Backup all servers at once</div>
-                    </div>
-                    <div class="owner-card" onclick="showServerList()">
-                        <div class="owner-card-icon">📋</div>
-                        <div class="owner-card-title">Server List</div>
-                        <div class="owner-card-desc">List all servers the bot is in</div>
-                    </div>
-                    <div class="owner-card" onclick="openManageCoinsModal()">
-                        <div class="owner-card-icon">💰</div>
-                        <div class="owner-card-title">Manage Coins</div>
-                        <div class="owner-card-desc">Add/remove coins from users</div>
-                    </div>
-                    <div class="owner-card" onclick="openBanModal()">
-                        <div class="owner-card-icon">🔨</div>
-                        <div class="owner-card-title">Ban User</div>
-                        <div class="owner-card-desc">Ban users from the bot</div>
-                    </div>
-                    <div class="owner-card" onclick="showPremiumUsers()">
-                        <div class="owner-card-icon">⭐</div>
-                        <div class="owner-card-title">Premium Users</div>
-                        <div class="owner-card-desc">View premium users list</div>
-                    </div>
-                    <div class="owner-card" onclick="showSystemLogs()">
-                        <div class="owner-card-icon">📝</div>
-                        <div class="owner-card-title">System Logs</div>
-                        <div class="owner-card-desc">View recent system logs</div>
-                    </div>
-                    <div class="owner-card" onclick="showStockStats()">
-                        <div class="owner-card-icon">📦</div>
-                        <div class="owner-card-title">Stock Stats</div>
-                        <div class="owner-card-desc">View stock statistics</div>
-                    </div>
-                    <div class="owner-card" onclick="openBroadcastModal()">
-                        <div class="owner-card-icon">🔁</div>
-                        <div class="owner-card-title">Broadcast</div>
-                        <div class="owner-card-desc">Send broadcast to all servers</div>
-                    </div>
-                    <div class="owner-card" onclick="backupDatabase()">
-                        <div class="owner-card-icon">💾</div>
-                        <div class="owner-card-title">Backup DB</div>
-                        <div class="owner-card-desc">Backup the entire database</div>
-                    </div>
-                    <div class="owner-card" onclick="openRestoreModal()">
-                        <div class="owner-card-icon">🔄</div>
-                        <div class="owner-card-title">Restore Server</div>
-                        <div class="owner-card-desc">Restore a server from backup</div>
-                    </div>
-                    <div class="owner-card" onclick="refreshStats()">
-                        <div class="owner-card-icon">🔄</div>
-                        <div class="owner-card-title">Refresh Stats</div>
-                        <div class="owner-card-desc">Refresh bot statistics</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Support Tab -->
-        <div id="support-tab" class="tab-content" style="display: none;">
-            <div class="commands-panel">
-                <div class="panel-header">
-                    <h2>🆘 Support & Help</h2>
-                </div>
-                <div style="padding: 24px;">
-                    <h3>📚 Quick Links</h3>
-                    <p style="color: #a0a0a0; margin: 16px 0;">Need help with XULT? Check out these resources:</p>
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <a href="#" style="color: #cc0000; text-decoration: none;">📖 Documentation</a>
-                        <a href="#" style="color: #cc0000; text-decoration: none;">💬 Support Server</a>
-                        <a href="#" style="color: #cc0000; text-decoration: none;">📧 Contact Support</a>
-                        <a href="#" style="color: #cc0000; text-decoration: none;">📝 Report Bug</a>
-                    </div>
-                    <hr style="border-color: #333; margin: 24px 0;">
-                    <h3>🔧 Bot Commands</h3>
-                    <p style="color: #a0a0a0; margin: 16px 0;">Use these commands in Discord:</p>
-                    <ul style="color: #a0a0a0; margin-left: 20px; line-height: 1.8;">
-                        <li><code style="color: #cc0000;">/help</code> - Show all commands</li>
-                        <li><code style="color: #cc0000;">/balance</code> - Check your balance</li>
-                        <li><code style="color: #cc0000;">/gen [type]</code> - Generate a stock entry</li>
-                        <li><code style="color: #cc0000;">/stocklist</code> - List available stock</li>
-                        <li><code style="color: #cc0000;">/togglecommand [command] [enabled]</code> - Enable/disable commands (Admin)</li>
-                        <li><code style="color: #cc0000;">/owner_panel</code> - Open owner panel (Owner only)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>XULT - Ultimate Discord Bot | © 2024 | Powered by Discord API</p>
-        </div>
+  <!-- ── VENDING TAB ── -->
+  <div class="tab-content active fadein" id="tab-vending">
+    <div style="padding:40px 0 28px">
+      <div class="hero-eyebrow">XULT VENDING MACHINE</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(36px,5vw,68px);font-weight:800;letter-spacing:0.04em;line-height:0.95">
+        GENERATE<br><span style="color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,0.15)">PREMIUM</span><br><span style="color:var(--red)">CONTENT</span>
+      </h1>
     </div>
 
-    <!-- Premium Purchase Modal -->
-    <div id="premium-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">💎 Get Premium Access</div>
-            <div class="modal-body premium-modal">
-                <p style="text-align: center; margin-bottom: 20px;">Get unlimited access to the vending machine with premium!</p>
-                <div style="background: #1a1a1a; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-                    <h3 style="color: #cc0000;">Premium Benefits:</h3>
-                    <ul style="margin-top: 12px; list-style: none;">
-                        <li>✅ No cooldown on generation</li>
-                        <li>✅ Access to ALL stock types</li>
-                        <li>✅ Priority support</li>
-                        <li>✅ Exclusive premium-only items</li>
-                        <li>✅ Early access to new features</li>
-                    </ul>
-                </div>
-                <div class="payment-methods">
-                    <button class="payment-btn paypal" onclick="processPayment('paypal')">
-                        💰 PayPal - $3
-                    </button>
-                    <button class="payment-btn cashapp" onclick="processPayment('cashapp')">
-                        💚 CashApp - $3
-                    </button>
-                </div>
-                <p style="font-size: 12px; color: #666; text-align: center; margin-top: 16px;">
-                    After payment, you'll automatically receive the premium role in the main server.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-cancel" onclick="closePremiumModal()">Close</button>
-            </div>
+    <div class="vm-shell">
+      <!-- Machine body -->
+      <div class="vm-body">
+        <div class="vm-top-strip"></div>
+        <div class="vm-header">
+          <div>
+            <div class="vm-brand">XULT GEN-3000</div>
+            <div class="vm-brand-sub">PREMIUM CONTENT DISPENSER • SERIES III</div>
+          </div>
+          <div class="vm-status-pill locked" id="vm-status-pill" onclick="openPremiumModal()">
+            <div class="status-dot"></div>
+            <span id="vm-status-text">FREE TIER</span>
+          </div>
         </div>
+
+        <div class="vm-glass">
+          <div class="vm-glass-inner" id="vm-glass-inner">
+            <!-- slots injected by JS -->
+          </div>
+        </div>
+
+        <div class="vm-btn-row">
+          <input type="text" class="vm-input" id="vm-type-input" placeholder="Enter slot code e.g. A1, B2...">
+          <button class="btn-dispense" onclick="dispenseSelected()">▶ DISPENSE</button>
+        </div>
+
+        <div class="vm-screen" id="vm-screen">
+          <div class="vm-screen-scanline"></div>
+          <span id="vm-screen-text">READY. SELECT AN ITEM OR CLICK GENERATE.</span>
+        </div>
+      </div>
+
+      <!-- Side panel -->
+      <div class="vm-side">
+        <div class="vm-coin-display">
+          <div class="coin-amount" id="coin-display">—</div>
+          <div class="coin-label">COINS AVAILABLE</div>
+          <div class="coin-level-bar"><div class="coin-level-fill" id="coin-fill"></div></div>
+        </div>
+
+        <div class="vm-info-box">
+          <div class="vm-info-title">SESSION STATUS</div>
+          <div class="vm-info-row"><span class="vm-info-key">USER</span><span class="vm-info-val" id="side-user">—</span></div>
+          <div class="vm-info-row"><span class="vm-info-key">TIER</span><span class="vm-info-val red" id="side-tier">FREE</span></div>
+          <div class="vm-info-row"><span class="vm-info-key">COOLDOWN</span><span class="vm-info-val" id="side-cd">5s</span></div>
+          <div class="vm-info-row"><span class="vm-info-key">GENERATED</span><span class="vm-info-val" id="side-gencount">0</span></div>
+          <div class="vm-info-row"><span class="vm-info-key">BOT STATUS</span><span class="vm-info-val green" id="side-bot">ONLINE</span></div>
+        </div>
+
+        <button class="btn-premium" onclick="openPremiumModal()">★ UPGRADE TO PREMIUM</button>
+
+        <div class="gen-log">
+          <div class="gen-log-header">RECENT GENERATIONS</div>
+          <div class="gen-log-list" id="gen-log-list">
+            <div style="padding:12px 14px;font-family:var(--font-mono);font-size:11px;color:#333">No generations yet...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD TAB ── -->
+  <div class="tab-content fadein" id="tab-dashboard">
+    <div style="padding:40px 0 28px">
+      <div class="hero-eyebrow">OVERVIEW</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">BOT <span style="color:var(--red)">STATISTICS</span></h1>
+    </div>
+    <div class="stats-row">
+      <div class="stat-tile"><div class="stat-icon">👥</div><div class="stat-val" id="s-users">—</div><div class="stat-label">Total Users</div></div>
+      <div class="stat-tile"><div class="stat-icon">🏠</div><div class="stat-val" id="s-servers">—</div><div class="stat-label">Servers</div></div>
+      <div class="stat-tile"><div class="stat-icon">⚡</div><div class="stat-val" id="s-cmds">—</div><div class="stat-label">Commands Today</div></div>
+      <div class="stat-tile"><div class="stat-icon">💎</div><div class="stat-val" id="s-premium">—</div><div class="stat-label">Premium Users</div></div>
+      <div class="stat-tile"><div class="stat-icon">📦</div><div class="stat-val" id="s-stock">—</div><div class="stat-label">Stock Items</div></div>
+      <div class="stat-tile"><div class="stat-icon">📡</div><div class="stat-val" id="s-ping">—</div><div class="stat-label">Latency</div></div>
+    </div>
+  </div>
+
+  <!-- ── COMMANDS TAB ── -->
+  <div class="tab-content fadein" id="tab-commands">
+    <div style="padding:40px 0 20px">
+      <div class="hero-eyebrow">SERVER CONFIG</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">COMMAND <span style="color:var(--red)">CONTROLS</span></h1>
     </div>
 
-    <!-- Main Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header" id="modal-title">Confirm</div>
-            <div class="modal-body" id="modal-body">
-                <p id="modal-message">Are you sure?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-btn modal-btn-confirm" id="modal-confirm">Confirm</button>
-            </div>
-        </div>
+    <div class="server-pick" id="server-pick" style="display:none">
+      <h3>Select Server</h3>
+      <div class="server-chips" id="server-chips"></div>
     </div>
 
-    <script>
-        // Configuration
-        const API_URL = 'https://ultbotb.onrender.com';
-        const OWNER_ID = '1302203907782606880';
-        const PREMIUM_ROLE_ID = 1474136325912399994;
-        const MAIN_SERVER_ID = 1344385779627069541;
-        let API_KEY = null;
-        let currentUser = null;
-        let selectedServer = null;
-        let commandsData = {};
-        let activityChart = null;
-        let isPremium = false;
-        let currentCooldown = {};
+    <div class="cmd-panel" id="cmd-panel" style="display:none">
+      <div class="cmd-toolbar">
+        <input type="text" class="cmd-search" placeholder="Search commands..." id="cmd-search">
+      </div>
+      <div class="cat-chips" id="cat-chips">
+        <div class="cat-chip active" data-cat="all">ALL</div>
+        <div class="cat-chip" data-cat="economy">💰 ECONOMY</div>
+        <div class="cat-chip" data-cat="stock">📦 STOCK</div>
+        <div class="cat-chip" data-cat="moderation">🛡️ MOD</div>
+        <div class="cat-chip" data-cat="notifications">📢 NOTIFY</div>
+        <div class="cat-chip" data-cat="management">⚙️ MANAGE</div>
+        <div class="cat-chip" data-cat="fun">🎨 FUN</div>
+      </div>
+      <div class="cmd-grid" id="cmd-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:13px">Select a server to configure commands</div>
+      </div>
+    </div>
+  </div>
 
-        // Categories for commands
-        const commandCategories = {
-            'balance': 'economy', 'daily': 'economy', 'coinflip': 'economy', 'rps': 'economy', 'slots': 'economy', 'blackjack': 'economy', 'joke': 'economy', 'eightball': 'economy', 'riddle': 'economy',
-            'gen': 'stock', 'dmgen': 'stock', 'stocklist': 'stock', 'addstock': 'stock', 'deletestock': 'stock', 'setgenaccess': 'stock', 'setautoupdate': 'stock',
-            'jail': 'moderation', 'unjail': 'moderation', 'purge': 'moderation', 'warnings': 'moderation', 'resetwarn': 'moderation', 'setroleonjoin': 'moderation', 'set_logs': 'moderation', 'add_allowed_channel': 'moderation', 'upload_bad_words': 'moderation', 'sendnotice': 'moderation',
-            'setnotichannel': 'notifications', 'addyoutubechannel': 'notifications', 'addtwitchstream': 'notifications', 'addtwitteraccount': 'notifications',
-            'reactionrole': 'management', 'setreportchannel': 'management', 'report': 'management', 'setlogchannels': 'management', 'save_server': 'management', 'load_server': 'management', 
-            'add_to_channel': 'management', 'test': 'management', 'togglecommand': 'management', 'commandroles': 'management', 'commandchannels': 'management', 'listcommands': 'management', 'view_enabled_commands': 'management',
-            'gif': 'fun', 'meme': 'fun', 'hug': 'fun', 'slap': 'fun', 'say': 'fun'
-        };
+  <!-- ── ANALYTICS TAB ── -->
+  <div class="tab-content fadein" id="tab-analytics">
+    <div style="padding:40px 0 28px">
+      <div class="hero-eyebrow">INSIGHTS</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">ACTIVITY <span style="color:var(--red)">ANALYTICS</span></h1>
+    </div>
+    <div class="analytics-grid">
+      <div class="chart-box">
+        <div class="chart-header">COMMAND USAGE — 7 DAYS</div>
+        <div class="chart-body"><canvas id="activity-chart"></canvas></div>
+      </div>
+      <div class="activity-feed">
+        <div class="chart-header">RECENT ACTIVITY</div>
+        <div id="activity-list">
+          <div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">Loading activity...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        const commandDescriptions = {
-            'balance': 'Check your coins, XP, and level',
-            'daily': 'Claim your daily coins (24h cooldown)',
-            'coinflip': 'Flip a coin and guess heads or tails',
-            'rps': 'Play rock-paper-scissors',
-            'slots': 'Play the slot machine (costs 20 coins)',
-            'blackjack': 'Play blackjack against the dealer',
-            'joke': 'Get a random joke',
-            'eightball': 'Ask the magic 8-ball a question',
-            'riddle': 'Solve a riddle to earn coins',
-            'gen': 'Generate a stock entry',
-            'dmgen': 'Generate a stock entry via DM',
-            'stocklist': 'List all available stock types',
-            'addstock': 'Add stock entries (Admin only)',
-            'deletestock': 'Delete a stock file (Admin only)',
-            'setgenaccess': 'Set roles that can use /gen (Admin only)',
-            'setautoupdate': 'Set auto-update stock channel (Admin only)',
-            'jail': 'Jail a member - strips roles and restricts to jail channels',
-            'unjail': 'Unjail a member - restores roles and permissions',
-            'purge': 'Delete messages (Manage Messages permission)',
-            'warnings': 'View a user\'s warnings',
-            'resetwarn': 'Reset a user\'s warnings (Admin only)',
-            'setroleonjoin': 'Set role for new members (Admin only)',
-            'set_logs': 'Set log channel (Admin only)',
-            'add_allowed_channel': 'Add channel where bad words are not moderated',
-            'upload_bad_words': 'Upload bad words from .txt file (Admin only)',
-            'sendnotice': 'Send a notification',
-            'setnotichannel': 'Set channel for media notifications (Admin only)',
-            'addyoutubechannel': 'Track a YouTube channel (Admin only)',
-            'addtwitchstream': 'Track a Twitch stream (Admin only)',
-            'addtwitteraccount': 'Track a Twitter/X account (Admin only)',
-            'reactionrole': 'Create a reaction role dropdown (Admin only)',
-            'setreportchannel': 'Set report channel (Admin only)',
-            'report': 'Report an issue to moderators',
-            'setlogchannels': 'Set granular log channels (Admin only)',
-            'save_server': 'Save server backup (Admin only)',
-            'load_server': 'Restore server from backup (Admin only)',
-            'add_to_channel': 'Configure 4:20 messages (Admin only)',
-            'test': 'Send a test 4:20 message',
-            'togglecommand': 'Enable or disable a command on your server',
-            'commandroles': 'Set allowed roles for a command',
-            'commandchannels': 'Set channels where a command is disabled',
-            'listcommands': 'List all available commands and their status',
-            'view_enabled_commands': 'View which commands are enabled for you',
-            'gif': 'Get a GIF from GIPHY',
-            'meme': 'Get a random meme',
-            'hug': 'Hug a member',
-            'slap': 'Slap a member',
-            'say': 'Bot repeats your message'
-        };
+  <!-- ── OWNER TAB ── -->
+  <div class="tab-content fadein" id="tab-owner">
+    <div style="padding:40px 0 20px">
+      <div class="hero-eyebrow">OWNER PANEL</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">CONTROL <span style="color:var(--red)">CENTER</span></h1>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden">
+      <div style="padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase">Owner ID: 1302203907782606880</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">● ELEVATED ACCESS</span>
+      </div>
+      <div class="owner-grid" id="owner-grid">
+        <div class="owner-tile" onclick="openPullModal()"><div class="owner-tile-icon">👥</div><div class="owner-tile-title">PULL MEMBERS</div><div class="owner-tile-desc">Pull saved members to any server</div></div>
+        <div class="owner-tile" onclick="saveAllServers()"><div class="owner-tile-icon">💾</div><div class="owner-tile-title">SAVE ALL SERVERS</div><div class="owner-tile-desc">Backup all servers at once</div></div>
+        <div class="owner-tile" onclick="showServerList()"><div class="owner-tile-icon">📋</div><div class="owner-tile-title">SERVER LIST</div><div class="owner-tile-desc">View all servers bot is in</div></div>
+        <div class="owner-tile" onclick="openManageCoinsModal()"><div class="owner-tile-icon">💰</div><div class="owner-tile-title">MANAGE COINS</div><div class="owner-tile-desc">Add or remove coins from users</div></div>
+        <div class="owner-tile" onclick="openBanModal()"><div class="owner-tile-icon">🔨</div><div class="owner-tile-title">BAN USER</div><div class="owner-tile-desc">Ban users from the bot</div></div>
+        <div class="owner-tile" onclick="showPremiumUsers()"><div class="owner-tile-icon">⭐</div><div class="owner-tile-title">PREMIUM USERS</div><div class="owner-tile-desc">View premium user list</div></div>
+        <div class="owner-tile" onclick="showSystemLogs()"><div class="owner-tile-icon">📝</div><div class="owner-tile-title">SYSTEM LOGS</div><div class="owner-tile-desc">View recent system logs</div></div>
+        <div class="owner-tile" onclick="showStockStats()"><div class="owner-tile-icon">📦</div><div class="owner-tile-title">STOCK STATS</div><div class="owner-tile-desc">View stock statistics</div></div>
+        <div class="owner-tile" onclick="openBroadcastModal()"><div class="owner-tile-icon">📡</div><div class="owner-tile-title">BROADCAST</div><div class="owner-tile-desc">Send message to all servers</div></div>
+        <div class="owner-tile" onclick="backupDatabase()"><div class="owner-tile-icon">🗄️</div><div class="owner-tile-title">BACKUP DB</div><div class="owner-tile-desc">Backup the full database</div></div>
+        <div class="owner-tile" onclick="openRestoreModal()"><div class="owner-tile-icon">🔄</div><div class="owner-tile-title">RESTORE SERVER</div><div class="owner-tile-desc">Restore server from backup</div></div>
+        <div class="owner-tile" onclick="refreshStats()"><div class="owner-tile-icon">🔁</div><div class="owner-tile-title">REFRESH STATS</div><div class="owner-tile-desc">Refresh bot statistics</div></div>
+      </div>
+    </div>
+  </div>
 
-        // Helper Functions
-        function showToast(message, isError = false) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.borderLeftColor = isError ? '#ff4444' : '#cc0000';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+  <!-- ── SUPPORT TAB ── -->
+  <div class="tab-content fadein" id="tab-support">
+    <div style="padding:40px 0 28px">
+      <div class="hero-eyebrow">HELP</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">SUPPORT <span style="color:var(--red)">CENTER</span></h1>
+    </div>
+    <div class="support-grid">
+      <div class="support-card">
+        <h3>QUICK LINKS</h3>
+        <a class="support-link" href="#">→ Documentation</a>
+        <a class="support-link" href="#">→ Support Server</a>
+        <a class="support-link" href="#">→ Contact Support</a>
+        <a class="support-link" href="#">→ Report a Bug</a>
+      </div>
+      <div class="support-card">
+        <h3>BOT COMMANDS</h3>
+        <div class="cmd-ref-row"><code>/help</code><span class="cmd-ref-desc">Show all commands</span></div>
+        <div class="cmd-ref-row"><code>/balance</code><span class="cmd-ref-desc">Check your balance</span></div>
+        <div class="cmd-ref-row"><code>/gen [type]</code><span class="cmd-ref-desc">Generate a stock entry</span></div>
+        <div class="cmd-ref-row"><code>/stocklist</code><span class="cmd-ref-desc">List available stock</span></div>
+        <div class="cmd-ref-row"><code>/togglecommand</code><span class="cmd-ref-desc">Enable/disable commands (Admin)</span></div>
+        <div class="cmd-ref-row"><code>/owner_panel</code><span class="cmd-ref-desc">Open owner panel (Owner only)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">XULT — ULTIMATE DISCORD BOT &nbsp;|&nbsp; © 2024 &nbsp;|&nbsp; POWERED BY DISCORD API</div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-bg" id="modal-premium">
+  <div class="modal-box">
+    <div class="modal-title">PREMIUM ACCESS</div>
+    <div class="modal-sub">Unlock unlimited generation and exclusive features.</div>
+    <div class="premium-perks">
+      <div class="perk-title">WHAT YOU GET</div>
+      <div class="perk-row"><span class="perk-check">✓</span> No cooldown on generation</div>
+      <div class="perk-row"><span class="perk-check">✓</span> Access to ALL stock types</div>
+      <div class="perk-row"><span class="perk-check">✓</span> Priority support</div>
+      <div class="perk-row"><span class="perk-check">✓</span> Premium-only exclusive items</div>
+      <div class="perk-row"><span class="perk-check">✓</span> Early access to new features</div>
+    </div>
+    <div class="pay-btns">
+      <button class="pay-btn pay-paypal" onclick="processPayment('paypal')">PayPal — $3</button>
+      <button class="pay-btn pay-cashapp" onclick="processPayment('cashapp')">CashApp — $3</button>
+    </div>
+    <p style="font-size:12px;color:#444;text-align:center">After payment, the premium role is assigned automatically.</p>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-premium')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-main">
+  <div class="modal-box">
+    <div class="modal-title" id="main-modal-title">CONFIRM</div>
+    <div class="modal-sub" id="main-modal-sub"></div>
+    <div id="main-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-main')">CANCEL</button>
+      <button class="btn-confirm" id="main-modal-confirm">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL='https://ultbotb.onrender.com';
+const OWNER_ID='1302203907782606880';
+let currentUser=null,isPremium=false,API_KEY=null;
+let commandsData={},selectedServer=null,genCount=0;
+let actChart=null;
+
+const commandCategories={
+  balance:'economy',daily:'economy',coinflip:'economy',rps:'economy',slots:'economy',blackjack:'economy',joke:'economy',eightball:'economy',riddle:'economy',
+  gen:'stock',dmgen:'stock',stocklist:'stock',addstock:'stock',deletestock:'stock',setgenaccess:'stock',setautoupdate:'stock',
+  jail:'moderation',unjail:'moderation',purge:'moderation',warnings:'moderation',resetwarn:'moderation',setroleonjoin:'moderation',set_logs:'moderation',add_allowed_channel:'moderation',upload_bad_words:'moderation',sendnotice:'moderation',
+  setnotichannel:'notifications',addyoutubechannel:'notifications',addtwitchstream:'notifications',addtwitteraccount:'notifications',
+  reactionrole:'management',setreportchannel:'management',report:'management',setlogchannels:'management',save_server:'management',load_server:'management',add_to_channel:'management',test:'management',togglecommand:'management',commandroles:'management',commandchannels:'management',listcommands:'management',view_enabled_commands:'management',
+  gif:'fun',meme:'fun',hug:'fun',slap:'fun',say:'fun'
+};
+const cmdDesc={
+  balance:'Check your coins, XP and level',daily:'Claim daily coins (24h cooldown)',coinflip:'Flip a coin and bet',rps:'Rock-paper-scissors',slots:'Slot machine (costs 20 coins)',blackjack:'Play blackjack',joke:'Random joke',eightball:'Magic 8-ball',riddle:'Riddle for coins',
+  gen:'Generate a stock entry',dmgen:'Generate via DM',stocklist:'List stock types',addstock:'Add stock (Admin)',deletestock:'Delete stock file (Admin)',setgenaccess:'Set gen roles (Admin)',setautoupdate:'Auto-update stock channel (Admin)',
+  jail:'Jail a member',unjail:'Unjail a member',purge:'Delete messages',warnings:'View user warnings',resetwarn:'Reset warnings (Admin)',setroleonjoin:'Role on join (Admin)',set_logs:'Set log channel (Admin)',add_allowed_channel:'Allow channel for bad words',upload_bad_words:'Upload bad words list (Admin)',sendnotice:'Send a notification',
+  setnotichannel:'Set media notification channel (Admin)',addyoutubechannel:'Track YouTube channel (Admin)',addtwitchstream:'Track Twitch stream (Admin)',addtwitteraccount:'Track Twitter/X account (Admin)',
+  reactionrole:'Create reaction role dropdown (Admin)',setreportchannel:'Set report channel (Admin)',report:'Report to moderators',setlogchannels:'Set granular log channels (Admin)',save_server:'Save server backup (Admin)',load_server:'Restore from backup (Admin)',add_to_channel:'Configure 4:20 messages (Admin)',test:'Send test 4:20 message',togglecommand:'Enable/disable a command',commandroles:'Set roles for a command',commandchannels:'Set disabled channels',listcommands:'List all commands',view_enabled_commands:'View enabled commands',
+  gif:'Get a GIF',meme:'Random meme',hug:'Hug a member',slap:'Slap a member',say:'Bot repeats your message'
+};
+
+/* ── LOADER ── */
+const loaderMsgs=['INITIALIZING SYSTEMS...','LOADING STOCK DATABASE...','CONNECTING TO DISCORD API...','VERIFYING CREDENTIALS...','LAUNCHING DASHBOARD...'];
+let lmi=0;
+const lmEl=document.getElementById('loader-msg');
+const lmInt=setInterval(()=>{lmi++;if(lmi<loaderMsgs.length){lmEl.textContent=loaderMsgs[lmi];}else{clearInterval(lmInt);}},320);
+setTimeout(()=>{
+  const loader=document.getElementById('loader');
+  loader.style.transition='opacity 0.5s';
+  loader.style.opacity='0';
+  setTimeout(()=>loader.remove(),500);
+},2000);
+
+/* ── UTILITIES ── */
+function toast(msg,err=false){
+  const t=document.createElement('div');
+  t.className='toast';
+  t.style.borderLeftColor=err?'#ff4444':'var(--red)';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity 0.3s';t.style.opacity='0';setTimeout(()=>t.remove(),300)},2800);
+}
+async function getKey(){
+  try{const r=await fetch(`${API_URL}/api/key`);const d=await r.json();API_KEY=d.key;return true;}
+  catch{return false;}
+}
+async function api(endpoint,opts={}){
+  if(!API_KEY)await getKey();
+  const headers={'Authorization':`Bearer ${API_KEY}`,'Content-Type':'application/json',...(opts.headers||{})};
+  try{
+    const r=await fetch(`${API_URL}${endpoint}`,{...opts,headers});
+    if(!r.ok)throw new Error(r.status);
+    return await r.json();
+  }catch(e){toast('Failed to reach bot backend',true);throw e;}
+}
+
+/* ── TABS ── */
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const tab=document.getElementById(`tab-${name}`);
+  if(tab){tab.classList.add('active');}
+  document.querySelectorAll(`[data-tab="${name}"]`).forEach(l=>l.classList.add('active'));
+  if(name==='dashboard')loadStats();
+  if(name==='analytics')loadAnalytics();
+  if(name==='vending')loadVending();
+}
+document.querySelectorAll('[data-tab]').forEach(el=>{
+  el.addEventListener('click',()=>switchTab(el.dataset.tab));
+});
+
+/* ── VENDING MACHINE ── */
+const slotCodes=['A1','A2','A3','A4','A5','B1','B2','B3','B4','B5','C1','C2'];
+async function loadVending(){
+  const grid=document.getElementById('vm-glass-inner');
+  grid.innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#333">LOADING STOCK...</div>';
+  try{
+    const stock=await api('/api/stock');
+    const entries=Object.entries(stock);
+    if(!entries.length){grid.innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#333">NO STOCK AVAILABLE</div>';return;}
+    grid.innerHTML=entries.map(([type,data],i)=>`
+      <div class="vm-slot" onclick="selectSlot('${type}','${slotCodes[i]||'A'+(i+1)}')" id="slot-${type}">
+        <div class="vm-slot-num">${slotCodes[i]||'A'+(i+1)}</div>
+        <span class="vm-slot-emoji">${data.emoji||'📄'}</span>
+        <div class="vm-slot-name">${data.name||type}</div>
+        <div class="vm-slot-count">${data.count}</div>
+        <div class="vm-slot-label">IN STOCK</div>
+      </div>
+    `).join('');
+  }catch{grid.innerHTML='<div style="grid-column:1/-1;padding:30px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#333">FAILED TO LOAD</div>';}
+}
+let selectedType=null;
+function selectSlot(type,code){
+  document.querySelectorAll('.vm-slot').forEach(s=>s.style.background='');
+  const el=document.getElementById(`slot-${type}`);
+  if(el){el.style.background='rgba(230,0,0,0.12)';el.style.borderColor='var(--red)';}
+  selectedType=type;
+  document.getElementById('vm-type-input').value=code;
+  setScreen(`SELECTED: ${type.toUpperCase()} [${code}] — PRESS DISPENSE TO GENERATE`,'#ffcc00');
+}
+function setScreen(msg,color='#0f0'){
+  document.getElementById('vm-screen-text').textContent=msg;
+  document.getElementById('vm-screen').style.color=color;
+}
+async function dispenseSelected(){
+  const type=selectedType;
+  if(!type){setScreen('NO SLOT SELECTED. CLICK A SLOT FIRST.','#ff4444');return;}
+  if(!currentUser){setScreen('LOGIN REQUIRED. PLEASE LOGIN WITH DISCORD.','#ff4444');toast('Please login first',true);return;}
+
+  if(!isPremium){
+    const last=localStorage.getItem(`gen_${currentUser.id}_${type}`);
+    if(last&&(Date.now()-parseInt(last))/1000<5){
+      const wait=Math.ceil(5-(Date.now()-parseInt(last))/1000);
+      setScreen(`COOLDOWN ACTIVE — WAIT ${wait}s OR UPGRADE TO PREMIUM`,'#ff6600');return;
+    }
+  }
+  setScreen('PROCESSING REQUEST...','#ffcc00');
+  try{
+    const r=await api('/api/gen',{method:'POST',body:JSON.stringify({stock_type:type,user_id:currentUser.id})});
+    if(r.success){
+      setScreen(`✓ DISPENSED: ${type.toUpperCase()} — CHECK YOUR DMS`,'#0f0');
+      if(!isPremium)localStorage.setItem(`gen_${currentUser.id}_${type}`,Date.now());
+      genCount++;document.getElementById('side-gencount').textContent=genCount;
+      addGenLog(type);loadVending();
+    }else{setScreen(`ERROR: ${(r.message||'FAILED').toUpperCase()}`,'#ff4444');}
+  }catch{setScreen('CONNECTION ERROR — BOT OFFLINE?','#ff4444');}
+  setTimeout(()=>setScreen('READY. SELECT AN ITEM OR CLICK GENERATE.'),'#0f0',3000);
+}
+function addGenLog(type){
+  const list=document.getElementById('gen-log-list');
+  const now=new Date();
+  const t=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  const item=document.createElement('div');
+  item.className='gen-log-item';
+  item.innerHTML=`<span class="tick">✓</span><span>${type.toUpperCase()}</span><span class="time">${t}</span>`;
+  const placeholder=list.querySelector('div');
+  if(placeholder&&placeholder.style.color==='rgb(51, 51, 51)')placeholder.remove();
+  list.prepend(item);
+  if(list.children.length>8)list.lastChild.remove();
+}
+
+/* ── AUTH ── */
+function doLogin(){
+  const cid='1417284780675956766';
+  const redir=encodeURIComponent(window.location.origin+'/callback');
+  window.location.href=`https://discord.com/api/oauth2/authorize?client_id=${cid}&redirect_uri=${redir}&response_type=token&scope=identify+guilds`;
+}
+function handleCallback(){
+  const hash=window.location.hash.substring(1);
+  const params=new URLSearchParams(hash);
+  const token=params.get('access_token');
+  if(token){localStorage.setItem('discord_token',token);window.history.pushState({},'','/');loadUser(token);}
+  else{const t=localStorage.getItem('discord_token');if(t)loadUser(t);}
+}
+async function loadUser(token){
+  try{
+    const r=await fetch('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token}`}});
+    const u=await r.json();currentUser=u;
+    document.getElementById('auth-zone').innerHTML=`
+      <div class="user-pill">
+        <img src="https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png" alt="">
+        <span>${u.username}</span>
+        ${u.id===OWNER_ID?'<span class="owner-tag">OWNER</span>':''}
+      </div>`;
+    document.getElementById('side-user').textContent=u.username.toUpperCase();
+    if(u.id===OWNER_ID){
+      document.getElementById('owner-nav-link').classList.remove('hidden');
+    }
+    await checkPremium();
+    await loadServers();
+    loadVending();
+  }catch(e){console.error(e);}
+}
+async function checkPremium(){
+  if(!currentUser)return;
+  try{
+    const r=await api(`/api/check-premium/${currentUser.id}`);
+    isPremium=r.hasPremium;
+    const pill=document.getElementById('vm-status-pill');
+    const txt=document.getElementById('vm-status-text');
+    const tier=document.getElementById('side-tier');
+    const cd=document.getElementById('side-cd');
+    if(isPremium){
+      pill.className='vm-status-pill premium';
+      txt.textContent='PREMIUM ACTIVE';
+      tier.textContent='PREMIUM';tier.style.color='#ffb400';
+      cd.textContent='NONE';cd.style.color='#0f0';
+    }else{
+      pill.className='vm-status-pill locked';
+      txt.textContent='FREE TIER';
+      tier.textContent='FREE';tier.style.color='var(--red)';
+      cd.textContent='5s';
+    }
+  }catch{}
+}
+
+/* ── STATS ── */
+async function loadStats(){
+  try{
+    const s=await api('/api/stats');
+    document.getElementById('s-users').textContent=(s.total_users||0).toLocaleString();
+    document.getElementById('s-servers').textContent=(s.total_servers||0).toLocaleString();
+    document.getElementById('s-cmds').textContent=(s.total_commands||0).toLocaleString();
+    document.getElementById('s-premium').textContent=(s.premium_users||0).toLocaleString();
+    document.getElementById('s-ping').textContent=s.latency?`${s.latency}ms`:'—';
+    const stock=await api('/api/stock');
+    let t=0;for(const d of Object.values(stock))t+=d.count;
+    document.getElementById('s-stock').textContent=t.toLocaleString();
+    document.getElementById('coin-display').textContent=(s.total_coins||0).toLocaleString();
+  }catch{}
+}
+async function refreshStats(){toast('Refreshing stats...');await loadStats();toast('Stats refreshed!');}
+
+/* ── SERVERS ── */
+async function loadServers(){
+  try{
+    const servers=await api('/api/servers');
+    const chips=document.getElementById('server-chips');
+    chips.innerHTML='';
+    servers.forEach(s=>{
+      const c=document.createElement('div');
+      c.className='server-chip';
+      c.innerHTML=`<div class="chip-dot"></div>${s.name}<span style="font-size:11px;color:#444;margin-left:4px">${s.memberCount}</span>`;
+      c.onclick=()=>selectServer(s.id,s.name,c);
+      chips.appendChild(c);
+    });
+    document.getElementById('server-pick').style.display='block';
+  }catch{}
+}
+async function selectServer(id,name,el){
+  selectedServer=id;
+  document.querySelectorAll('.server-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cmd-panel').style.display='block';
+  try{
+    const cfg=await api(`/api/server/${id}/config`);
+    commandsData=cfg.commands||{};
+    renderCmds();
+  }catch{toast('Failed to load config',true);}
+}
+
+/* ── COMMANDS ── */
+function renderCmds(){
+  const grid=document.getElementById('cmd-grid');
+  const search=document.getElementById('cmd-search').value.toLowerCase();
+  const cat=document.querySelector('.cat-chip.active').dataset.cat;
+  const cmds=Object.keys(commandsData).filter(c=>{
+    return c.toLowerCase().includes(search)&&(cat==='all'||commandCategories[c]===cat);
+  });
+  if(!cmds.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;font-family:var(--font-mono);font-size:12px;color:#333">NO COMMANDS FOUND</div>';return;}
+  grid.innerHTML=cmds.map(c=>{
+    const cfg=commandsData[c]||{enabled:true,allowed_roles:[]};
+    return `<div class="cmd-card">
+      <div class="cmd-top">
+        <span class="cmd-name">/${c}</span>
+        <div class="toggle ${cfg.enabled?'on':''}" onclick="toggleCmd('${c}')"></div>
+      </div>
+      <div class="cmd-desc">${cmdDesc[c]||'Configure this command'}</div>
+      <div class="cmd-bottom">
+        <input type="text" class="cmd-role-input" id="role-${c}" placeholder="Role IDs..." value="${(cfg.allowed_roles||[]).join(',')}">
+        <button class="btn-save-cmd" onclick="saveCmd('${c}')">SAVE</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleCmd(c){
+  const cfg=commandsData[c]||{enabled:true};const ns=!cfg.enabled;
+  try{
+    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:ns,allowed_roles:cfg.allowed_roles||[],disabled_channels:cfg.disabled_channels||[]})});
+    commandsData[c]={...cfg,enabled:ns};renderCmds();toast(`/${c} ${ns?'enabled':'disabled'}`);
+  }catch{toast('Failed to update command',true);}
+}
+async function saveCmd(c){
+  const cfg=commandsData[c]||{enabled:true};
+  const inp=document.getElementById(`role-${c}`);
+  const roles=inp?.value?inp.value.split(',').map(r=>parseInt(r.trim())).filter(r=>!isNaN(r)):[];
+  try{
+    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:cfg.enabled,allowed_roles:roles,disabled_channels:cfg.disabled_channels||[]})});
+    commandsData[c]={...cfg,allowed_roles:roles};toast(`/${c} saved`);
+  }catch{toast('Failed to save',true);}
+}
+document.getElementById('cmd-search').addEventListener('input',renderCmds);
+document.querySelectorAll('.cat-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');renderCmds();
+  });
+});
+
+/* ── ANALYTICS ── */
+async function loadAnalytics(){
+  try{
+    const s=await api('/api/stats');
+    if(actChart)actChart.destroy();
+    const ctx=document.getElementById('activity-chart').getContext('2d');
+    actChart=new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:['7d ago','6d ago','5d ago','4d ago','3d ago','Yesterday','Today'],
+        datasets:[{
+          label:'Commands',
+          data:s.activity||[0,0,0,0,0,0,0],
+          borderColor:'#e60000',
+          backgroundColor:'rgba(230,0,0,0.08)',
+          fill:true,tension:0.4,
+          pointBackgroundColor:'#e60000',
+          pointRadius:4,
+          pointHoverRadius:6,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#888',font:{family:'Barlow Condensed',size:13}}}},
+        scales:{
+          y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}},
+          x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}}
         }
+      }
+    });
+    const list=document.getElementById('activity-list');
+    if(s.recent?.length){
+      list.innerHTML=s.recent.map(r=>`
+        <div class="activity-item">
+          <div class="a-avatar">${(r.username||'?')[0].toUpperCase()}</div>
+          <div>
+            <div class="a-name">${r.username||'Unknown'}</div>
+            <div class="a-action">${r.type||'action'}</div>
+          </div>
+          <span class="a-time">${r.time||''}</span>
+        </div>
+      `).join('');
+    }else{
+      list.innerHTML='<div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">NO RECENT ACTIVITY</div>';
+    }
+  }catch{}
+}
 
-        async function fetchAPI(endpoint, options = {}) {
-            if (!API_KEY) await getAPIKey();
-            const headers = {
-                'Authorization': `Bearer ${API_KEY}`,
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-            try {
-                const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error('API Error:', error);
-                showToast('Failed to connect to bot backend', true);
-                throw error;
-            }
-        }
+/* ── MODALS ── */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openPremiumModal(){openModal('modal-premium');}
+document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
 
-        async function getAPIKey() {
-            try {
-                const response = await fetch(`${API_URL}/api/key`);
-                const data = await response.json();
-                API_KEY = data.key;
-                return true;
-            } catch (error) {
-                console.error('Failed to get API key:', error);
-                return false;
-            }
-        }
+function showModal(title,sub,bodyHtml,onConfirm){
+  document.getElementById('main-modal-title').textContent=title;
+  document.getElementById('main-modal-sub').textContent=sub||'';
+  document.getElementById('main-modal-body').innerHTML=bodyHtml||'';
+  const btn=document.getElementById('main-modal-confirm');
+  const newBtn=btn.cloneNode(true);btn.parentNode.replaceChild(newBtn,btn);
+  if(onConfirm){newBtn.style.display='';newBtn.addEventListener('click',()=>{closeModal('modal-main');onConfirm();});}
+  else{newBtn.style.display='none';}
+  openModal('modal-main');
+}
 
-        // Check premium status
-        async function checkPremiumStatus() {
-            if (!currentUser) return false;
-            
-            try {
-                const response = await fetchAPI(`/api/check-premium/${currentUser.id}`);
-                isPremium = response.hasPremium;
-                
-                const statusDiv = document.getElementById('premium-status');
-                if (isPremium) {
-                    statusDiv.className = 'premium-status premium';
-                    statusDiv.innerHTML = '⭐ PREMIUM ACTIVE ⭐<br>No cooldown • Full access';
-                } else {
-                    statusDiv.className = 'premium-status';
-                    statusDiv.innerHTML = '🔒 FREE USER 🔒<br>5s cooldown • Click to upgrade →';
-                    statusDiv.style.cursor = 'pointer';
-                    statusDiv.onclick = () => openPremiumModal();
-                }
-                return isPremium;
-            } catch (error) {
-                console.error('Failed to check premium:', error);
-                return false;
-            }
-        }
+function processPayment(m){
+  const link=m==='paypal'?'https://paypal.me/yourusername/3':'https://cash.app/$yourcashapp/3';
+  showModal('PAYMENT','Send $3 then click verify.',`
+    <div style="display:flex;gap:10px;margin:10px 0">
+      <a href="${link}" target="_blank" style="flex:1;padding:11px;background:var(--red);color:#fff;text-align:center;text-decoration:none;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:3px">PAY NOW</a>
+      <button onclick="verifyPayment()" style="flex:1;padding:11px;background:var(--surface2);border:1px solid var(--border-red);color:var(--red);font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border-radius:3px">I HAVE PAID</button>
+    </div>
+  `,null);
+}
+function verifyPayment(){
+  closeModal('modal-main');toast('Verifying payment...');
+  setTimeout(()=>{
+    isPremium=true;
+    document.getElementById('vm-status-pill').className='vm-status-pill premium';
+    document.getElementById('vm-status-text').textContent='PREMIUM ACTIVE';
+    document.getElementById('side-tier').textContent='PREMIUM';
+    document.getElementById('side-tier').style.color='#ffb400';
+    document.getElementById('side-cd').textContent='NONE';
+    toast('Payment verified! Premium activated!');
+  },2000);
+}
 
-        // Open premium purchase modal
-        function openPremiumModal() {
-            document.getElementById('premium-modal').classList.add('active');
-        }
+/* ── OWNER FUNCS ── */
+function openPullModal(){showModal('PULL MEMBERS','Pull saved members to a server.',`<input type="text" class="modal-input" id="pull-server" placeholder="Server ID or Name"><input type="text" class="modal-input" id="pull-count" placeholder="Count or 'all'" value="all">`,async()=>{const s=document.getElementById('pull-server').value;if(!s){toast('Enter a server',true);return;}toast(`Pulling to ${s}...`);try{const r=await api('/api/owner/pull',{method:'POST',body:JSON.stringify({target_server:s,count:document.getElementById('pull-count').value})});toast(r.message||'Done');}catch{toast('Failed',true);}});}
+async function saveAllServers(){showModal('SAVE ALL SERVERS','Backup all servers? This may take a moment.',null,async()=>{toast('Saving...');try{await api('/api/owner/save_all',{method:'POST'});toast('All servers saved!');}catch{toast('Failed',true);}});}
+async function showServerList(){try{const s=await api('/api/servers');showModal('SERVER LIST','',`<pre style="font-family:var(--font-mono);font-size:12px;color:#0f0;max-height:300px;overflow:auto">${s.map(x=>`${x.name} — ${x.memberCount} members\nID: ${x.id}`).join('\n\n')}</pre>`,null);}catch{toast('Failed',true);}}
+function openManageCoinsModal(){showModal('MANAGE COINS','Add or remove coins from a user.',`<input type="text" class="modal-input" id="coin-user" placeholder="User ID"><input type="number" class="modal-input" id="coin-amount" placeholder="Amount (negative to remove)">`,async()=>{const uid=document.getElementById('coin-user').value;const amt=parseInt(document.getElementById('coin-amount').value);if(!uid||isNaN(amt)){toast('Invalid input',true);return;}try{await api('/api/owner/manage_coins',{method:'POST',body:JSON.stringify({user_id:uid,amount:amt})});toast(`${amt>0?'Added':'Removed'} ${Math.abs(amt)} coins`);}catch{toast('Failed',true);}});}
+function openBanModal(){showModal('BAN USER','Ban a user from the bot.',`<input type="text" class="modal-input" id="ban-user" placeholder="User ID"><input type="text" class="modal-input" id="ban-reason" placeholder="Reason">`,async()=>{const uid=document.getElementById('ban-user').value;if(!uid){toast('Enter a user ID',true);return;}try{await api('/api/owner/ban_user',{method:'POST',body:JSON.stringify({user_id:uid,reason:document.getElementById('ban-reason').value||'No reason'})});toast(`User ${uid} banned`);}catch{toast('Failed',true);}});}
+async function showPremiumUsers(){try{const p=await api('/api/owner/premium_users');showModal('PREMIUM USERS','',`<pre style="font-family:var(--font-mono);font-size:12px;color:#0f0;max-height:300px;overflow:auto">${p.map(u=>`${u.username} — ${u.is_active?'ACTIVE':'INACTIVE'}\nSince: ${u.granted_at?.slice(0,10)||'N/A'}`).join('\n\n')||'No premium users'}</pre>`,null);}catch{toast('Failed',true);}}
+async function showSystemLogs(){try{const l=await api('/api/owner/logs');showModal('SYSTEM LOGS','',`<pre style="font-family:var(--font-mono);font-size:11px;color:#0f0;max-height:320px;overflow:auto">${l.map(x=>`[${x.time?.slice(0,19)}] ${x.userId}: ${x.action}`).join('\n')||'No logs'}</pre>`,null);}catch{toast('Failed',true);}}
+async function showStockStats(){try{const s=await api('/api/stock');let total=0,txt='';for(const[k,d]of Object.entries(s)){txt+=`${k}: ${d.count}\n`;total+=d.count;}showModal('STOCK STATS',`Total: ${total} entries`,`<pre style="font-family:var(--font-mono);font-size:13px;color:#0f0">${txt}</pre>`,null);}catch{toast('Failed',true);}}
+function openBroadcastModal(){showModal('BROADCAST','Send a message to all servers.',`<textarea class="modal-textarea" id="broadcast-msg" rows="4" placeholder="Message..."></textarea>`,async()=>{const m=document.getElementById('broadcast-msg').value;if(!m){toast('Enter a message',true);return;}try{await api('/api/owner/broadcast',{method:'POST',body:JSON.stringify({message:m})});toast('Broadcast sent!');}catch{toast('Failed',true);}});}
+async function backupDatabase(){showModal('BACKUP DATABASE','Backup the full database?',null,async()=>{toast('Backing up...');try{const r=await api('/api/owner/backup_db',{method:'POST'});toast(`Backed up: ${r.filename||'done'}`);}catch{toast('Failed',true);}});}
+function openRestoreModal(){showModal('RESTORE SERVER','Restore a server from backup.',`<input type="text" class="modal-input" id="restore-id" placeholder="Server ID">`,async()=>{const sid=document.getElementById('restore-id').value;if(!sid){toast('Enter a server ID',true);return;}toast('Restoring...');try{await api('/api/owner/restore_server',{method:'POST',body:JSON.stringify({server_id:sid})});toast('Server restored!');}catch{toast('Failed',true);}});}
 
-        function closePremiumModal() {
-            document.getElementById('premium-modal').classList.remove('active');
-        }
-
-        // Process payment (simulated - replace with actual payment integration)
-        function processPayment(method) {
-            const paypalEmail = "your-paypal@email.com";
-            const cashappTag = "$yourcashapp";
-            
-            let paymentLink = "";
-            let instructions = "";
-            
-            if (method === 'paypal') {
-                paymentLink = `https://paypal.me/yourusername/3`;
-                instructions = `Send $3 to ${paypalEmail} and then click the verification button below.`;
-            } else {
-                paymentLink = `https://cash.app/${cashappTag}/3`;
-                instructions = `Send $3 to ${cashappTag} and then click the verification button below.`;
-            }
-            
-            showModal('Payment Instructions', `
-                <div style="text-align: center;">
-                    <p>${instructions}</p>
-                    <p style="margin: 15px 0;"><strong>After sending payment:</strong></p>
-                    <button class="payment-btn paypal" style="margin: 5px;" onclick="verifyPayment()">✅ I Have Paid - Verify</button>
-                    <a href="${paymentLink}" target="_blank" class="payment-btn paypal" style="display: inline-block; text-decoration: none; margin: 5px;">💸 Pay Now</a>
-                </div>
-            `, null);
-        }
-
-        // Verify payment (this would call your backend to check and assign premium role)
-        async function verifyPayment() {
-            closeModal();
-            showToast('Verifying payment... Please wait.');
-            
-            // This would call your backend API to verify payment and assign the premium role
-            // For now, we'll simulate it
-            setTimeout(() => {
-                showToast('Payment verified! You now have premium access!', false);
-                isPremium = true;
-                document.getElementById('premium-status').className = 'premium-status premium';
-                document.getElementById('premium-status').innerHTML = '⭐ PREMIUM ACTIVE ⭐<br>No cooldown • Full access';
-                loadVendingMachine();
-            }, 2000);
-        }
-
-        // Load vending machine
-        async function loadVendingMachine() {
-            try {
-                const stock = await fetchAPI('/api/stock');
-                const grid = document.getElementById('vending-grid');
-                
-                const stockItems = Object.entries(stock);
-                if (stockItems.length === 0) {
-                    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#666;">No stock available</div>';
-                    return;
-                }
-                
-                grid.innerHTML = stockItems.map(([type, data]) => `
-                    <div class="vending-item" data-type="${type}">
-                        <div class="item-emoji">${data.emoji || '📄'}</div>
-                        <div class="item-name">${data.name}</div>
-                        <div class="item-count">${data.count} left</div>
-                        <button class="gen-button" onclick="generateFromVending('${type}')">🎲 GENERATE</button>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Failed to load vending machine:', error);
-                document.getElementById('vending-grid').innerHTML = '<div style="text-align:center;padding:40px;color:#666;">Failed to load stock</div>';
-            }
-        }
-
-        // Generate from vending machine
-        async function generateFromVending(stockType) {
-            const screen = document.getElementById('vending-screen');
-            
-            // Check cooldown for free users
-            if (!isPremium) {
-                const lastGen = localStorage.getItem(`gen_${currentUser?.id}_${stockType}`);
-                if (lastGen) {
-                    const elapsed = (Date.now() - parseInt(lastGen)) / 1000;
-                    if (elapsed < 5) {
-                        screen.innerHTML = `⏰ COOLDOWN: Please wait ${Math.ceil(5 - elapsed)} seconds before generating again!`;
-                        screen.style.color = '#ff6600';
-                        setTimeout(() => {
-                            screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
-                            screen.style.color = '#00ff00';
-                        }, 2000);
-                        return;
-                    }
-                }
-            }
-            
-            screen.innerHTML = '🔄 PROCESSING... Please wait';
-            screen.style.color = '#ffcc00';
-            
-            try {
-                const response = await fetchAPI('/api/gen', {
-                    method: 'POST',
-                    body: JSON.stringify({ stock_type: stockType, user_id: currentUser?.id })
-                });
-                
-                if (response.success) {
-                    screen.innerHTML = `✅ SUCCESS! Stock sent to your DMs!\n📦 Type: ${stockType}\n💎 ${isPremium ? 'Premium user - No cooldown' : 'Free user - 5s cooldown'}`;
-                    screen.style.color = '#00ff00';
-                    
-                    if (!isPremium) {
-                        localStorage.setItem(`gen_${currentUser?.id}_${stockType}`, Date.now().toString());
-                    }
-                    
-                    // Refresh stock count
-                    loadVendingMachine();
-                    
-                    setTimeout(() => {
-                        screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
-                        screen.style.color = '#00ff00';
-                    }, 3000);
-                } else {
-                    screen.innerHTML = `❌ ERROR: ${response.message || 'Failed to generate'}`;
-                    screen.style.color = '#ff0000';
-                    setTimeout(() => {
-                        screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
-                        screen.style.color = '#00ff00';
-                    }, 3000);
-                }
-            } catch (error) {
-                screen.innerHTML = `❌ ERROR: ${error.message || 'Connection failed'}`;
-                screen.style.color = '#ff0000';
-                setTimeout(() => {
-                    screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
-                    screen.style.color = '#00ff00';
-                }, 3000);
-            }
-        }
-
-        // Load stats
-        async function loadStats() {
-            try {
-                const stats = await fetchAPI('/api/stats');
-                document.getElementById('total-users').textContent = stats.total_users?.toLocaleString() || '0';
-                document.getElementById('total-servers').textContent = stats.total_servers?.toLocaleString() || '0';
-                document.getElementById('total-commands').textContent = stats.total_commands?.toLocaleString() || '0';
-                document.getElementById('premium-users').textContent = stats.premium_users?.toLocaleString() || '0';
-                document.getElementById('latency').textContent = stats.latency ? `${stats.latency}ms` : '-';
-                
-                const stock = await fetchAPI('/api/stock');
-                let stockTotal = 0;
-                for (const [type, data] of Object.entries(stock)) {
-                    stockTotal += data.count;
-                }
-                document.getElementById('stock-total').textContent = stockTotal.toLocaleString();
-                
-                return stats;
-            } catch (error) {
-                console.error('Failed to load stats:', error);
-                return null;
-            }
-        }
-
-        async function refreshStats() {
-            showToast('Refreshing stats...');
-            await loadStats();
-            showToast('Stats refreshed!');
-        }
-
-        // Load servers for commands
-        async function loadServersForCommands() {
-            try {
-                const servers = await fetchAPI('/api/servers');
-                const serverList = document.getElementById('commands-server-list');
-                serverList.innerHTML = '';
-                
-                servers.forEach(server => {
-                    const serverItem = document.createElement('div');
-                    serverItem.className = 'server-item';
-                    serverItem.innerHTML = `
-                        <div class="server-icon">${server.icon ? `<img src="${server.icon}" alt="${server.name}">` : '🏠'}</div>
-                        <div>${server.name}</div>
-                        <div style="font-size:11px;color:#666;margin-left:auto">${server.memberCount} members</div>
-                    `;
-                    serverItem.onclick = () => selectServerForCommands(server.id, server.name);
-                    serverList.appendChild(serverItem);
-                });
-                
-                document.getElementById('commands-server-selector').style.display = 'block';
-            } catch (error) {
-                console.error('Failed to load servers:', error);
-            }
-        }
-
-        async function selectServerForCommands(serverId, serverName) {
-            selectedServer = serverId;
-            
-            document.querySelectorAll('#commands-server-list .server-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.querySelector('div:nth-child(2)').textContent === serverName) {
-                    item.classList.add('active');
-                }
-            });
-            
-            await loadServerConfig(serverId);
-            document.getElementById('commands-panel').style.display = 'block';
-        }
-
-        async function loadServerConfig(serverId) {
-            try {
-                const config = await fetchAPI(`/api/server/${serverId}/config`);
-                commandsData = config.commands || {};
-                renderCommands();
-            } catch (error) {
-                console.error('Failed to load server config:', error);
-                showToast('Failed to load server configuration', true);
-            }
-        }
-
-        function renderCommands() {
-            const grid = document.getElementById('commands-grid');
-            const searchTerm = document.getElementById('search-commands').value.toLowerCase();
-            const activeCategory = document.querySelector('.category-btn.active').dataset.category;
-            
-            const commands = Object.keys(commandsData);
-            const filteredCommands = commands.filter(cmd => {
-                const matchesSearch = cmd.toLowerCase().includes(searchTerm);
-                const matchesCategory = activeCategory === 'all' || commandCategories[cmd] === activeCategory;
-                return matchesSearch && matchesCategory;
-            });
-            
-            if (filteredCommands.length === 0) {
-                grid.innerHTML = '<div style="text-align:center;padding:40px;color:#666;">No commands found</div>';
-                return;
-            }
-            
-            grid.innerHTML = filteredCommands.map(cmd => {
-                const config = commandsData[cmd] || { enabled: true, allowed_roles: [], disabled_channels: [] };
-                const category = commandCategories[cmd] || 'other';
-                const categoryIcon = {
-                    'economy': '💰', 'stock': '📦', 'moderation': '🛡️', 'notifications': '📢', 'management': '⚙️', 'fun': '🎨', 'other': '⚙️'
-                }[category];
-                const desc = commandDescriptions[cmd] || 'Configure this command\'s permissions';
-                
-                return `
-                    <div class="command-card" data-command="${cmd}">
-                        <div class="command-header">
-                            <span class="command-name">${categoryIcon} /${cmd}</span>
-                            <div class="toggle-switch ${config.enabled ? 'active' : ''}" onclick="toggleCommand('${cmd}')"></div>
-                        </div>
-                        <div class="command-desc">${desc}</div>
-                        <div class="command-options">
-                            <input type="text" class="role-select" id="roles-${cmd}" placeholder="Role IDs (comma separated)" value="${(config.allowed_roles || []).join(',')}">
-                            <button class="save-settings" onclick="saveCommandSettings('${cmd}')">Save</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function toggleCommand(cmd) {
-            const config = commandsData[cmd] || { enabled: true };
-            const newState = !config.enabled;
-            
-            try {
-                await fetchAPI(`/api/server/${selectedServer}/command/${cmd}`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        enabled: newState,
-                        allowed_roles: config.allowed_roles || [],
-                        disabled_channels: config.disabled_channels || []
-                    })
-                });
-                
-                commandsData[cmd] = { ...config, enabled: newState };
-                renderCommands();
-                showToast(`/${cmd} ${newState ? 'enabled' : 'disabled'}`);
-            } catch (error) {
-                showToast('Failed to update command', true);
-            }
-        }
-
-        async function saveCommandSettings(cmd) {
-            const config = commandsData[cmd] || { enabled: true };
-            const rolesInput = document.getElementById(`roles-${cmd}`);
-            let allowedRoles = [];
-            if (rolesInput && rolesInput.value) {
-                allowedRoles = rolesInput.value.split(',').map(r => parseInt(r.trim())).filter(r => !isNaN(r));
-            }
-            
-            try {
-                await fetchAPI(`/api/server/${selectedServer}/command/${cmd}`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        enabled: config.enabled,
-                        allowed_roles: allowedRoles,
-                        disabled_channels: config.disabled_channels || []
-                    })
-                });
-                
-                commandsData[cmd] = { ...config, allowed_roles: allowedRoles };
-                showToast(`/${cmd} settings saved`);
-            } catch (error) {
-                showToast('Failed to save settings', true);
-            }
-        }
-
-        // Load analytics
-        async function loadAnalytics() {
-            try {
-                const stats = await fetchAPI('/api/stats');
-                
-                if (activityChart) {
-                    activityChart.destroy();
-                }
-                
-                const ctx = document.getElementById('activity-chart').getContext('2d');
-                activityChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['7 days ago', '6 days ago', '5 days ago', '4 days ago', '3 days ago', 'Yesterday', 'Today'],
-                        datasets: [{
-                            label: 'Commands Used',
-                            data: stats.activity || [0,0,0,0,0,0,0],
-                            borderColor: '#cc0000',
-                            backgroundColor: 'rgba(204, 0, 0, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#ffffff' }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                grid: { color: '#333' },
-                                ticks: { color: '#a0a0a0' }
-                            },
-                            x: {
-                                grid: { color: '#333' },
-                                ticks: { color: '#a0a0a0' }
-                            }
-                        }
-                    }
-                });
-                
-                const recentList = document.getElementById('recent-list');
-                if (stats.recent && stats.recent.length > 0) {
-                    recentList.innerHTML = stats.recent.map(item => `
-                        <div class="recent-item">
-                            <div>${item.username}</div>
-                            <div><span class="recent-type">${item.type}</span> ${item.time}</div>
-                        </div>
-                    `).join('');
-                } else {
-                    recentList.innerHTML = '<div style="text-align:center;padding:24px;color:#666;">No recent activity</div>';
-                }
-            } catch (error) {
-                console.error('Failed to load analytics:', error);
-            }
-        }
-
-        // ==================== OWNER FUNCTIONS ====================
-        
-        function isOwner() {
-            return currentUser && currentUser.id === OWNER_ID;
-        }
-
-        function openPullModal() {
-            showModal('Pull Members to Server', `
-                <input type="text" id="pull-server" placeholder="Server ID or Name" style="width:100%;padding:10px;margin-bottom:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-                <input type="text" id="pull-count" placeholder="Number of members (or 'all')" value="all" style="width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-            `, async () => {
-                const server = document.getElementById('pull-server').value;
-                const count = document.getElementById('pull-count').value;
-                if (!server) {
-                    showToast('Please enter a server ID or name', true);
-                    return;
-                }
-                showToast(`Pulling members to ${server}...`);
-                try {
-                    const response = await fetchAPI(`/api/owner/pull`, {
-                        method: 'POST',
-                        body: JSON.stringify({ target_server: server, count: count })
-                    });
-                    showToast(`Success: ${response.message || 'Members pulled successfully'}`);
-                } catch (error) {
-                    showToast('Failed to pull members', true);
-                }
-            });
-        }
-
-        async function saveAllServers() {
-            showModal('Save All Servers', 'Are you sure you want to save backups for all servers? This may take a while.', async () => {
-                showToast('Saving all servers...');
-                try {
-                    await fetchAPI('/api/owner/save_all', { method: 'POST' });
-                    showToast('All servers saved successfully!');
-                } catch (error) {
-                    showToast('Failed to save servers', true);
-                }
-            });
-        }
-
-        async function showServerList() {
-            try {
-                const servers = await fetchAPI('/api/servers');
-                let serverList = '';
-                servers.forEach(s => {
-                    serverList += `${s.name} - ${s.memberCount} members (ID: ${s.id})\n`;
-                });
-                showModal('Server List', `<pre style="white-space:pre-wrap;max-height:300px;overflow:auto;">${serverList}</pre>`, null);
-            } catch (error) {
-                showToast('Failed to load server list', true);
-            }
-        }
-
-        function openManageCoinsModal() {
-            showModal('Manage Coins', `
-                <input type="text" id="coin-user" placeholder="User ID" style="width:100%;padding:10px;margin-bottom:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-                <input type="number" id="coin-amount" placeholder="Amount (positive to add, negative to remove)" style="width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-            `, async () => {
-                const userId = document.getElementById('coin-user').value;
-                const amount = parseInt(document.getElementById('coin-amount').value);
-                if (!userId || isNaN(amount)) {
-                    showToast('Invalid input', true);
-                    return;
-                }
-                try {
-                    await fetchAPI('/api/owner/manage_coins', {
-                        method: 'POST',
-                        body: JSON.stringify({ user_id: userId, amount: amount })
-                    });
-                    showToast(`Successfully ${amount > 0 ? 'added' : 'removed'} ${Math.abs(amount)} coins`);
-                } catch (error) {
-                    showToast('Failed to manage coins', true);
-                }
-            });
-        }
-
-        function openBanModal() {
-            showModal('Ban User', `
-                <input type="text" id="ban-user" placeholder="User ID" style="width:100%;padding:10px;margin-bottom:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-                <input type="text" id="ban-reason" placeholder="Reason" style="width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-            `, async () => {
-                const userId = document.getElementById('ban-user').value;
-                const reason = document.getElementById('ban-reason').value || 'No reason provided';
-                if (!userId) {
-                    showToast('Please enter a user ID', true);
-                    return;
-                }
-                try {
-                    await fetchAPI('/api/owner/ban_user', {
-                        method: 'POST',
-                        body: JSON.stringify({ user_id: userId, reason: reason })
-                    });
-                    showToast(`User ${userId} has been banned`);
-                } catch (error) {
-                    showToast('Failed to ban user', true);
-                }
-            });
-        }
-
-        async function showPremiumUsers() {
-            try {
-                const premium = await fetchAPI('/api/owner/premium_users');
-                let list = '';
-                premium.forEach(u => {
-                    list += `${u.username} - ${u.is_active ? 'Active' : 'Inactive'} (Since: ${u.granted_at?.slice(0,10) || 'N/A'})\n`;
-                });
-                showModal('Premium Users', `<pre style="white-space:pre-wrap;max-height:300px;overflow:auto;">${list || 'No premium users'}</pre>`, null);
-            } catch (error) {
-                showToast('Failed to load premium users', true);
-            }
-        }
-
-        async function showSystemLogs() {
-            try {
-                const logs = await fetchAPI('/api/owner/logs');
-                let logText = '';
-                logs.forEach(l => {
-                    logText += `[${l.time?.slice(0,19)}] User ${l.userId}: ${l.action} - ${l.details || ''}\n`;
-                });
-                showModal('System Logs', `<pre style="white-space:pre-wrap;max-height:300px;overflow:auto;">${logText || 'No logs found'}</pre>`, null);
-            } catch (error) {
-                showToast('Failed to load logs', true);
-            }
-        }
-
-        async function showStockStats() {
-            try {
-                const stock = await fetchAPI('/api/stock');
-                let stockText = '';
-                let total = 0;
-                for (const [type, data] of Object.entries(stock)) {
-                    stockText += `${type}: ${data.count} entries\n`;
-                    total += data.count;
-                }
-                showModal('Stock Statistics', `<strong>Total: ${total} entries</strong>\n\n${stockText}`, null);
-            } catch (error) {
-                showToast('Failed to load stock stats', true);
-            }
-        }
-
-        function openBroadcastModal() {
-            showModal('Broadcast to All Servers', `
-                <textarea id="broadcast-message" placeholder="Enter your broadcast message..." rows="4" style="width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;"></textarea>
-            `, async () => {
-                const message = document.getElementById('broadcast-message').value;
-                if (!message) {
-                    showToast('Please enter a message', true);
-                    return;
-                }
-                try {
-                    await fetchAPI('/api/owner/broadcast', {
-                        method: 'POST',
-                        body: JSON.stringify({ message: message })
-                    });
-                    showToast('Broadcast sent to all servers!');
-                } catch (error) {
-                    showToast('Failed to send broadcast', true);
-                }
-            });
-        }
-
-        async function backupDatabase() {
-            showModal('Backup Database', 'Are you sure you want to backup the database?', async () => {
-                showToast('Backing up database...');
-                try {
-                    const response = await fetchAPI('/api/owner/backup_db', { method: 'POST' });
-                    showToast(`Database backed up: ${response.filename}`);
-                } catch (error) {
-                    showToast('Failed to backup database', true);
-                }
-            });
-        }
-
-        function openRestoreModal() {
-            showModal('Restore Server', `
-                <input type="text" id="restore-server" placeholder="Server ID" style="width:100%;padding:10px;margin-bottom:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-            `, async () => {
-                const serverId = document.getElementById('restore-server').value;
-                if (!serverId) {
-                    showToast('Please enter a server ID', true);
-                    return;
-                }
-                showToast(`Restoring server ${serverId}...`);
-                try {
-                    await fetchAPI('/api/owner/restore_server', {
-                        method: 'POST',
-                        body: JSON.stringify({ server_id: serverId })
-                    });
-                    showToast('Server restored successfully!');
-                } catch (error) {
-                    showToast('Failed to restore server', true);
-                }
-            });
-        }
-
-        // Modal functions
-        function showModal(title, bodyHtml, onConfirm) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').innerHTML = bodyHtml;
-            const confirmBtn = document.getElementById('modal-confirm');
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            if (onConfirm) {
-                newConfirmBtn.addEventListener('click', () => {
-                    closeModal();
-                    onConfirm();
-                });
-                newConfirmBtn.style.display = 'block';
-            } else {
-                newConfirmBtn.style.display = 'none';
-                const cancelBtn = document.querySelector('.modal-btn-cancel');
-                cancelBtn.textContent = 'Close';
-                cancelBtn.onclick = closeModal;
-            }
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        // Discord OAuth Login
-        function login() {
-            const CLIENT_ID = '1417284780675956766';
-            const REDIRECT_URI = encodeURIComponent(window.location.origin + '/callback');
-            const scope = 'identify guilds';
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${scope}`;
-        }
-
-        function handleCallback() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            
-            if (token) {
-                localStorage.setItem('discord_token', token);
-                window.history.pushState({}, document.title, '/');
-                loadUserInfo(token);
-            } else {
-                const token = localStorage.getItem('discord_token');
-                if (token) loadUserInfo(token);
-            }
-        }
-
-        async function loadUserInfo(token) {
-            try {
-                const response = await fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const user = await response.json();
-                currentUser = user;
-                
-                document.getElementById('auth-section').innerHTML = `
-                    <div class="user-info">
-                        <img class="user-avatar" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png">
-                        <span>${user.username}</span>
-                        ${user.id === OWNER_ID ? '<span class="owner-badge">OWNER</span>' : ''}
-                    </div>
-                `;
-                
-                // Check premium status
-                await checkPremiumStatus();
-                
-                // Show owner tab if user is owner
-                if (user.id === OWNER_ID) {
-                    document.getElementById('owner-tab-link').style.display = 'block';
-                }
-                
-                await loadServersForCommands();
-                await loadVendingMachine();
-            } catch (error) {
-                console.error('Failed to load user info:', error);
-            }
-        }
-
-        // Tab switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
-            });
-            
-            document.getElementById(`${tabName}-tab`).style.display = 'block';
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.tab === tabName) {
-                    link.classList.add('active');
-                }
-            });
-            
-            if (tabName === 'dashboard') {
-                loadStats();
-            } else if (tabName === 'analytics') {
-                loadAnalytics();
-            } else if (tabName === 'vending') {
-                loadVendingMachine();
-            }
-        }
-
-        // Event listeners
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => switchTab(link.dataset.tab));
-        });
-        
-        document.getElementById('search-commands')?.addEventListener('input', () => renderCommands());
-        
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderCommands();
-            });
-        });
-
-        // Initialize
-        async function init() {
-            await getAPIKey();
-            await loadStats();
-            handleCallback();
-            switchTab('vending');
-            
-            setInterval(async () => {
-                if (document.getElementById('dashboard-tab').style.display !== 'none') {
-                    await loadStats();
-                }
-                if (document.getElementById('analytics-tab').style.display !== 'none') {
-                    await loadAnalytics();
-                }
-                if (document.getElementById('vending-tab').style.display !== 'none') {
-                    await loadVendingMachine();
-                }
-            }, 30000);
-        }
-        
-        init();
-    </script>
+/* ── INIT ── */
+async function init(){
+  await getKey();
+  handleCallback();
+  switchTab('vending');
+  setInterval(async()=>{
+    if(document.getElementById('tab-dashboard').classList.contains('active'))loadStats();
+    if(document.getElementById('tab-analytics').classList.contains('active'))loadAnalytics();
+    if(document.getElementById('tab-vending').classList.contains('active'))loadVending();
+  },30000);
+}
+init();
+</script>
 </body>
 </html>
