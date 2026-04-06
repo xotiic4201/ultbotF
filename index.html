@@ -131,6 +131,15 @@
             border: 2px solid #cc0000;
         }
 
+        .premium-badge {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
         .owner-badge {
             background: #cc0000;
             padding: 4px 8px;
@@ -208,6 +217,190 @@
         .stat-label {
             color: #a0a0a0;
             font-size: 13px;
+        }
+
+        /* Vending Machine */
+        .vending-machine {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border: 2px solid #cc0000;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vending-machine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #cc0000, #ff6666, #cc0000);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .machine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .machine-title {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .machine-title span {
+            background: #cc0000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .premium-status {
+            background: rgba(204, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid #cc0000;
+        }
+
+        .premium-status.premium {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .stock-grid-machine {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .vending-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vending-item:hover {
+            transform: translateY(-4px);
+            border-color: #cc0000;
+            box-shadow: 0 0 20px rgba(204, 0, 0, 0.3);
+        }
+
+        .vending-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .vending-item.disabled:hover {
+            transform: none;
+        }
+
+        .item-emoji {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .item-count {
+            font-size: 20px;
+            font-weight: 700;
+            color: #cc0000;
+            margin-bottom: 8px;
+        }
+
+        .gen-button {
+            background: linear-gradient(135deg, #cc0000, #990000);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .gen-button:hover:not(:disabled) {
+            transform: scale(1.02);
+        }
+
+        .gen-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .vending-screen {
+            background: #000;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px solid #cc0000;
+            min-height: 80px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff00;
+        }
+
+        /* Premium Modal */
+        .premium-modal {
+            text-align: center;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .payment-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .payment-btn.paypal {
+            background: #0070ba;
+            color: white;
+        }
+
+        .payment-btn.cashapp {
+            background: #00d632;
+            color: white;
+        }
+
+        .payment-btn:hover {
+            transform: scale(1.05);
         }
 
         /* Server Selector */
@@ -298,8 +491,8 @@
             color: #cc0000;
         }
 
-        /* Panels */
-        .commands-panel, .stock-panel, .analytics-panel, .owner-panel {
+        /* Commands Panel */
+        .commands-panel, .analytics-panel, .owner-panel {
             background: #111111;
             border: 1px solid #222222;
             border-radius: 16px;
@@ -463,46 +656,6 @@
             background: #ff0000;
         }
 
-        /* Stock Grid */
-        .stock-grid {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 14px;
-        }
-
-        .stock-card {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 14px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .stock-card:hover {
-            border-color: #cc0000;
-            transform: translateY(-2px);
-        }
-
-        .stock-emoji {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .stock-name {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-
-        .stock-count {
-            font-size: 22px;
-            font-weight: 700;
-            color: #cc0000;
-            margin-bottom: 6px;
-        }
-
         /* Owner Panel */
         .owner-grid {
             padding: 20px;
@@ -551,7 +704,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             z-index: 2000;
             align-items: center;
             justify-content: center;
@@ -564,17 +717,20 @@
         .modal-content {
             background: #111;
             border: 1px solid #cc0000;
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 28px;
             max-width: 500px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-header {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
             color: #cc0000;
+            text-align: center;
         }
 
         .modal-body {
@@ -583,7 +739,7 @@
 
         .modal-body input, .modal-body textarea, .modal-body select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: #1a1a1a;
             border: 1px solid #333;
             border-radius: 8px;
@@ -603,10 +759,11 @@
         }
 
         .modal-btn {
-            padding: 8px 20px;
+            padding: 10px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .modal-btn-cancel {
@@ -665,28 +822,6 @@
             }
         }
 
-        /* Recent Activity */
-        .recent-list {
-            padding: 0 20px 20px;
-        }
-
-        .recent-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: #1a1a1a;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .recent-type {
-            background: #cc0000;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-        }
-
         /* Footer */
         .footer {
             text-align: center;
@@ -710,6 +845,9 @@
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            .stock-grid-machine {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -722,9 +860,9 @@
                 <span class="logo-text">XULT</span>
             </div>
             <div class="nav-links">
-                <a class="nav-link active" data-tab="dashboard">Dashboard</a>
+                <a class="nav-link active" data-tab="vending">🎰 Vending Machine</a>
+                <a class="nav-link" data-tab="dashboard">Dashboard</a>
                 <a class="nav-link" data-tab="commands">Commands</a>
-                <a class="nav-link" data-tab="stock">Stock</a>
                 <a class="nav-link" data-tab="analytics">Analytics</a>
                 <a id="owner-tab-link" class="nav-link" data-tab="owner" style="display: none;">👑 Owner</a>
                 <a class="nav-link" data-tab="support">Support</a>
@@ -738,11 +876,39 @@
     <div class="container">
         <div class="hero">
             <h1>Welcome to <span class="highlight">XULT</span> Dashboard</h1>
-            <p>Configure your bot commands, manage stock, and monitor your server</p>
+            <p>Premium vending machine access • Generate accounts • Get exclusive content</p>
+        </div>
+
+        <!-- Vending Machine Tab -->
+        <div id="vending-tab" class="tab-content">
+            <div class="vending-machine">
+                <div class="machine-header">
+                    <div class="machine-title">
+                        🎰 XULT Vending Machine
+                        <span>PREMIUM</span>
+                    </div>
+                    <div id="premium-status" class="premium-status">
+                        🔒 Checking premium status...
+                    </div>
+                </div>
+                
+                <div class="stock-grid-machine" id="vending-grid">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+                
+                <div class="vending-screen" id="vending-screen">
+                    💡 Select an item to generate. Premium users have no cooldown!
+                </div>
+            </div>
+            
+            <div class="server-selector" id="server-selector" style="display: none;">
+                <h2>📌 Select a Server to Configure</h2>
+                <div class="server-list" id="server-list"></div>
+            </div>
         </div>
 
         <!-- Dashboard Tab -->
-        <div id="dashboard-tab" class="tab-content">
+        <div id="dashboard-tab" class="tab-content" style="display: none;">
             <div class="stats-grid" id="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">👥</div>
@@ -775,11 +941,6 @@
                     <div class="stat-label">Latency</div>
                 </div>
             </div>
-
-            <div class="server-selector" id="server-selector" style="display: none;">
-                <h2>📌 Select a Server to Configure</h2>
-                <div class="server-list" id="server-list"></div>
-            </div>
         </div>
 
         <!-- Commands Tab -->
@@ -804,18 +965,6 @@
                     <button class="category-btn" data-category="fun">🎨 Fun</button>
                 </div>
                 <div class="commands-grid" id="commands-grid">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stock Tab -->
-        <div id="stock-tab" class="tab-content" style="display: none;">
-            <div class="stock-panel">
-                <div class="panel-header">
-                    <h2>📦 Stock Management</h2>
-                </div>
-                <div class="stock-grid" id="stock-grid">
                     <div class="loading"><div class="spinner"></div></div>
                 </div>
             </div>
@@ -913,7 +1062,7 @@
 
         <!-- Support Tab -->
         <div id="support-tab" class="tab-content" style="display: none;">
-            <div class="stock-panel">
+            <div class="commands-panel">
                 <div class="panel-header">
                     <h2>🆘 Support & Help</h2>
                 </div>
@@ -946,7 +1095,41 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Premium Purchase Modal -->
+    <div id="premium-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">💎 Get Premium Access</div>
+            <div class="modal-body premium-modal">
+                <p style="text-align: center; margin-bottom: 20px;">Get unlimited access to the vending machine with premium!</p>
+                <div style="background: #1a1a1a; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: #cc0000;">Premium Benefits:</h3>
+                    <ul style="margin-top: 12px; list-style: none;">
+                        <li>✅ No cooldown on generation</li>
+                        <li>✅ Access to ALL stock types</li>
+                        <li>✅ Priority support</li>
+                        <li>✅ Exclusive premium-only items</li>
+                        <li>✅ Early access to new features</li>
+                    </ul>
+                </div>
+                <div class="payment-methods">
+                    <button class="payment-btn paypal" onclick="processPayment('paypal')">
+                        💰 PayPal - $3
+                    </button>
+                    <button class="payment-btn cashapp" onclick="processPayment('cashapp')">
+                        💚 CashApp - $3
+                    </button>
+                </div>
+                <p style="font-size: 12px; color: #666; text-align: center; margin-top: 16px;">
+                    After payment, you'll automatically receive the premium role in the main server.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closePremiumModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header" id="modal-title">Confirm</div>
@@ -964,12 +1147,15 @@
         // Configuration
         const API_URL = 'https://ultbotb.onrender.com';
         const OWNER_ID = '1302203907782606880';
+        const PREMIUM_ROLE_ID = 1474136325912399994;
+        const MAIN_SERVER_ID = 1344385779627069541;
         let API_KEY = null;
         let currentUser = null;
         let selectedServer = null;
         let commandsData = {};
         let activityChart = null;
-        let currentModalCallback = null;
+        let isPremium = false;
+        let currentCooldown = {};
 
         // Categories for commands
         const commandCategories = {
@@ -977,7 +1163,8 @@
             'gen': 'stock', 'dmgen': 'stock', 'stocklist': 'stock', 'addstock': 'stock', 'deletestock': 'stock', 'setgenaccess': 'stock', 'setautoupdate': 'stock',
             'jail': 'moderation', 'unjail': 'moderation', 'purge': 'moderation', 'warnings': 'moderation', 'resetwarn': 'moderation', 'setroleonjoin': 'moderation', 'set_logs': 'moderation', 'add_allowed_channel': 'moderation', 'upload_bad_words': 'moderation', 'sendnotice': 'moderation',
             'setnotichannel': 'notifications', 'addyoutubechannel': 'notifications', 'addtwitchstream': 'notifications', 'addtwitteraccount': 'notifications',
-            'reactionrole': 'management', 'setup_oauth_verification': 'management', 'send_verify': 'management', 'check_verification_status': 'management', 'setreportchannel': 'management', 'report': 'management', 'setlogchannels': 'management', 'save_server': 'management', 'load_server': 'management', 'add_to_channel': 'management', 'test': 'management', 'togglecommand': 'management', 'commandroles': 'management', 'commandchannels': 'management', 'listcommands': 'management', 'view_enabled_commands': 'management',
+            'reactionrole': 'management', 'setreportchannel': 'management', 'report': 'management', 'setlogchannels': 'management', 'save_server': 'management', 'load_server': 'management', 
+            'add_to_channel': 'management', 'test': 'management', 'togglecommand': 'management', 'commandroles': 'management', 'commandchannels': 'management', 'listcommands': 'management', 'view_enabled_commands': 'management',
             'gif': 'fun', 'meme': 'fun', 'hug': 'fun', 'slap': 'fun', 'say': 'fun'
         };
 
@@ -1013,9 +1200,6 @@
             'addtwitchstream': 'Track a Twitch stream (Admin only)',
             'addtwitteraccount': 'Track a Twitter/X account (Admin only)',
             'reactionrole': 'Create a reaction role dropdown (Admin only)',
-            'setup_oauth_verification': 'Set up OAuth2 verification system (Admin only)',
-            'send_verify': 'Send verification message (Admin only)',
-            'check_verification_status': 'Check if a user is verified',
             'setreportchannel': 'Set report channel (Admin only)',
             'report': 'Report an issue to moderators',
             'setlogchannels': 'Set granular log channels (Admin only)',
@@ -1077,6 +1261,171 @@
             }
         }
 
+        // Check premium status
+        async function checkPremiumStatus() {
+            if (!currentUser) return false;
+            
+            try {
+                const response = await fetchAPI(`/api/check-premium/${currentUser.id}`);
+                isPremium = response.hasPremium;
+                
+                const statusDiv = document.getElementById('premium-status');
+                if (isPremium) {
+                    statusDiv.className = 'premium-status premium';
+                    statusDiv.innerHTML = '⭐ PREMIUM ACTIVE ⭐<br>No cooldown • Full access';
+                } else {
+                    statusDiv.className = 'premium-status';
+                    statusDiv.innerHTML = '🔒 FREE USER 🔒<br>5s cooldown • Click to upgrade →';
+                    statusDiv.style.cursor = 'pointer';
+                    statusDiv.onclick = () => openPremiumModal();
+                }
+                return isPremium;
+            } catch (error) {
+                console.error('Failed to check premium:', error);
+                return false;
+            }
+        }
+
+        // Open premium purchase modal
+        function openPremiumModal() {
+            document.getElementById('premium-modal').classList.add('active');
+        }
+
+        function closePremiumModal() {
+            document.getElementById('premium-modal').classList.remove('active');
+        }
+
+        // Process payment (simulated - replace with actual payment integration)
+        function processPayment(method) {
+            const paypalEmail = "your-paypal@email.com";
+            const cashappTag = "$yourcashapp";
+            
+            let paymentLink = "";
+            let instructions = "";
+            
+            if (method === 'paypal') {
+                paymentLink = `https://paypal.me/yourusername/3`;
+                instructions = `Send $3 to ${paypalEmail} and then click the verification button below.`;
+            } else {
+                paymentLink = `https://cash.app/${cashappTag}/3`;
+                instructions = `Send $3 to ${cashappTag} and then click the verification button below.`;
+            }
+            
+            showModal('Payment Instructions', `
+                <div style="text-align: center;">
+                    <p>${instructions}</p>
+                    <p style="margin: 15px 0;"><strong>After sending payment:</strong></p>
+                    <button class="payment-btn paypal" style="margin: 5px;" onclick="verifyPayment()">✅ I Have Paid - Verify</button>
+                    <a href="${paymentLink}" target="_blank" class="payment-btn paypal" style="display: inline-block; text-decoration: none; margin: 5px;">💸 Pay Now</a>
+                </div>
+            `, null);
+        }
+
+        // Verify payment (this would call your backend to check and assign premium role)
+        async function verifyPayment() {
+            closeModal();
+            showToast('Verifying payment... Please wait.');
+            
+            // This would call your backend API to verify payment and assign the premium role
+            // For now, we'll simulate it
+            setTimeout(() => {
+                showToast('Payment verified! You now have premium access!', false);
+                isPremium = true;
+                document.getElementById('premium-status').className = 'premium-status premium';
+                document.getElementById('premium-status').innerHTML = '⭐ PREMIUM ACTIVE ⭐<br>No cooldown • Full access';
+                loadVendingMachine();
+            }, 2000);
+        }
+
+        // Load vending machine
+        async function loadVendingMachine() {
+            try {
+                const stock = await fetchAPI('/api/stock');
+                const grid = document.getElementById('vending-grid');
+                
+                const stockItems = Object.entries(stock);
+                if (stockItems.length === 0) {
+                    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#666;">No stock available</div>';
+                    return;
+                }
+                
+                grid.innerHTML = stockItems.map(([type, data]) => `
+                    <div class="vending-item" data-type="${type}">
+                        <div class="item-emoji">${data.emoji || '📄'}</div>
+                        <div class="item-name">${data.name}</div>
+                        <div class="item-count">${data.count} left</div>
+                        <button class="gen-button" onclick="generateFromVending('${type}')">🎲 GENERATE</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load vending machine:', error);
+                document.getElementById('vending-grid').innerHTML = '<div style="text-align:center;padding:40px;color:#666;">Failed to load stock</div>';
+            }
+        }
+
+        // Generate from vending machine
+        async function generateFromVending(stockType) {
+            const screen = document.getElementById('vending-screen');
+            
+            // Check cooldown for free users
+            if (!isPremium) {
+                const lastGen = localStorage.getItem(`gen_${currentUser?.id}_${stockType}`);
+                if (lastGen) {
+                    const elapsed = (Date.now() - parseInt(lastGen)) / 1000;
+                    if (elapsed < 5) {
+                        screen.innerHTML = `⏰ COOLDOWN: Please wait ${Math.ceil(5 - elapsed)} seconds before generating again!`;
+                        screen.style.color = '#ff6600';
+                        setTimeout(() => {
+                            screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
+                            screen.style.color = '#00ff00';
+                        }, 2000);
+                        return;
+                    }
+                }
+            }
+            
+            screen.innerHTML = '🔄 PROCESSING... Please wait';
+            screen.style.color = '#ffcc00';
+            
+            try {
+                const response = await fetchAPI('/api/gen', {
+                    method: 'POST',
+                    body: JSON.stringify({ stock_type: stockType, user_id: currentUser?.id })
+                });
+                
+                if (response.success) {
+                    screen.innerHTML = `✅ SUCCESS! Stock sent to your DMs!\n📦 Type: ${stockType}\n💎 ${isPremium ? 'Premium user - No cooldown' : 'Free user - 5s cooldown'}`;
+                    screen.style.color = '#00ff00';
+                    
+                    if (!isPremium) {
+                        localStorage.setItem(`gen_${currentUser?.id}_${stockType}`, Date.now().toString());
+                    }
+                    
+                    // Refresh stock count
+                    loadVendingMachine();
+                    
+                    setTimeout(() => {
+                        screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
+                        screen.style.color = '#00ff00';
+                    }, 3000);
+                } else {
+                    screen.innerHTML = `❌ ERROR: ${response.message || 'Failed to generate'}`;
+                    screen.style.color = '#ff0000';
+                    setTimeout(() => {
+                        screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
+                        screen.style.color = '#00ff00';
+                    }, 3000);
+                }
+            } catch (error) {
+                screen.innerHTML = `❌ ERROR: ${error.message || 'Connection failed'}`;
+                screen.style.color = '#ff0000';
+                setTimeout(() => {
+                    screen.innerHTML = '💡 Select an item to generate. Premium users have no cooldown!';
+                    screen.style.color = '#00ff00';
+                }, 3000);
+            }
+        }
+
         // Load stats
         async function loadStats() {
             try {
@@ -1087,7 +1436,6 @@
                 document.getElementById('premium-users').textContent = stats.premium_users?.toLocaleString() || '0';
                 document.getElementById('latency').textContent = stats.latency ? `${stats.latency}ms` : '-';
                 
-                // Calculate stock total
                 const stock = await fetchAPI('/api/stock');
                 let stockTotal = 0;
                 for (const [type, data] of Object.entries(stock)) {
@@ -1243,32 +1591,6 @@
                 showToast(`/${cmd} settings saved`);
             } catch (error) {
                 showToast('Failed to save settings', true);
-            }
-        }
-
-        // Load stock
-        async function loadStock() {
-            try {
-                const stock = await fetchAPI('/api/stock');
-                const grid = document.getElementById('stock-grid');
-                
-                const stockItems = Object.entries(stock);
-                if (stockItems.length === 0) {
-                    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#666;">No stock available</div>';
-                    return;
-                }
-                
-                grid.innerHTML = stockItems.map(([type, data]) => `
-                    <div class="stock-card">
-                        <div class="stock-emoji">${data.emoji || '📄'}</div>
-                        <div class="stock-name">${data.name}</div>
-                        <div class="stock-count">${data.count}</div>
-                        <div class="stock-cooldown" style="font-size:10px;color:#666;">Cooldown: ${data.cooldown}s</div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Failed to load stock:', error);
-                document.getElementById('stock-grid').innerHTML = '<div style="text-align:center;padding:40px;color:#666;">Failed to load stock</div>';
             }
         }
 
@@ -1510,9 +1832,6 @@
         function openRestoreModal() {
             showModal('Restore Server', `
                 <input type="text" id="restore-server" placeholder="Server ID" style="width:100%;padding:10px;margin-bottom:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-                <select id="restore-backup" style="width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:white;">
-                    <option value="latest">Latest Backup</option>
-                </select>
             `, async () => {
                 const serverId = document.getElementById('restore-server').value;
                 if (!serverId) {
@@ -1544,6 +1863,7 @@
                     closeModal();
                     onConfirm();
                 });
+                newConfirmBtn.style.display = 'block';
             } else {
                 newConfirmBtn.style.display = 'none';
                 const cancelBtn = document.querySelector('.modal-btn-cancel');
@@ -1596,12 +1916,16 @@
                     </div>
                 `;
                 
+                // Check premium status
+                await checkPremiumStatus();
+                
                 // Show owner tab if user is owner
                 if (user.id === OWNER_ID) {
                     document.getElementById('owner-tab-link').style.display = 'block';
                 }
                 
                 await loadServersForCommands();
+                await loadVendingMachine();
             } catch (error) {
                 console.error('Failed to load user info:', error);
             }
@@ -1624,10 +1948,10 @@
             
             if (tabName === 'dashboard') {
                 loadStats();
-            } else if (tabName === 'stock') {
-                loadStock();
             } else if (tabName === 'analytics') {
                 loadAnalytics();
+            } else if (tabName === 'vending') {
+                loadVendingMachine();
             }
         }
 
@@ -1651,7 +1975,7 @@
             await getAPIKey();
             await loadStats();
             handleCallback();
-            switchTab('dashboard');
+            switchTab('vending');
             
             setInterval(async () => {
                 if (document.getElementById('dashboard-tab').style.display !== 'none') {
@@ -1660,8 +1984,8 @@
                 if (document.getElementById('analytics-tab').style.display !== 'none') {
                     await loadAnalytics();
                 }
-                if (document.getElementById('stock-tab').style.display !== 'none') {
-                    await loadStock();
+                if (document.getElementById('vending-tab').style.display !== 'none') {
+                    await loadVendingMachine();
                 }
             }, 30000);
         }
