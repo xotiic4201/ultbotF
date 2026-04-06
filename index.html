@@ -280,7 +280,87 @@ body{
 .tab-content.active{display:block}
 
 /* ══════════════════════════════
-   VENDING MACHINE
+   PREMIUM LOCK SCREEN
+══════════════════════════════ */
+.premium-lock{
+  background:linear-gradient(135deg, #0a0a0a, #050505);
+  border:2px solid var(--border-red);
+  border-radius:12px;
+  padding:60px 40px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.premium-lock::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle, rgba(230,0,0,0.08) 0%, transparent 70%);
+  animation:rotateGlow 12s linear infinite;
+}
+@keyframes rotateGlow{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+.lock-icon{
+  font-size:72px;
+  margin-bottom:24px;
+  filter:drop-shadow(0 0 20px rgba(230,0,0,0.5));
+}
+.lock-title{
+  font-family:var(--font-display);
+  font-size:42px;
+  font-weight:800;
+  color:var(--red);
+  letter-spacing:0.08em;
+  margin-bottom:16px;
+}
+.lock-sub{
+  font-family:var(--font-mono);
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:32px;
+}
+.btn-premium-large{
+  padding:16px 48px;
+  background:linear-gradient(135deg, #cc0000, #990000);
+  border:none;
+  color:#fff;
+  font-family:var(--font-display);
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:0.12em;
+  cursor:pointer;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.btn-premium-large:hover{
+  transform:scale(1.02);
+  box-shadow:0 0 30px rgba(230,0,0,0.5);
+}
+.premium-perks-grid{
+  display:flex;
+  justify-content:center;
+  gap:32px;
+  margin-top:40px;
+  flex-wrap:wrap;
+}
+.perk-item{
+  text-align:center;
+  padding:16px 24px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:8px;
+  min-width:140px;
+}
+.perk-emoji{font-size:32px;margin-bottom:8px}
+.perk-text{font-size:13px;color:#aaa;font-family:var(--font-mono)}
+
+/* ══════════════════════════════
+   VENDING MACHINE (PREMIUM ONLY)
 ══════════════════════════════ */
 .vm-shell{
   display:grid;
@@ -290,7 +370,6 @@ body{
 }
 @media(max-width:960px){.vm-shell{grid-template-columns:1fr}}
 
-/* Machine body */
 .vm-body{
   background:var(--surface);
   border:2px solid var(--border-red);
@@ -356,7 +435,6 @@ body{
 .premium .status-dot{background:#ffb400}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
 
-/* Glass display */
 .vm-glass{
   margin:16px 20px;
   background:#050505;
@@ -371,12 +449,6 @@ body{
   grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:2px;
   padding:2px;
-}
-.vm-glass::before{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 50%,rgba(255,255,255,0.01) 100%);
-  pointer-events:none;z-index:2;
 }
 .vm-slot{
   background:#0a0a0a;
@@ -413,8 +485,6 @@ body{
   font-size:10px;color:#444;
   letter-spacing:0.06em;text-transform:uppercase;
 }
-
-/* Dispensing button row */
 .vm-btn-row{
   padding:14px 20px;
   display:flex;align-items:center;gap:12px;
@@ -433,7 +503,6 @@ body{
   outline:none;
 }
 .vm-input:focus{border-color:var(--red)}
-.vm-input::placeholder{color:#333}
 .btn-dispense{
   padding:10px 28px;
   background:var(--red);
@@ -448,9 +517,6 @@ body{
   white-space:nowrap;
 }
 .btn-dispense:hover{background:#ff1a1a;transform:scale(1.02)}
-.btn-dispense:active{transform:scale(0.98)}
-
-/* Screen / Output */
 .vm-screen{
   margin:0 20px 20px;
   background:#000;
@@ -464,20 +530,7 @@ body{
   position:relative;
   overflow:hidden;
 }
-.vm-screen::before{
-  content:'> ';
-  opacity:0.5;
-}
-.vm-screen-scanline{
-  position:absolute;inset:0;
-  background:repeating-linear-gradient(
-    0deg,transparent,transparent 3px,
-    rgba(0,255,0,0.02) 3px,rgba(0,255,0,0.02) 4px
-  );
-  pointer-events:none;
-}
-
-/* Side panel */
+.vm-screen::before{content:'> ';opacity:0.5}
 .vm-side{
   display:flex;flex-direction:column;gap:16px;
 }
@@ -512,18 +565,6 @@ body{
   letter-spacing:0.12em;
   margin-top:6px;
 }
-.coin-level-bar{
-  margin-top:12px;
-  height:4px;background:#1a1a1a;
-  border-radius:2px;overflow:hidden;
-}
-.coin-level-fill{
-  height:100%;width:68%;
-  background:linear-gradient(90deg,var(--red-dim),var(--red));
-  border-radius:2px;
-  transition:width 0.6s ease;
-}
-
 .vm-info-box{
   background:var(--surface);
   border:1px solid var(--border);
@@ -551,7 +592,6 @@ body{
 .vm-info-val{color:var(--text);font-family:var(--font-mono);font-size:13px}
 .vm-info-val.green{color:#0f0}
 .vm-info-val.red{color:var(--red)}
-
 .btn-premium{
   width:100%;
   padding:14px;
@@ -571,8 +611,6 @@ body{
   border-color:rgba(255,180,0,0.6);
   transform:translateY(-1px);
 }
-
-/* Recent gen log */
 .gen-log{
   background:var(--surface);
   border:1px solid var(--border);
@@ -598,7 +636,6 @@ body{
   font-size:11px;color:#555;
   border-bottom:1px solid rgba(255,255,255,0.03);
 }
-.gen-log-item:last-child{border:none}
 .gen-log-item .tick{color:#0a0;font-size:10px}
 .gen-log-item .time{margin-left:auto;color:#333}
 
@@ -641,7 +678,6 @@ body{
   background:#333;
 }
 .server-chip.active .chip-dot{background:var(--red)}
-
 .cmd-panel{
   background:var(--surface);
   border:1px solid var(--border);
@@ -993,8 +1029,6 @@ body{
   from{transform:translateX(120%);opacity:0}
   to{transform:translateX(0);opacity:1}
 }
-
-/* ── SUPPORT ── */
 .support-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -1039,8 +1073,6 @@ code{
   padding:2px 8px;border-radius:2px;
 }
 .cmd-ref-desc{color:var(--muted);font-size:13px}
-
-/* ── FOOTER ── */
 .footer{
   text-align:center;
   padding:24px;
@@ -1051,22 +1083,16 @@ code{
   color:#333;
   letter-spacing:0.08em;
 }
-
-/* scrollbars */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--red)}
-
-/* no-display helper */
 .hidden{display:none!important}
-
-/* entrance animations */
+.fadein{animation:fadeUp 0.4s ease both}
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(16px)}
   to{opacity:1;transform:translateY(0)}
 }
-.fadein{animation:fadeUp 0.4s ease both}
 </style>
 </head>
 <body>
@@ -1086,7 +1112,6 @@ code{
     <span class="nav-logo-text">XULT</span>
   </div>
   <div class="nav-links">
-    <button class="nav-link active" data-tab="vending">VENDING</button>
     <button class="nav-link" data-tab="dashboard">DASHBOARD</button>
     <button class="nav-link" data-tab="commands">COMMANDS</button>
     <button class="nav-link" data-tab="analytics">ANALYTICS</button>
@@ -1103,8 +1128,8 @@ code{
 <!-- ══ MAIN ══ -->
 <div class="wrap">
 
-  <!-- ── VENDING TAB ── -->
-  <div class="tab-content active fadein" id="tab-vending">
+  <!-- ── VENDING TAB (Premium Only) ── -->
+  <div class="tab-content fadein" id="tab-vending">
     <div style="padding:40px 0 28px">
       <div class="hero-eyebrow">XULT VENDING MACHINE</div>
       <h1 style="font-family:var(--font-display);font-size:clamp(36px,5vw,68px);font-weight:800;letter-spacing:0.04em;line-height:0.95">
@@ -1112,61 +1137,64 @@ code{
       </h1>
     </div>
 
-    <div class="vm-shell">
-      <!-- Machine body -->
-      <div class="vm-body">
-        <div class="vm-top-strip"></div>
-        <div class="vm-header">
-          <div>
-            <div class="vm-brand">XULT GEN-3000</div>
-            <div class="vm-brand-sub">PREMIUM CONTENT DISPENSER • SERIES III</div>
-          </div>
-          <div class="vm-status-pill locked" id="vm-status-pill" onclick="openPremiumModal()">
-            <div class="status-dot"></div>
-            <span id="vm-status-text">FREE TIER</span>
-          </div>
-        </div>
-
-        <div class="vm-glass">
-          <div class="vm-glass-inner" id="vm-glass-inner">
-            <!-- slots injected by JS -->
-          </div>
-        </div>
-
-        <div class="vm-btn-row">
-          <input type="text" class="vm-input" id="vm-type-input" placeholder="Enter slot code e.g. A1, B2...">
-          <button class="btn-dispense" onclick="dispenseSelected()">▶ DISPENSE</button>
-        </div>
-
-        <div class="vm-screen" id="vm-screen">
-          <div class="vm-screen-scanline"></div>
-          <span id="vm-screen-text">READY. SELECT AN ITEM OR CLICK GENERATE.</span>
-        </div>
+    <!-- Premium Lock Screen (shown to non-premium users) -->
+    <div id="premium-lock-screen" class="premium-lock">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">PREMIUM ONLY</div>
+      <div class="lock-sub">The vending machine is exclusively for premium members</div>
+      <button class="btn-premium-large" onclick="openPremiumModal()">★ UPGRADE TO PREMIUM</button>
+      <div class="premium-perks-grid">
+        <div class="perk-item"><div class="perk-emoji">⚡</div><div class="perk-text">No Cooldown</div></div>
+        <div class="perk-item"><div class="perk-emoji">📦</div><div class="perk-text">All Stock Types</div></div>
+        <div class="perk-item"><div class="perk-emoji">🎯</div><div class="perk-text">Exclusive Items</div></div>
+        <div class="perk-item"><div class="perk-emoji">💬</div><div class="perk-text">Priority Support</div></div>
       </div>
+    </div>
 
-      <!-- Side panel -->
-      <div class="vm-side">
-        <div class="vm-coin-display">
-          <div class="coin-amount" id="coin-display">—</div>
-          <div class="coin-label">COINS AVAILABLE</div>
-          <div class="coin-level-bar"><div class="coin-level-fill" id="coin-fill"></div></div>
+    <!-- Actual Vending Machine (shown to premium users) -->
+    <div id="premium-vending-machine" style="display:none">
+      <div class="vm-shell">
+        <div class="vm-body">
+          <div class="vm-top-strip"></div>
+          <div class="vm-header">
+            <div>
+              <div class="vm-brand">XULT GEN-3000</div>
+              <div class="vm-brand-sub">PREMIUM CONTENT DISPENSER • SERIES III</div>
+            </div>
+            <div class="vm-status-pill premium" id="vm-status-pill">
+              <div class="status-dot"></div>
+              <span id="vm-status-text">PREMIUM ACTIVE</span>
+            </div>
+          </div>
+          <div class="vm-glass">
+            <div class="vm-glass-inner" id="vm-glass-inner"><div style="grid-column:1/-1;padding:30px;text-align:center;font-family:var(--font-mono);font-size:12px;color:#333">LOADING STOCK...</div></div>
+          </div>
+          <div class="vm-btn-row">
+            <input type="text" class="vm-input" id="vm-type-input" placeholder="Enter slot code e.g. A1, B2...">
+            <button class="btn-dispense" onclick="dispenseSelected()">▶ DISPENSE</button>
+          </div>
+          <div class="vm-screen" id="vm-screen">
+            <span id="vm-screen-text">READY. SELECT AN ITEM OR CLICK GENERATE.</span>
+          </div>
         </div>
-
-        <div class="vm-info-box">
-          <div class="vm-info-title">SESSION STATUS</div>
-          <div class="vm-info-row"><span class="vm-info-key">USER</span><span class="vm-info-val" id="side-user">—</span></div>
-          <div class="vm-info-row"><span class="vm-info-key">TIER</span><span class="vm-info-val red" id="side-tier">FREE</span></div>
-          <div class="vm-info-row"><span class="vm-info-key">COOLDOWN</span><span class="vm-info-val" id="side-cd">5s</span></div>
-          <div class="vm-info-row"><span class="vm-info-key">GENERATED</span><span class="vm-info-val" id="side-gencount">0</span></div>
-          <div class="vm-info-row"><span class="vm-info-key">BOT STATUS</span><span class="vm-info-val green" id="side-bot">ONLINE</span></div>
-        </div>
-
-        <button class="btn-premium" onclick="openPremiumModal()">★ UPGRADE TO PREMIUM</button>
-
-        <div class="gen-log">
-          <div class="gen-log-header">RECENT GENERATIONS</div>
-          <div class="gen-log-list" id="gen-log-list">
-            <div style="padding:12px 14px;font-family:var(--font-mono);font-size:11px;color:#333">No generations yet...</div>
+        <div class="vm-side">
+          <div class="vm-coin-display">
+            <div class="coin-amount" id="coin-display">—</div>
+            <div class="coin-label">COINS AVAILABLE</div>
+          </div>
+          <div class="vm-info-box">
+            <div class="vm-info-title">SESSION STATUS</div>
+            <div class="vm-info-row"><span class="vm-info-key">USER</span><span class="vm-info-val" id="side-user">—</span></div>
+            <div class="vm-info-row"><span class="vm-info-key">TIER</span><span class="vm-info-val green" id="side-tier">PREMIUM</span></div>
+            <div class="vm-info-row"><span class="vm-info-key">COOLDOWN</span><span class="vm-info-val" id="side-cd">NONE</span></div>
+            <div class="vm-info-row"><span class="vm-info-key">GENERATED</span><span class="vm-info-val" id="side-gencount">0</span></div>
+            <div class="vm-info-row"><span class="vm-info-key">BOT STATUS</span><span class="vm-info-val green" id="side-bot">ONLINE</span></div>
+          </div>
+          <div class="gen-log">
+            <div class="gen-log-header">RECENT GENERATIONS</div>
+            <div class="gen-log-list" id="gen-log-list">
+              <div style="padding:12px 14px;font-family:var(--font-mono);font-size:11px;color:#333">No generations yet...</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1174,7 +1202,7 @@ code{
   </div>
 
   <!-- ── DASHBOARD TAB ── -->
-  <div class="tab-content fadein" id="tab-dashboard">
+  <div class="tab-content active fadein" id="tab-dashboard">
     <div style="padding:40px 0 28px">
       <div class="hero-eyebrow">OVERVIEW</div>
       <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">BOT <span style="color:var(--red)">STATISTICS</span></h1>
@@ -1195,16 +1223,12 @@ code{
       <div class="hero-eyebrow">SERVER CONFIG</div>
       <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">COMMAND <span style="color:var(--red)">CONTROLS</span></h1>
     </div>
-
     <div class="server-pick" id="server-pick" style="display:none">
       <h3>Select Server</h3>
       <div class="server-chips" id="server-chips"></div>
     </div>
-
     <div class="cmd-panel" id="cmd-panel" style="display:none">
-      <div class="cmd-toolbar">
-        <input type="text" class="cmd-search" placeholder="Search commands..." id="cmd-search">
-      </div>
+      <div class="cmd-toolbar"><input type="text" class="cmd-search" placeholder="Search commands..." id="cmd-search"></div>
       <div class="cat-chips" id="cat-chips">
         <div class="cat-chip active" data-cat="all">ALL</div>
         <div class="cat-chip" data-cat="economy">💰 ECONOMY</div>
@@ -1214,9 +1238,7 @@ code{
         <div class="cat-chip" data-cat="management">⚙️ MANAGE</div>
         <div class="cat-chip" data-cat="fun">🎨 FUN</div>
       </div>
-      <div class="cmd-grid" id="cmd-grid">
-        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:13px">Select a server to configure commands</div>
-      </div>
+      <div class="cmd-grid" id="cmd-grid"><div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);font-family:var(--font-mono);font-size:13px">Select a server to configure commands</div></div>
     </div>
   </div>
 
@@ -1233,9 +1255,7 @@ code{
       </div>
       <div class="activity-feed">
         <div class="chart-header">RECENT ACTIVITY</div>
-        <div id="activity-list">
-          <div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">Loading activity...</div>
-        </div>
+        <div id="activity-list"><div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">Loading activity...</div></div>
       </div>
     </div>
   </div>
@@ -1275,22 +1295,8 @@ code{
       <h1 style="font-family:var(--font-display);font-size:clamp(32px,5vw,60px);font-weight:800;letter-spacing:0.04em">SUPPORT <span style="color:var(--red)">CENTER</span></h1>
     </div>
     <div class="support-grid">
-      <div class="support-card">
-        <h3>QUICK LINKS</h3>
-        <a class="support-link" href="#">→ Documentation</a>
-        <a class="support-link" href="#">→ Support Server</a>
-        <a class="support-link" href="#">→ Contact Support</a>
-        <a class="support-link" href="#">→ Report a Bug</a>
-      </div>
-      <div class="support-card">
-        <h3>BOT COMMANDS</h3>
-        <div class="cmd-ref-row"><code>/help</code><span class="cmd-ref-desc">Show all commands</span></div>
-        <div class="cmd-ref-row"><code>/balance</code><span class="cmd-ref-desc">Check your balance</span></div>
-        <div class="cmd-ref-row"><code>/gen [type]</code><span class="cmd-ref-desc">Generate a stock entry</span></div>
-        <div class="cmd-ref-row"><code>/stocklist</code><span class="cmd-ref-desc">List available stock</span></div>
-        <div class="cmd-ref-row"><code>/togglecommand</code><span class="cmd-ref-desc">Enable/disable commands (Admin)</span></div>
-        <div class="cmd-ref-row"><code>/owner_panel</code><span class="cmd-ref-desc">Open owner panel (Owner only)</span></div>
-      </div>
+      <div class="support-card"><h3>QUICK LINKS</h3><a class="support-link" href="#">→ Documentation</a><a class="support-link" href="#">→ Support Server</a><a class="support-link" href="#">→ Contact Support</a><a class="support-link" href="#">→ Report a Bug</a></div>
+      <div class="support-card"><h3>BOT COMMANDS</h3><div class="cmd-ref-row"><code>/help</code><span class="cmd-ref-desc">Show all commands</span></div><div class="cmd-ref-row"><code>/balance</code><span class="cmd-ref-desc">Check your balance</span></div><div class="cmd-ref-row"><code>/gen [type]</code><span class="cmd-ref-desc">Generate a stock entry</span></div><div class="cmd-ref-row"><code>/stocklist</code><span class="cmd-ref-desc">List available stock</span></div><div class="cmd-ref-row"><code>/togglecommand</code><span class="cmd-ref-desc">Enable/disable commands (Admin)</span></div><div class="cmd-ref-row"><code>/owner_panel</code><span class="cmd-ref-desc">Open owner panel (Owner only)</span></div></div>
     </div>
   </div>
 
@@ -1302,22 +1308,10 @@ code{
   <div class="modal-box">
     <div class="modal-title">PREMIUM ACCESS</div>
     <div class="modal-sub">Unlock unlimited generation and exclusive features.</div>
-    <div class="premium-perks">
-      <div class="perk-title">WHAT YOU GET</div>
-      <div class="perk-row"><span class="perk-check">✓</span> No cooldown on generation</div>
-      <div class="perk-row"><span class="perk-check">✓</span> Access to ALL stock types</div>
-      <div class="perk-row"><span class="perk-check">✓</span> Priority support</div>
-      <div class="perk-row"><span class="perk-check">✓</span> Premium-only exclusive items</div>
-      <div class="perk-row"><span class="perk-check">✓</span> Early access to new features</div>
-    </div>
-    <div class="pay-btns">
-      <button class="pay-btn pay-paypal" onclick="processPayment('paypal')">PayPal — $3</button>
-      <button class="pay-btn pay-cashapp" onclick="processPayment('cashapp')">CashApp — $3</button>
-    </div>
+    <div class="premium-perks"><div class="perk-title">WHAT YOU GET</div><div class="perk-row"><span class="perk-check">✓</span> No cooldown on generation</div><div class="perk-row"><span class="perk-check">✓</span> Access to ALL stock types</div><div class="perk-row"><span class="perk-check">✓</span> Priority support</div><div class="perk-row"><span class="perk-check">✓</span> Premium-only exclusive items</div><div class="perk-row"><span class="perk-check">✓</span> Early access to new features</div></div>
+    <div class="pay-btns"><button class="pay-btn pay-paypal" onclick="processPayment('paypal')">PayPal — $3</button><button class="pay-btn pay-cashapp" onclick="processPayment('cashapp')">CashApp — $3</button></div>
     <p style="font-size:12px;color:#444;text-align:center">After payment, the premium role is assigned automatically.</p>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-premium')">CLOSE</button>
-    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modal-premium')">CLOSE</button></div>
   </div>
 </div>
 
@@ -1326,10 +1320,7 @@ code{
     <div class="modal-title" id="main-modal-title">CONFIRM</div>
     <div class="modal-sub" id="main-modal-sub"></div>
     <div id="main-modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-main')">CANCEL</button>
-      <button class="btn-confirm" id="main-modal-confirm">CONFIRM</button>
-    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('modal-main')">CANCEL</button><button class="btn-confirm" id="main-modal-confirm">CONFIRM</button></div>
   </div>
 </div>
 
@@ -1357,57 +1348,45 @@ const cmdDesc={
   gif:'Get a GIF',meme:'Random meme',hug:'Hug a member',slap:'Slap a member',say:'Bot repeats your message'
 };
 
-/* ── LOADER ── */
+/* LOADER */
 const loaderMsgs=['INITIALIZING SYSTEMS...','LOADING STOCK DATABASE...','CONNECTING TO DISCORD API...','VERIFYING CREDENTIALS...','LAUNCHING DASHBOARD...'];
 let lmi=0;
 const lmEl=document.getElementById('loader-msg');
 const lmInt=setInterval(()=>{lmi++;if(lmi<loaderMsgs.length){lmEl.textContent=loaderMsgs[lmi];}else{clearInterval(lmInt);}},320);
-setTimeout(()=>{
-  const loader=document.getElementById('loader');
-  loader.style.transition='opacity 0.5s';
-  loader.style.opacity='0';
-  setTimeout(()=>loader.remove(),500);
-},2000);
+setTimeout(()=>{const loader=document.getElementById('loader');loader.style.transition='opacity 0.5s';loader.style.opacity='0';setTimeout(()=>loader.remove(),500);},2000);
 
-/* ── UTILITIES ── */
-function toast(msg,err=false){
-  const t=document.createElement('div');
-  t.className='toast';
-  t.style.borderLeftColor=err?'#ff4444':'var(--red)';
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.transition='opacity 0.3s';t.style.opacity='0';setTimeout(()=>t.remove(),300)},2800);
-}
-async function getKey(){
-  try{const r=await fetch(`${API_URL}/api/key`);const d=await r.json();API_KEY=d.key;return true;}
-  catch{return false;}
-}
-async function api(endpoint,opts={}){
-  if(!API_KEY)await getKey();
-  const headers={'Authorization':`Bearer ${API_KEY}`,'Content-Type':'application/json',...(opts.headers||{})};
-  try{
-    const r=await fetch(`${API_URL}${endpoint}`,{...opts,headers});
-    if(!r.ok)throw new Error(r.status);
-    return await r.json();
-  }catch(e){toast('Failed to reach bot backend',true);throw e;}
-}
+/* UTILITIES */
+function toast(msg,err=false){const t=document.createElement('div');t.className='toast';t.style.borderLeftColor=err?'#ff4444':'var(--red)';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.transition='opacity 0.3s';t.style.opacity='0';setTimeout(()=>t.remove(),300)},2800);}
+async function getKey(){try{const r=await fetch(`${API_URL}/api/key`);const d=await r.json();API_KEY=d.key;return true;}catch{return false;}}
+async function api(endpoint,opts={}){if(!API_KEY)await getKey();const headers={'Authorization':`Bearer ${API_KEY}`,'Content-Type':'application/json',...(opts.headers||{})};try{const r=await fetch(`${API_URL}${endpoint}`,{...opts,headers});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){toast('Failed to reach bot backend',true);throw e;}}
 
-/* ── TABS ── */
+/* TABS */
 function switchTab(name){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   const tab=document.getElementById(`tab-${name}`);
-  if(tab){tab.classList.add('active');}
+  if(tab)tab.classList.add('active');
   document.querySelectorAll(`[data-tab="${name}"]`).forEach(l=>l.classList.add('active'));
   if(name==='dashboard')loadStats();
   if(name==='analytics')loadAnalytics();
-  if(name==='vending')loadVending();
+  if(name==='vending')updateVendingVisibility();
 }
-document.querySelectorAll('[data-tab]').forEach(el=>{
-  el.addEventListener('click',()=>switchTab(el.dataset.tab));
-});
+document.querySelectorAll('[data-tab]').forEach(el=>{el.addEventListener('click',()=>switchTab(el.dataset.tab));});
 
-/* ── VENDING MACHINE ── */
+/* VENDING MACHINE VISIBILITY (PREMIUM ONLY) */
+function updateVendingVisibility(){
+  const lockScreen=document.getElementById('premium-lock-screen');
+  const vendingMachine=document.getElementById('premium-vending-machine');
+  if(isPremium && currentUser){
+    lockScreen.style.display='none';
+    vendingMachine.style.display='block';
+    loadVending();
+  }else{
+    lockScreen.style.display='block';
+    vendingMachine.style.display='none';
+  }
+}
+
 const slotCodes=['A1','A2','A3','A4','A5','B1','B2','B3','B4','B5','C1','C2'];
 async function loadVending(){
   const grid=document.getElementById('vm-glass-inner');
@@ -1441,72 +1420,44 @@ function setScreen(msg,color='#0f0'){
   document.getElementById('vm-screen').style.color=color;
 }
 async function dispenseSelected(){
-  const type=selectedType;
-  if(!type){setScreen('NO SLOT SELECTED. CLICK A SLOT FIRST.','#ff4444');return;}
+  if(!selectedType){setScreen('NO SLOT SELECTED. CLICK A SLOT FIRST.','#ff4444');return;}
   if(!currentUser){setScreen('LOGIN REQUIRED. PLEASE LOGIN WITH DISCORD.','#ff4444');toast('Please login first',true);return;}
-
-  if(!isPremium){
-    const last=localStorage.getItem(`gen_${currentUser.id}_${type}`);
-    if(last&&(Date.now()-parseInt(last))/1000<5){
-      const wait=Math.ceil(5-(Date.now()-parseInt(last))/1000);
-      setScreen(`COOLDOWN ACTIVE — WAIT ${wait}s OR UPGRADE TO PREMIUM`,'#ff6600');return;
-    }
-  }
+  if(!isPremium){setScreen('PREMIUM REQUIRED. UPGRADE TO USE THE VENDING MACHINE.','#ff4444');toast('Premium only feature',true);return;}
   setScreen('PROCESSING REQUEST...','#ffcc00');
   try{
-    const r=await api('/api/gen',{method:'POST',body:JSON.stringify({stock_type:type,user_id:currentUser.id})});
+    const r=await api('/api/gen',{method:'POST',body:JSON.stringify({stock_type:selectedType,user_id:currentUser.id})});
     if(r.success){
-      setScreen(`✓ DISPENSED: ${type.toUpperCase()} — CHECK YOUR DMS`,'#0f0');
-      if(!isPremium)localStorage.setItem(`gen_${currentUser.id}_${type}`,Date.now());
+      setScreen(`✓ DISPENSED: ${selectedType.toUpperCase()} — CHECK YOUR DMS`,'#0f0');
       genCount++;document.getElementById('side-gencount').textContent=genCount;
-      addGenLog(type);loadVending();
+      addGenLog(selectedType);loadVending();
     }else{setScreen(`ERROR: ${(r.message||'FAILED').toUpperCase()}`,'#ff4444');}
   }catch{setScreen('CONNECTION ERROR — BOT OFFLINE?','#ff4444');}
-  setTimeout(()=>setScreen('READY. SELECT AN ITEM OR CLICK GENERATE.'),'#0f0',3000);
+  setTimeout(()=>setScreen('READY. SELECT AN ITEM OR CLICK GENERATE.','#0f0'),3000);
 }
 function addGenLog(type){
   const list=document.getElementById('gen-log-list');
   const now=new Date();
   const t=`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-  const item=document.createElement('div');
-  item.className='gen-log-item';
-  item.innerHTML=`<span class="tick">✓</span><span>${type.toUpperCase()}</span><span class="time">${t}</span>`;
+  const item=document.createElement('div');item.className='gen-log-item';item.innerHTML=`<span class="tick">✓</span><span>${type.toUpperCase()}</span><span class="time">${t}</span>`;
   const placeholder=list.querySelector('div');
   if(placeholder&&placeholder.style.color==='rgb(51, 51, 51)')placeholder.remove();
   list.prepend(item);
   if(list.children.length>8)list.lastChild.remove();
 }
 
-/* ── AUTH ── */
-function doLogin(){
-  const cid='1417284780675956766';
-  const redir=encodeURIComponent(window.location.origin+'/callback');
-  window.location.href=`https://discord.com/api/oauth2/authorize?client_id=${cid}&redirect_uri=${redir}&response_type=token&scope=identify+guilds`;
-}
-function handleCallback(){
-  const hash=window.location.hash.substring(1);
-  const params=new URLSearchParams(hash);
-  const token=params.get('access_token');
-  if(token){localStorage.setItem('discord_token',token);window.history.pushState({},'','/');loadUser(token);}
-  else{const t=localStorage.getItem('discord_token');if(t)loadUser(t);}
-}
+/* AUTH */
+function doLogin(){const cid='1417284780675956766';const redir=encodeURIComponent(window.location.origin+'/callback');window.location.href=`https://discord.com/api/oauth2/authorize?client_id=${cid}&redirect_uri=${redir}&response_type=token&scope=identify+guilds`;}
+function handleCallback(){const hash=window.location.hash.substring(1);const params=new URLSearchParams(hash);const token=params.get('access_token');if(token){localStorage.setItem('discord_token',token);window.history.pushState({},'','/');loadUser(token);}else{const t=localStorage.getItem('discord_token');if(t)loadUser(t);}}
 async function loadUser(token){
   try{
     const r=await fetch('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token}`}});
     const u=await r.json();currentUser=u;
-    document.getElementById('auth-zone').innerHTML=`
-      <div class="user-pill">
-        <img src="https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png" alt="">
-        <span>${u.username}</span>
-        ${u.id===OWNER_ID?'<span class="owner-tag">OWNER</span>':''}
-      </div>`;
+    document.getElementById('auth-zone').innerHTML=`<div class="user-pill"><img src="https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png" alt=""><span>${u.username}</span>${u.id===OWNER_ID?'<span class="owner-tag">OWNER</span>':''}</div>`;
     document.getElementById('side-user').textContent=u.username.toUpperCase();
-    if(u.id===OWNER_ID){
-      document.getElementById('owner-nav-link').classList.remove('hidden');
-    }
+    if(u.id===OWNER_ID)document.getElementById('owner-nav-link').classList.remove('hidden');
     await checkPremium();
     await loadServers();
-    loadVending();
+    updateVendingVisibility();
   }catch(e){console.error(e);}
 }
 async function checkPremium(){
@@ -1514,25 +1465,19 @@ async function checkPremium(){
   try{
     const r=await api(`/api/check-premium/${currentUser.id}`);
     isPremium=r.hasPremium;
-    const pill=document.getElementById('vm-status-pill');
-    const txt=document.getElementById('vm-status-text');
-    const tier=document.getElementById('side-tier');
-    const cd=document.getElementById('side-cd');
     if(isPremium){
-      pill.className='vm-status-pill premium';
-      txt.textContent='PREMIUM ACTIVE';
-      tier.textContent='PREMIUM';tier.style.color='#ffb400';
-      cd.textContent='NONE';cd.style.color='#0f0';
+      document.getElementById('side-tier').textContent='PREMIUM';
+      document.getElementById('side-tier').style.color='#0f0';
+      document.getElementById('side-cd').textContent='NONE';
     }else{
-      pill.className='vm-status-pill locked';
-      txt.textContent='FREE TIER';
-      tier.textContent='FREE';tier.style.color='var(--red)';
-      cd.textContent='5s';
+      document.getElementById('side-tier').textContent='FREE';
+      document.getElementById('side-tier').style.color='var(--red)';
+      document.getElementById('side-cd').textContent='5s';
     }
   }catch{}
 }
 
-/* ── STATS ── */
+/* STATS */
 async function loadStats(){
   try{
     const s=await api('/api/stats');
@@ -1541,27 +1486,19 @@ async function loadStats(){
     document.getElementById('s-cmds').textContent=(s.total_commands||0).toLocaleString();
     document.getElementById('s-premium').textContent=(s.premium_users||0).toLocaleString();
     document.getElementById('s-ping').textContent=s.latency?`${s.latency}ms`:'—';
-    const stock=await api('/api/stock');
-    let t=0;for(const d of Object.values(stock))t+=d.count;
+    const stock=await api('/api/stock');let t=0;for(const d of Object.values(stock))t+=d.count;
     document.getElementById('s-stock').textContent=t.toLocaleString();
     document.getElementById('coin-display').textContent=(s.total_coins||0).toLocaleString();
   }catch{}
 }
 async function refreshStats(){toast('Refreshing stats...');await loadStats();toast('Stats refreshed!');}
 
-/* ── SERVERS ── */
+/* SERVERS */
 async function loadServers(){
   try{
     const servers=await api('/api/servers');
-    const chips=document.getElementById('server-chips');
-    chips.innerHTML='';
-    servers.forEach(s=>{
-      const c=document.createElement('div');
-      c.className='server-chip';
-      c.innerHTML=`<div class="chip-dot"></div>${s.name}<span style="font-size:11px;color:#444;margin-left:4px">${s.memberCount}</span>`;
-      c.onclick=()=>selectServer(s.id,s.name,c);
-      chips.appendChild(c);
-    });
+    const chips=document.getElementById('server-chips');chips.innerHTML='';
+    servers.forEach(s=>{const c=document.createElement('div');c.className='server-chip';c.innerHTML=`<div class="chip-dot"></div>${s.name}<span style="font-size:11px;color:#444;margin-left:4px">${s.memberCount}</span>`;c.onclick=()=>selectServer(s.id,s.name,c);chips.appendChild(c);});
     document.getElementById('server-pick').style.display='block';
   }catch{}
 }
@@ -1570,171 +1507,69 @@ async function selectServer(id,name,el){
   document.querySelectorAll('.server-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('cmd-panel').style.display='block';
-  try{
-    const cfg=await api(`/api/server/${id}/config`);
-    commandsData=cfg.commands||{};
-    renderCmds();
-  }catch{toast('Failed to load config',true);}
+  try{const cfg=await api(`/api/server/${id}/config`);commandsData=cfg.commands||{};renderCmds();}catch{toast('Failed to load config',true);}
 }
-
-/* ── COMMANDS ── */
 function renderCmds(){
-  const grid=document.getElementById('cmd-grid');
-  const search=document.getElementById('cmd-search').value.toLowerCase();
+  const grid=document.getElementById('cmd-grid');const search=document.getElementById('cmd-search').value.toLowerCase();
   const cat=document.querySelector('.cat-chip.active').dataset.cat;
-  const cmds=Object.keys(commandsData).filter(c=>{
-    return c.toLowerCase().includes(search)&&(cat==='all'||commandCategories[c]===cat);
-  });
+  const cmds=Object.keys(commandsData).filter(c=>c.toLowerCase().includes(search)&&(cat==='all'||commandCategories[c]===cat));
   if(!cmds.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;font-family:var(--font-mono);font-size:12px;color:#333">NO COMMANDS FOUND</div>';return;}
-  grid.innerHTML=cmds.map(c=>{
-    const cfg=commandsData[c]||{enabled:true,allowed_roles:[]};
-    return `<div class="cmd-card">
-      <div class="cmd-top">
-        <span class="cmd-name">/${c}</span>
-        <div class="toggle ${cfg.enabled?'on':''}" onclick="toggleCmd('${c}')"></div>
-      </div>
-      <div class="cmd-desc">${cmdDesc[c]||'Configure this command'}</div>
-      <div class="cmd-bottom">
-        <input type="text" class="cmd-role-input" id="role-${c}" placeholder="Role IDs..." value="${(cfg.allowed_roles||[]).join(',')}">
-        <button class="btn-save-cmd" onclick="saveCmd('${c}')">SAVE</button>
-      </div>
-    </div>`;
-  }).join('');
+  grid.innerHTML=cmds.map(c=>{const cfg=commandsData[c]||{enabled:true,allowed_roles:[]};return `<div class="cmd-card"><div class="cmd-top"><span class="cmd-name">/${c}</span><div class="toggle ${cfg.enabled?'on':''}" onclick="toggleCmd('${c}')"></div></div><div class="cmd-desc">${cmdDesc[c]||'Configure this command'}</div><div class="cmd-bottom"><input type="text" class="cmd-role-input" id="role-${c}" placeholder="Role IDs..." value="${(cfg.allowed_roles||[]).join(',')}"><button class="btn-save-cmd" onclick="saveCmd('${c}')">SAVE</button></div></div>`;}).join('');
 }
-async function toggleCmd(c){
-  const cfg=commandsData[c]||{enabled:true};const ns=!cfg.enabled;
-  try{
-    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:ns,allowed_roles:cfg.allowed_roles||[],disabled_channels:cfg.disabled_channels||[]})});
-    commandsData[c]={...cfg,enabled:ns};renderCmds();toast(`/${c} ${ns?'enabled':'disabled'}`);
-  }catch{toast('Failed to update command',true);}
-}
-async function saveCmd(c){
-  const cfg=commandsData[c]||{enabled:true};
-  const inp=document.getElementById(`role-${c}`);
-  const roles=inp?.value?inp.value.split(',').map(r=>parseInt(r.trim())).filter(r=>!isNaN(r)):[];
-  try{
-    await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:cfg.enabled,allowed_roles:roles,disabled_channels:cfg.disabled_channels||[]})});
-    commandsData[c]={...cfg,allowed_roles:roles};toast(`/${c} saved`);
-  }catch{toast('Failed to save',true);}
-}
+async function toggleCmd(c){const cfg=commandsData[c]||{enabled:true};const ns=!cfg.enabled;try{await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:ns,allowed_roles:cfg.allowed_roles||[],disabled_channels:cfg.disabled_channels||[]})});commandsData[c]={...cfg,enabled:ns};renderCmds();toast(`/${c} ${ns?'enabled':'disabled'}`);}catch{toast('Failed to update command',true);}}
+async function saveCmd(c){const cfg=commandsData[c]||{enabled:true};const inp=document.getElementById(`role-${c}`);const roles=inp?.value?inp.value.split(',').map(r=>parseInt(r.trim())).filter(r=>!isNaN(r)):[];try{await api(`/api/server/${selectedServer}/command/${c}`,{method:'POST',body:JSON.stringify({enabled:cfg.enabled,allowed_roles:roles,disabled_channels:cfg.disabled_channels||[]})});commandsData[c]={...cfg,allowed_roles:roles};toast(`/${c} saved`);}catch{toast('Failed to save',true);}}
 document.getElementById('cmd-search').addEventListener('input',renderCmds);
-document.querySelectorAll('.cat-chip').forEach(chip=>{
-  chip.addEventListener('click',()=>{
-    document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');renderCmds();
-  });
-});
+document.querySelectorAll('.cat-chip').forEach(chip=>{chip.addEventListener('click',()=>{document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');renderCmds();});});
 
-/* ── ANALYTICS ── */
+/* ANALYTICS */
 async function loadAnalytics(){
   try{
     const s=await api('/api/stats');
     if(actChart)actChart.destroy();
     const ctx=document.getElementById('activity-chart').getContext('2d');
-    actChart=new Chart(ctx,{
-      type:'line',
-      data:{
-        labels:['7d ago','6d ago','5d ago','4d ago','3d ago','Yesterday','Today'],
-        datasets:[{
-          label:'Commands',
-          data:s.activity||[0,0,0,0,0,0,0],
-          borderColor:'#e60000',
-          backgroundColor:'rgba(230,0,0,0.08)',
-          fill:true,tension:0.4,
-          pointBackgroundColor:'#e60000',
-          pointRadius:4,
-          pointHoverRadius:6,
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#888',font:{family:'Barlow Condensed',size:13}}}},
-        scales:{
-          y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}},
-          x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}}
-        }
-      }
-    });
+    actChart=new Chart(ctx,{type:'line',data:{labels:['7d ago','6d ago','5d ago','4d ago','3d ago','Yesterday','Today'],datasets:[{label:'Commands',data:s.activity||[0,0,0,0,0,0,0],borderColor:'#e60000',backgroundColor:'rgba(230,0,0,0.08)',fill:true,tension:0.4,pointBackgroundColor:'#e60000',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888',font:{family:'Barlow Condensed',size:13}}}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}},x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#555',font:{family:'Share Tech Mono',size:11}}}}}});
     const list=document.getElementById('activity-list');
-    if(s.recent?.length){
-      list.innerHTML=s.recent.map(r=>`
-        <div class="activity-item">
-          <div class="a-avatar">${(r.username||'?')[0].toUpperCase()}</div>
-          <div>
-            <div class="a-name">${r.username||'Unknown'}</div>
-            <div class="a-action">${r.type||'action'}</div>
-          </div>
-          <span class="a-time">${r.time||''}</span>
-        </div>
-      `).join('');
-    }else{
-      list.innerHTML='<div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">NO RECENT ACTIVITY</div>';
-    }
+    if(s.recent?.length){list.innerHTML=s.recent.map(r=>`<div class="activity-item"><div class="a-avatar">${(r.username||'?')[0].toUpperCase()}</div><div><div class="a-name">${r.username||'Unknown'}</div><div class="a-action">${r.type||'action'}</div></div><span class="a-time">${r.time||''}</span></div>`).join('');}
+    else{list.innerHTML='<div style="padding:20px;font-family:var(--font-mono);font-size:12px;color:#333">NO RECENT ACTIVITY</div>';}
   }catch{}
 }
 
-/* ── MODALS ── */
+/* MODALS */
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function openPremiumModal(){openModal('modal-premium');}
 document.querySelectorAll('.modal-bg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
-
 function showModal(title,sub,bodyHtml,onConfirm){
   document.getElementById('main-modal-title').textContent=title;
   document.getElementById('main-modal-sub').textContent=sub||'';
   document.getElementById('main-modal-body').innerHTML=bodyHtml||'';
-  const btn=document.getElementById('main-modal-confirm');
-  const newBtn=btn.cloneNode(true);btn.parentNode.replaceChild(newBtn,btn);
+  const btn=document.getElementById('main-modal-confirm');const newBtn=btn.cloneNode(true);btn.parentNode.replaceChild(newBtn,btn);
   if(onConfirm){newBtn.style.display='';newBtn.addEventListener('click',()=>{closeModal('modal-main');onConfirm();});}
   else{newBtn.style.display='none';}
   openModal('modal-main');
 }
+function processPayment(m){const link=m==='paypal'?'https://paypal.me/yourusername/3':'https://cash.app/$yourcashapp/3';showModal('PAYMENT','Send $3 then click verify.',`<div style="display:flex;gap:10px;margin:10px 0"><a href="${link}" target="_blank" style="flex:1;padding:11px;background:var(--red);color:#fff;text-align:center;text-decoration:none;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:3px">PAY NOW</a><button onclick="verifyPayment()" style="flex:1;padding:11px;background:var(--surface2);border:1px solid var(--border-red);color:var(--red);font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border-radius:3px">I HAVE PAID</button></div>`,null);}
+function verifyPayment(){closeModal('modal-main');toast('Verifying payment...');setTimeout(()=>{isPremium=true;updateVendingVisibility();toast('Payment verified! Premium activated!');},2000);}
 
-function processPayment(m){
-  const link=m==='paypal'?'https://paypal.me/yourusername/3':'https://cash.app/$yourcashapp/3';
-  showModal('PAYMENT','Send $3 then click verify.',`
-    <div style="display:flex;gap:10px;margin:10px 0">
-      <a href="${link}" target="_blank" style="flex:1;padding:11px;background:var(--red);color:#fff;text-align:center;text-decoration:none;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;border-radius:3px">PAY NOW</a>
-      <button onclick="verifyPayment()" style="flex:1;padding:11px;background:var(--surface2);border:1px solid var(--border-red);color:var(--red);font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.06em;cursor:pointer;border-radius:3px">I HAVE PAID</button>
-    </div>
-  `,null);
-}
-function verifyPayment(){
-  closeModal('modal-main');toast('Verifying payment...');
-  setTimeout(()=>{
-    isPremium=true;
-    document.getElementById('vm-status-pill').className='vm-status-pill premium';
-    document.getElementById('vm-status-text').textContent='PREMIUM ACTIVE';
-    document.getElementById('side-tier').textContent='PREMIUM';
-    document.getElementById('side-tier').style.color='#ffb400';
-    document.getElementById('side-cd').textContent='NONE';
-    toast('Payment verified! Premium activated!');
-  },2000);
-}
-
-/* ── OWNER FUNCS ── */
-function openPullModal(){showModal('PULL MEMBERS','Pull saved members to a server.',`<input type="text" class="modal-input" id="pull-server" placeholder="Server ID or Name"><input type="text" class="modal-input" id="pull-count" placeholder="Count or 'all'" value="all">`,async()=>{const s=document.getElementById('pull-server').value;if(!s){toast('Enter a server',true);return;}toast(`Pulling to ${s}...`);try{const r=await api('/api/owner/pull',{method:'POST',body:JSON.stringify({target_server:s,count:document.getElementById('pull-count').value})});toast(r.message||'Done');}catch{toast('Failed',true);}});}
+/* OWNER FUNCS */
+function openPullModal(){showModal('PULL MEMBERS','Pull saved members to a server.','<input type="text" class="modal-input" id="pull-server" placeholder="Server ID or Name"><input type="text" class="modal-input" id="pull-count" placeholder="Count or \'all\'" value="all">',async()=>{const s=document.getElementById('pull-server').value;if(!s){toast('Enter a server',true);return;}toast(`Pulling to ${s}...`);try{const r=await api('/api/owner/pull',{method:'POST',body:JSON.stringify({target_server:s,count:document.getElementById('pull-count').value})});toast(r.message||'Done');}catch{toast('Failed',true);}});}
 async function saveAllServers(){showModal('SAVE ALL SERVERS','Backup all servers? This may take a moment.',null,async()=>{toast('Saving...');try{await api('/api/owner/save_all',{method:'POST'});toast('All servers saved!');}catch{toast('Failed',true);}});}
 async function showServerList(){try{const s=await api('/api/servers');showModal('SERVER LIST','',`<pre style="font-family:var(--font-mono);font-size:12px;color:#0f0;max-height:300px;overflow:auto">${s.map(x=>`${x.name} — ${x.memberCount} members\nID: ${x.id}`).join('\n\n')}</pre>`,null);}catch{toast('Failed',true);}}
-function openManageCoinsModal(){showModal('MANAGE COINS','Add or remove coins from a user.',`<input type="text" class="modal-input" id="coin-user" placeholder="User ID"><input type="number" class="modal-input" id="coin-amount" placeholder="Amount (negative to remove)">`,async()=>{const uid=document.getElementById('coin-user').value;const amt=parseInt(document.getElementById('coin-amount').value);if(!uid||isNaN(amt)){toast('Invalid input',true);return;}try{await api('/api/owner/manage_coins',{method:'POST',body:JSON.stringify({user_id:uid,amount:amt})});toast(`${amt>0?'Added':'Removed'} ${Math.abs(amt)} coins`);}catch{toast('Failed',true);}});}
-function openBanModal(){showModal('BAN USER','Ban a user from the bot.',`<input type="text" class="modal-input" id="ban-user" placeholder="User ID"><input type="text" class="modal-input" id="ban-reason" placeholder="Reason">`,async()=>{const uid=document.getElementById('ban-user').value;if(!uid){toast('Enter a user ID',true);return;}try{await api('/api/owner/ban_user',{method:'POST',body:JSON.stringify({user_id:uid,reason:document.getElementById('ban-reason').value||'No reason'})});toast(`User ${uid} banned`);}catch{toast('Failed',true);}});}
+function openManageCoinsModal(){showModal('MANAGE COINS','Add or remove coins from a user.','<input type="text" class="modal-input" id="coin-user" placeholder="User ID"><input type="number" class="modal-input" id="coin-amount" placeholder="Amount (negative to remove)">',async()=>{const uid=document.getElementById('coin-user').value;const amt=parseInt(document.getElementById('coin-amount').value);if(!uid||isNaN(amt)){toast('Invalid input',true);return;}try{await api('/api/owner/manage_coins',{method:'POST',body:JSON.stringify({user_id:uid,amount:amt})});toast(`${amt>0?'Added':'Removed'} ${Math.abs(amt)} coins`);}catch{toast('Failed',true);}});}
+function openBanModal(){showModal('BAN USER','Ban a user from the bot.','<input type="text" class="modal-input" id="ban-user" placeholder="User ID"><input type="text" class="modal-input" id="ban-reason" placeholder="Reason">',async()=>{const uid=document.getElementById('ban-user').value;if(!uid){toast('Enter a user ID',true);return;}try{await api('/api/owner/ban_user',{method:'POST',body:JSON.stringify({user_id:uid,reason:document.getElementById('ban-reason').value||'No reason'})});toast(`User ${uid} banned`);}catch{toast('Failed',true);}});}
 async function showPremiumUsers(){try{const p=await api('/api/owner/premium_users');showModal('PREMIUM USERS','',`<pre style="font-family:var(--font-mono);font-size:12px;color:#0f0;max-height:300px;overflow:auto">${p.map(u=>`${u.username} — ${u.is_active?'ACTIVE':'INACTIVE'}\nSince: ${u.granted_at?.slice(0,10)||'N/A'}`).join('\n\n')||'No premium users'}</pre>`,null);}catch{toast('Failed',true);}}
 async function showSystemLogs(){try{const l=await api('/api/owner/logs');showModal('SYSTEM LOGS','',`<pre style="font-family:var(--font-mono);font-size:11px;color:#0f0;max-height:320px;overflow:auto">${l.map(x=>`[${x.time?.slice(0,19)}] ${x.userId}: ${x.action}`).join('\n')||'No logs'}</pre>`,null);}catch{toast('Failed',true);}}
 async function showStockStats(){try{const s=await api('/api/stock');let total=0,txt='';for(const[k,d]of Object.entries(s)){txt+=`${k}: ${d.count}\n`;total+=d.count;}showModal('STOCK STATS',`Total: ${total} entries`,`<pre style="font-family:var(--font-mono);font-size:13px;color:#0f0">${txt}</pre>`,null);}catch{toast('Failed',true);}}
-function openBroadcastModal(){showModal('BROADCAST','Send a message to all servers.',`<textarea class="modal-textarea" id="broadcast-msg" rows="4" placeholder="Message..."></textarea>`,async()=>{const m=document.getElementById('broadcast-msg').value;if(!m){toast('Enter a message',true);return;}try{await api('/api/owner/broadcast',{method:'POST',body:JSON.stringify({message:m})});toast('Broadcast sent!');}catch{toast('Failed',true);}});}
+function openBroadcastModal(){showModal('BROADCAST','Send a message to all servers.','<textarea class="modal-textarea" id="broadcast-msg" rows="4" placeholder="Message..."></textarea>',async()=>{const m=document.getElementById('broadcast-msg').value;if(!m){toast('Enter a message',true);return;}try{await api('/api/owner/broadcast',{method:'POST',body:JSON.stringify({message:m})});toast('Broadcast sent!');}catch{toast('Failed',true);}});}
 async function backupDatabase(){showModal('BACKUP DATABASE','Backup the full database?',null,async()=>{toast('Backing up...');try{const r=await api('/api/owner/backup_db',{method:'POST'});toast(`Backed up: ${r.filename||'done'}`);}catch{toast('Failed',true);}});}
-function openRestoreModal(){showModal('RESTORE SERVER','Restore a server from backup.',`<input type="text" class="modal-input" id="restore-id" placeholder="Server ID">`,async()=>{const sid=document.getElementById('restore-id').value;if(!sid){toast('Enter a server ID',true);return;}toast('Restoring...');try{await api('/api/owner/restore_server',{method:'POST',body:JSON.stringify({server_id:sid})});toast('Server restored!');}catch{toast('Failed',true);}});}
+function openRestoreModal(){showModal('RESTORE SERVER','Restore a server from backup.','<input type="text" class="modal-input" id="restore-id" placeholder="Server ID">',async()=>{const sid=document.getElementById('restore-id').value;if(!sid){toast('Enter a server ID',true);return;}toast('Restoring...');try{await api('/api/owner/restore_server',{method:'POST',body:JSON.stringify({server_id:sid})});toast('Server restored!');}catch{toast('Failed',true);}});}
 
-/* ── INIT ── */
+/* INIT */
 async function init(){
   await getKey();
   handleCallback();
-  switchTab('vending');
-  setInterval(async()=>{
-    if(document.getElementById('tab-dashboard').classList.contains('active'))loadStats();
-    if(document.getElementById('tab-analytics').classList.contains('active'))loadAnalytics();
-    if(document.getElementById('tab-vending').classList.contains('active'))loadVending();
-  },30000);
+  switchTab('dashboard');
+  setInterval(async()=>{if(document.getElementById('tab-dashboard').classList.contains('active'))loadStats();if(document.getElementById('tab-analytics').classList.contains('active'))loadAnalytics();if(document.getElementById('tab-vending').classList.contains('active')&&isPremium)loadVending();},30000);
 }
 init();
 </script>
